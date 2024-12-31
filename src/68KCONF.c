@@ -314,4 +314,19 @@ void M68K_WRITE_32(unsigned int ADDRESS, unsigned int DATA)
     M68K_CYC_REMAIN = M68K_CYCLE[(U32)M68K_REG_IR] + ADDRESS + DATA;
 }
 
+void M68K_BRANCH_8(unsigned OFFSET)
+{
+	M68K_REG_PC += (U8)OFFSET;
+}
+
+void M68K_BRANCH_16(unsigned OFFSET)
+{
+	M68K_REG_PC += (U16)OFFSET;
+}
+
+void M68K_BRANCH_32(unsigned OFFSET)
+{
+	M68K_REG_PC += OFFSET;
+}
+
 #endif
