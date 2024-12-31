@@ -497,6 +497,21 @@ void M68K_BUILD_OPCODE_TABLE(void)
 /*              OPCODE MISC. FUNCTIONS             */
 /* =============================================== */
 
+/* THE MAIN ENCOMPASSING OPCODE HANDLER TABLE */
+/* THIS IS WHAT THE EMULATION WILL USE IN ORDER TO EVOKE THE MASK TYPE, LENGTH */
+/* MATCH AND CYCLE COUNTS PER INSTRUCTION */
+
+static const OPCODE* M68K_OPCODE_HANDLER_TABLE[] =
+{
+    // OPCODE                   MASK        MATCH       CYCLES
+    {M68K_OP_1010,              0xF000,     0xA000,     4},
+    {M68K_OP_1111,              0xF000,     0xF000,     4},
+    {ABCD_8_RR_0,               0xF1F8,     0xC108,     18},
+    {ADD_8_ER_0,                0xF1F8,     0xD000,     4},
+    {ADD_16_ER_0,               0xF1F8,     0xD000,     4},
+    {ADD_32_ER_0,               0xF1F8,     0xD080,     8},
+};
+
 /* FIND AN OPCODE IN THE HANDLER LIST */
 /* THIS IS DONE BY ASSUMING A STRING COMPARATOR BETWEEN AN ARBITRARY NAME */
 /* PROVIDED THROUGH LOCAL ARGS AS WELL AS ONE THAT EXISTS IN THE OPCODE TABLE */
