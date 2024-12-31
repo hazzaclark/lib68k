@@ -58,7 +58,7 @@ void PROC_FILE(char* FILENAME)
 
     if(!OPCODE_BASE)
     {
-        fprintf(stderr, "Couldn't find valid Opcode at Line %d: %s\n", LINE_INDEX, OPCODE_BASE);
+        fprintf(stderr, "Couldn't find valid Opcode at Line %d: %s\n", LINE_INDEX, (char*)OPCODE_BASE);
         exit(EXIT_FAILURE);
     }
 }
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 
     printf("Setting 68K Stack Pointer\n");
     M68K_GET_REGISTERS(&CPU, M68K_REG_D[M68K_REG_SP]);
-    printf("68K Stack Pointer defined with Value: %d\n", &M68K_REG_SP);
+    printf("68K Stack Pointer defined with Value: %d\n", (int)M68K_REG_SP);
 
 
     return 0; 
