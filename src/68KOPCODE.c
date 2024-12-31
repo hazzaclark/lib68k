@@ -437,7 +437,7 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    unsigned OFFSET = (U16)M68K_READ_16;
+    U16 OFFSET = M68K_READ_16(0);
     M68K_REG_PC -= 2;
     M68K_BRANCH_16(OFFSET);
 }
@@ -449,8 +449,8 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
 
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
 {
-    unsigned MASK = 1 << (U8)M68K_READ_8 & 7;
-    unsigned EA = (U8)M68K_ADDRESS_HIGH;
+    unsigned MASK = 1 << M68K_READ_8(0) & 7;
+    unsigned EA = M68K_ADDRESS_HIGH;
 
     unsigned SRC = M68K_READ_8(EA);
 
@@ -469,7 +469,7 @@ M68K_MAKE_OPCODE(BSET, 32, R, D)
 
 M68K_MAKE_OPCODE(BSR, 16, 0, 0)
 {
-    unsigned OFFSET = (U16)M68K_READ_16;
+    unsigned OFFSET = M68K_READ_16(0);
     M68K_READ_32(M68K_REG_PC);
     M68K_REG_PC -= 2;
     M68K_READ_16(OFFSET);
@@ -488,7 +488,6 @@ M68K_MAKE_OPCODE(BTST, 32, D, 0)
 M68K_MAKE_OPCODE(CHK, 16, EA, 0)
 {
     signed SRC = (U16)M68K_DATA_LOW;
-    signed BOUNDARY = (U16)M68K_DATA_HIGH;
 
     M68K_FLAG_Z = (U16)SRC;
     M68K_FLAG_V = 0;
@@ -568,7 +567,9 @@ void M68K_BUILD_OPCODE_TABLE(void)
 /* THIS IS WHAT THE EMULATION WILL USE IN ORDER TO EVOKE THE MASK TYPE, LENGTH */
 /* MATCH AND CYCLE COUNTS PER INSTRUCTION */
 
-static const OPCODE* M68K_OPCODE_HANDLER_TABLE[] =
+#ifndef USE_OPCODE_HANDLER_TABLE
+
+OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
     {M68K_OP_1010,              0xF000,     0xA000,     4},
@@ -577,7 +578,12 @@ static const OPCODE* M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_EA_0,                0xF1F8,     0xD000,     4},
     {ADD_16_EA_0,               0xF1F8,     0xD000,     4},
     {ADD_32_EA_0,               0xF1F8,     0xD080,     8},
+    {BRA_8_0_0,                 0xFF00,     0x6000,     10},
+    {BRA_16_0_0,                0xFFFF,     0x6000,     10},
+    {BRA_32_0_0,                0xFFFF,     0x60FF,     10},
 };
+
+#endif
 
 /* FIND AN OPCODE IN THE HANDLER LIST */
 /* THIS IS DONE BY ASSUMING A STRING COMPARATOR BETWEEN AN ARBITRARY NAME */
