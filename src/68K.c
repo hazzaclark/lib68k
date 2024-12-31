@@ -8,11 +8,15 @@
 /* ANY AND ALL OF THE CORRESPONDING DEFINES AND DECLARATIONS CAN BE */
 /* ATTRIBUTED TO THE INFROMATION FOUND HERE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf  */ 
 
+#ifndef USE_OPCODE_HANDLER_TABLE
+
 /* NESTED INCLUDES */
 
 #include "68K.h"
 #include "68KCONF.h"
 #include "common.h"
+
+#endif
 
 #ifndef USE_68K
 
