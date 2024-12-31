@@ -63,6 +63,18 @@
 
     } OPCODE;
 
+    #ifndef USE_OPCODE_HANDLER_TABLE
+
+    typedef struct
+    {
+        void(*HANDLER)(void);
+        unsigned MASK;
+        unsigned MATCH;
+        unsigned CYCLES;
+
+    } OPCODE_HANDLER;
+
+    #endif
 
     #define M68K_MAKE_OPCODE(OP, SIZE, MODE, REG) \
     void OP##_##SIZE##_##MODE##_##REG(void)
@@ -81,8 +93,9 @@ void M68K_OP_1111(void);
 int EXTRACT_OPCODE(char* SRC, char* NAME, int* SIZE);
 int CHECK_OPCODE_LENGTH(char* SRC, char* DEST, int MAX);
 int GET_OP_CYCLES(OPCODE* OPCODE_BASE, int EA_MODE, int* CPU_TYPE);
-
 OPCODE* FIND_OPCODE(char* NAME, int SIZE);
+
+extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[];
 
 #endif
 #endif
