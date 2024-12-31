@@ -390,6 +390,10 @@ void M68K_PULSE_RESET(void);
 void M68K_PULSE_HALT(void);
 void M68K_BUILD_OPCODE_TABLE(void);
 
+void M68K_BRANCH_8(unsigned OFFSET);
+void M68K_BRANCH_16(unsigned OFFSET);
+void M68K_BRANCH_32(unsigned OFFSET);
+
 /*===============================================================================*/
 /*							        68000 MISC.							         */
 /*===============================================================================*/
