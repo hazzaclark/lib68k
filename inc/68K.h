@@ -89,6 +89,7 @@
 #define         M68K_EA_DECR_WORD()                         (M68K_ADDRESS_HIGH -= 2)
 #define         M68K_EA_DECR_WORD_LONG()                    (M68K_ADDRESS_HIGH -= 4)
 
+#define         M68K_GET_CCR()                              (((M68K_FLAG_X & 0x100) >> 4) << 8)
 #define         M68K_BIT_1(VALUE)                                   ((VALUE) & 0x00000002)
 #define         M68K_BIT_0(VALUE)                                   ((VALUE) & 0x00000001)
 #define         M68K_BIT_2(VALUE)                                   ((VALUE) & 0x00000004)
