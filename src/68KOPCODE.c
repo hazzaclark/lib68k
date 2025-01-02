@@ -689,6 +689,47 @@ M68K_MAKE_OPCODE(DBCC, 16, 0, 0)
     return;
 }
 
+M68K_MAKE_OPCODE(DIVS, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    signed SRC = (U16)M68K_DATA_HIGH;
+    signed QUOTIENT;
+    signed REMAINDER;
+
+    if(SRC != 0)
+    {
+        if((U32)*DEST == 0x80000000 && SRC == -1)
+        {
+
+            M68K_FLAG_Z = 0;
+            M68K_FLAG_N = 0;
+            M68K_FLAG_C = 0;
+            M68K_FLAG_V = 0;
+
+            *DEST = 0;
+            return;
+
+        }
+    }
+
+    QUOTIENT = (((U32)*DEST) / SRC);
+    REMAINDER = (((U32)*DEST) % SRC);
+
+    // MODULO TYPE CAST TO HANDLE NEW SIGNED BIAS
+
+    if(QUOTIENT == (U16)QUOTIENT)
+    {
+        M68K_FLAG_Z = QUOTIENT;
+        M68K_FLAG_N = 0;
+        M68K_FLAG_C = 0;
+        M68K_FLAG_V = 0;
+        *DEST = M68K_MASK_OUT_ABOVE_32(M68K_MASK_OUT_ABOVE_16(QUOTIENT) | REMAINDER << 16);
+        return;
+    }
+
+    M68K_EXCEPTION_TRAPV / 0;
+}
+
 /* BUILD THE OVERARCHING OPCODE TABLE BASED ON ALL OF THE DIRECTIVES AND PRE-REQUISITIES */
 /* THIS WILL WORK ON THE BASIS BY WHICH IT WILL BE ASSUME THE CURRENT OPERAND BASED ON THE MASK */
 /* AND IT'S DESIGNATED VALUE */ 
