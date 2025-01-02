@@ -732,14 +732,14 @@ M68K_MAKE_OPCODE(DIVU, 16, D, 0)
 {
     unsigned* DEST = &M68K_DATA_LOW;
     signed SRC = (U16)M68K_DATA_HIGH;
-    signed QUOTIENT;
-    signed REMAINDER;
+    signed QUOTIENT = 0;
+    signed REMAINDER = 0;
 
     if(SRC != 0)
     {
         // MODULO TYPE CAST TO HANDLE NEW SIGNED BIAS
 
-        if(QUOTIENT < 0x10000)
+        if((QUOTIENT) < 0x10000)
         {
             M68K_FLAG_Z = QUOTIENT;
             M68K_FLAG_N = 0;
