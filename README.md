@@ -46,6 +46,12 @@ You can find the provided example Assembly code [here](https://github.com/hazzac
 ![image](https://github.com/user-attachments/assets/d425f711-eaed-4545-bc08-4b3917d41955)
 
 
+# NOTE:
+
+Some of the Opcodes and their extended addressing capabilities such as IMM, EA, DI, PI, etc - are all reserved for an eventual expansion on this Library.
+
+As of right now, I wanted to focus on getting everything working with 68000 emulation to prioritise [mdemu](https://github.com/hazzaclark/mdemu/blob/main) developments
+
  # Sources:
 
 [Motorola 680x0 Programmer Manual](https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf)
