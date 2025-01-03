@@ -36,6 +36,8 @@
     #define         MAX_OPCODE_INPUT        1000      
     #define         MAX_OPCODE_TABLE        3000
     #define         MAX_MEMORY_SIZE         1024 * 1024
+    #define         MAX_OPERAND_INPUT       128
+
 
     /* ENUM STORE OF ALL OF THE POSSIBLE EFFECTIVE ADDRESING MODES */
     /* =========================================================== */
@@ -84,9 +86,12 @@
 /*              FUNCTION DECLARATIVES                 */
 /*====================================================*/
 
-static FILE* INPUT;
-
-void PROC_FILE(char* FILENAME);
+void PROCESS_FILE(char* FILENAME);
+void PROCESS_LINE(char* LINE_BUFFER, int LINE_INDEX);
+void EXTRACT_LABEL(char** LINE_START, char* LABEL);
+void EXTRACT_OPCODE_AND_OPERANDS(char* LINE_START, char* OPCODES, char* OPERANDS);
+void HANDLE_DIRECTIVE(int LINE_INDEX, char* LABEL, char* OPCODES, char* OPERANDS);
+void HANDLE_OPCODE(int LINE_INDEX, char* LABEL, char* OPCODES, char* OPERANDS);
 
 #endif
 #endif
