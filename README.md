@@ -1,7 +1,7 @@
 # lib68k
 Motorola 680x0 Standalone Emulation Library
 
-![image](https://github.com/user-attachments/assets/1f6391fd-327c-482e-a3d5-7d18d39c5b3c)
+![image](https://github.com/user-attachments/assets/19208caf-24ed-4018-82dc-72e72ceb64e9)
 
 # Motive:
 
@@ -36,6 +36,15 @@ lib68k.so
 ```
 
 the makefile in question is universal, allowing for ease of use compiling on other systems
+
+# Example:
+
+Below is an example provided to showcase how the ``OPCODE_HANDLER_TABLE`` is able to store and evaluate respective Opcodes and Operands
+
+You can find the provided example Assembly code [here](https://github.com/hazzaclark/lib68k/blob/main/hello.asm)
+
+![image](https://github.com/user-attachments/assets/d425f711-eaed-4545-bc08-4b3917d41955)
+
 
  # Sources:
 
