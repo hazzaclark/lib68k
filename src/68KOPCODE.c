@@ -1648,7 +1648,7 @@ M68K_MAKE_OPCODE(SUBA, 32, DA, 0)
 
 M68K_MAKE_OPCODE(SUBI, 8, D, 0)
 {
-    unsigned* DEST = (unsigned*)M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
     unsigned RESULT = *DEST - SRC;
 
@@ -1662,7 +1662,7 @@ M68K_MAKE_OPCODE(SUBI, 8, D, 0)
 
 M68K_MAKE_OPCODE(SUBI, 16, D, 0)
 {
-    unsigned* DEST = (unsigned*)M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
     unsigned RESULT = *DEST - SRC;
 
@@ -1676,7 +1676,7 @@ M68K_MAKE_OPCODE(SUBI, 16, D, 0)
 
 M68K_MAKE_OPCODE(SUBI, 32, D, 0)
 {
-    unsigned* DEST = (unsigned*)M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
     unsigned RESULT = *DEST - SRC;
 
