@@ -12,6 +12,10 @@
 #include "68K.h"
 #include "common.h"
 
+/* SYSTEM INCLUDES */
+
+#include <ctype.h>
+
 #if defined(USE_STD_LIB)
     #define USE_STD_LIB
 #else
