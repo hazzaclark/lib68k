@@ -14,7 +14,6 @@
 #ifdef USE_CONFIG
 
 static unsigned int CPU_TYPE;
-static int INIT_CYCLES;
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -148,47 +147,49 @@ int M68K_EXEC(int CYCLES)
     /* DISCERN THE INITIAL CYCLE COUNT PER CLOCK TICK */
     /* ASSUME THAT THE CLOCK CYCLES HAVE BEEN RESET UPON INITIAL BOOT */
 
-    CYCLES = 0;
-    unsigned CYCLE_COUNT = 0;
+    int RESET_CYCLES = M68K_RESET_CYCLES;
+    int INIT_CYCLES = CYCLES;
 
-	int REG_INDEX = 0;
-
-    if(M68K_RESET_CYCLES)
+    if (M68K_RESET_CYCLES)
     {
-        CYCLES = M68K_RESET_CYCLES;
-		return CYCLE_COUNT;
+        M68K_RESET_CYCLES = 0;
+        return RESET_CYCLES;
     }
 
     /* SET THE AVAILABLE CLOCK CYCLES */
-
     M68K_SET_CYCLES(CYCLES);
-	INIT_CYCLES = CYCLES;
 
     /* RECORD THE PREVIOUS INSTRUCTION PASSED THROUGH THE PC */
     /* PREPARE FOR RESET */
 
-    if(!M68K_CPU_STOPPED)
+    if (!M68K_CPU_STOPPED)
     {
         do
-		{
-			/* RECORD THE PREVIOUS STATE FOUND IN ANY RESPECTIVE DATA OR ADDRESS REGISTER */
+        {
+            /* SIMULATE INSTRUCTION EXECUTION */
+            /* FOR NOW, ASSUME EACH INSTRUCTION TAKES 4 CYCLES */
 
-        	for (int INDEX = 0; INDEX < 16; INDEX++)
-        	{
-        	    REG_INDEX[M68K_REG_DA] = M68K_REG_D[INDEX];
-        	}
+            int CYCLES_PER_INSTRUCTION = 4;
 
-        	/* FROM THERE, READ THE CONCURRENT INSTRUCTION INTO THE INDEX REGISTER */
-        	/* RELATIVE TO THE PREVIOUS INSTRUCTION'S OPCODE DIRECTIVE */ 
+            /* DEDUCT CYCLES FOR THE CURRENT INSTRUCTION */
+            M68K_USE_CYCLES(CYCLES_PER_INSTRUCTION);
 
-        	M68K_USE_CYCLES(REG_INDEX); 
+            /* INCREMENT THE PROGRAM COUNTER */
+            M68K_REG_PC += 2;
 
-		} while(M68K_GET_CYCLES() > 0);   
+            /* PRINT THE CURRENT STATE */
+            printf("Executed Instruction at PC=%06x, used %d Cycles, %d Remaining\n",
+                   M68K_REG_PC, CYCLES_PER_INSTRUCTION, M68K_GET_CYCLES());
+
+        } while (M68K_GET_CYCLES() > 0);
+    }
+    else
+    {
+        /* IF THE CPU IS STOPPED, SET REMAINING CYCLES TO 0 */
+        M68K_SET_CYCLES(0);
     }
 
-	else
-		M68K_SET_CYCLES(0);
-
+    /* RETURN THE NUMBER OF CYCLES CONSUMED */
     return INIT_CYCLES - M68K_GET_CYCLES();
 }
 
