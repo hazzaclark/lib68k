@@ -143,19 +143,19 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 
 /* SEE RESET COROUTINE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=537 */
 
-int M68K_EXEC(void)
+int M68K_EXEC(int CYCLES)
 {
     /* DISCERN THE INITIAL CYCLE COUNT PER CLOCK TICK */
     /* ASSUME THAT THE CLOCK CYCLES HAVE BEEN RESET UPON INITIAL BOOT */
 
-    int CYCLES = 0;
+    CYCLES = 0;
     unsigned CYCLE_COUNT = 0;
 
 	int REG_INDEX = 0;
 
     if(M68K_RESET_CYCLES)
     {
-        CYCLE_COUNT = M68K_RESET_CYCLES;
+        CYCLES = M68K_RESET_CYCLES;
 		return CYCLE_COUNT;
     }
 
