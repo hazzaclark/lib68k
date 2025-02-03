@@ -59,22 +59,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    if (argc > 2) 
-    {
-        char* INDEX;
-        strncpy(LIB68K->OUTPUT_PATH, argv[2], sizeof(LIB68K->OUTPUT_PATH));
-
-        for(INDEX = strchr(LIB68K->OUTPUT_PATH, '\\'); INDEX; INDEX = strchr(INDEX, '\\')) 
-        {
-            *INDEX = '/';
-        }
-
-        if(LIB68K->OUTPUT_PATH[strlen(LIB68K->OUTPUT_PATH) - 1] != '/') 
-        {
-            strcat(LIB68K->OUTPUT_PATH, "/");
-        }
-    }
-
     strcpy(LIB68K->INPUT_FILE, argv[1]);
 
     printf("Initialising 68000\n");
