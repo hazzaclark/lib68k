@@ -15,6 +15,9 @@
 
 static unsigned int CPU_TYPE;
 
+#define			M68K_CYCLE_RANGE_MIN		2
+#define			M68K_CYCLE_RANGE_MAX		16
+
 U8 M68K_VECTOR_TABLE[5][256] =
 {
 	{ 
@@ -142,7 +145,7 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 
 /* SEE RESET COROUTINE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=537 */
 
-int M68K_EXEC(int CYCLES)
+int M68K_EXEC(int CYCLES) 
 {
     /* DISCERN THE INITIAL CYCLE COUNT PER CLOCK TICK */
     /* ASSUME THAT THE CLOCK CYCLES HAVE BEEN RESET UPON INITIAL BOOT */
@@ -150,8 +153,8 @@ int M68K_EXEC(int CYCLES)
     int RESET_CYCLES = M68K_RESET_CYCLES;
     int INIT_CYCLES = CYCLES;
 
-    if (M68K_RESET_CYCLES)
-    {
+    if (M68K_RESET_CYCLES) 
+	{
         M68K_RESET_CYCLES = 0;
         return RESET_CYCLES;
     }
@@ -162,29 +165,21 @@ int M68K_EXEC(int CYCLES)
     /* RECORD THE PREVIOUS INSTRUCTION PASSED THROUGH THE PC */
     /* PREPARE FOR RESET */
 
-    if (!M68K_CPU_STOPPED)
-    {
-        do
-        {
-            /* SIMULATE INSTRUCTION EXECUTION */
-            /* FOR NOW, ASSUME EACH INSTRUCTION TAKES 4 CYCLES */
-
-            int CYCLES_PER_INSTRUCTION = 4;
-
+    if (!M68K_CPU_STOPPED) 
+	{
+        do 
+		{
             /* DEDUCT CYCLES FOR THE CURRENT INSTRUCTION */
-            M68K_USE_CYCLES(CYCLES_PER_INSTRUCTION);
+            M68K_USE_CYCLES(CYCLES);
 
             /* INCREMENT THE PROGRAM COUNTER */
             M68K_REG_PC += 2;
 
-            /* PRINT THE CURRENT STATE */
-            printf("Executed Instruction at PC=%06x, used %d Cycles, %d Remaining\n",
-                   M68K_REG_PC, CYCLES_PER_INSTRUCTION, M68K_GET_CYCLES());
 
         } while (M68K_GET_CYCLES() > 0);
-    }
-    else
-    {
+    } 
+	else 
+	{
         /* IF THE CPU IS STOPPED, SET REMAINING CYCLES TO 0 */
         M68K_SET_CYCLES(0);
     }
