@@ -12,11 +12,8 @@
 
 static LIB_BASE* LIB68K;
 
-#define         PC_MAX_VALUE            0x10000
-
-/* THE MAIN ENCOMPASSING FUNCTION TO PARSE THE CONTENTS PROVIDED THROUGH THE ARGS */
-/* READ THE CONTENTS, GET THE MAX SIZE OF EACH LINE, SKIP WHITESPACE AND VALIDATE EACH OPCODE */
-/* IN THE OPCODE TABLE */
+#define     PC_MAX_VALUE    0x1000  
+#define     SP_INIT_VALUE   0xFFFFF  
 
 void PROCESS_FILE(char* FILENAME) 
 {
@@ -24,7 +21,7 @@ void PROCESS_FILE(char* FILENAME)
     FILE* INPUT;
     int LINE_INDEX = 0;
 
-    INPUT = fopen(FILENAME, "r");
+    INPUT = fopen(FILENAME, "rb");
     if (!INPUT) 
     {
         perror("Failed to open source file\n");
@@ -40,12 +37,12 @@ void PROCESS_FILE(char* FILENAME)
     fclose(INPUT);
 }
 
-int main(int argc, char** argv)
+int main(int argc, char** argv) 
 {
     printf("====================================================\n");
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
-    
+
     if (argc != 2) 
     {
         printf("Usage: %s INPUT_FILE \n", argv[0]);
@@ -62,20 +59,21 @@ int main(int argc, char** argv)
     strcpy(LIB68K->INPUT_FILE, argv[1]);
 
     printf("Initialising 68000\n");
+
     M68K_INIT();
     M68K_EXEC(10000);
     printf("68000 is running: %p\n", (void*)&CPU);
     printf("Current Cycle Clock: %d\n", M68K_CYCLES_REMAINING);
 
     printf("Setting 68K Program Counter\n");
-    M68K_SET_REGISTERS(M68K_REG_PC, PC_MAX_VALUE);   
-    printf("68K Program Counter defined with Value: %d\n", PC_MAX_VALUE);
+    M68K_SET_REGISTERS(M68K_REG_PC, PC_MAX_VALUE);
+    printf("68K Program Counter defined with Value: %04X\n", PC_MAX_VALUE);
 
     printf("====================================================\n");
 
     printf("Setting 68K Stack Pointer\n");
-    M68K_GET_REGISTERS(&CPU, M68K_REG_D[M68K_REG_SP]);
-    printf("68K Stack Pointer defined with Value: %d\n", (int)M68K_REG_SP);
+    M68K_SET_REGISTERS(M68K_REG_SP, SP_INIT_VALUE);
+    printf("68K Stack Pointer defined with Value: %04X\n", SP_INIT_VALUE);
 
     printf("====================================================\n");
 
