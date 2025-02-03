@@ -167,7 +167,7 @@ int M68K_EXEC(int CYCLES)
 
     if (!M68K_CPU_STOPPED) 
 	{
-        do 
+		do 
 		{
             /* DEDUCT CYCLES FOR THE CURRENT INSTRUCTION */
             M68K_USE_CYCLES(CYCLES);
@@ -175,9 +175,8 @@ int M68K_EXEC(int CYCLES)
             /* INCREMENT THE PROGRAM COUNTER */
             M68K_REG_PC += 2;
 
-
-        } while (M68K_GET_CYCLES() > 0);
-    } 
+		} while (M68K_GET_CYCLES() > 0);
+	} 
 	else 
 	{
         /* IF THE CPU IS STOPPED, SET REMAINING CYCLES TO 0 */
