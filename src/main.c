@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
     
-    if (argc < 2) 
+    if (argc != 2) 
     {
         printf("Usage: %s INPUT_FILE \n", argv[0]);
         return 1;
@@ -79,8 +79,9 @@ int main(int argc, char** argv)
 
     printf("Initialising 68000\n");
     M68K_INIT();
-    M68K_EXEC();
+    M68K_EXEC(10000);
     printf("68000 is running: %p\n", (void*)&CPU);
+    printf("Current Cycle Clock: %d\n", M68K_CYCLES_REMAINING);
 
     printf("Setting 68K Program Counter\n");
     M68K_SET_REGISTERS(M68K_REG_PC, PC_MAX_VALUE);   
@@ -91,6 +92,8 @@ int main(int argc, char** argv)
     printf("Setting 68K Stack Pointer\n");
     M68K_GET_REGISTERS(&CPU, M68K_REG_D[M68K_REG_SP]);
     printf("68K Stack Pointer defined with Value: %d\n", (int)M68K_REG_SP);
+
+    printf("====================================================\n");
 
     printf("\nProcessing Source File: %s\n", LIB68K->INPUT_FILE);
     PROCESS_FILE(LIB68K->INPUT_FILE);
