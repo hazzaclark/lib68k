@@ -63,7 +63,6 @@ int main(int argc, char** argv)
     M68K_INIT();
     M68K_EXEC(10000);
     printf("68000 is running: %p\n", (void*)&CPU);
-    printf("Current Cycle Clock: %d\n", M68K_CYCLES_REMAINING);
 
     printf("Setting 68K Program Counter\n");
     M68K_SET_REGISTERS(M68K_REG_PC, PC_MAX_VALUE);
