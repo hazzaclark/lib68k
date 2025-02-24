@@ -69,6 +69,7 @@ void M68K_SET_INSTR_CALLBACK(unsigned CALLBACK, unsigned PC);
 void M68K_SET_MOVE_IRQ_INT(void);
 U16 M68K_FETCH_INSTR();
 U32 M68K_FETCH_LONG();
+int M68K_EXECUTE_INSTRUCTION(U16 INSTRUCTION);
 
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
