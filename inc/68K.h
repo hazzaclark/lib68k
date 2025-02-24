@@ -71,13 +71,16 @@
 /*-------------------------------------------------------------------------------*/
 /*===============================================================================*/
 
-#define         M68K_READ_BYTE(VALUE, ADDRESS)              (VALUE)[(ADDRESS) ^ 1]
-#define         M68K_READ_WORD(VALUE, ADDRESS)              (((VALUE)[ADDRESS]<<8) | (VALUE)[(ADDRESS)+1])
 
-#define         M68K_READ_WORD_LONG(VALUE, ADDRESS)         (((VALUE)[(ADDRESS)+1]<<24) |       \
-                                    		                ((VALUE)[(ADDRESS)]<<16) |  		\
-                                    		                ((VALUE)[(ADDRESS )+3]<<8) |   		\
-                                    		                (VALUE)[(ADDRESS)+2])
+#define WRITE_BYTE(BASE, ADDR, VAL) (BASE)[ADDR] = (VAL)&0xff
+#define WRITE_WORD(BASE, ADDR, VAL) (BASE)[ADDR] = ((VAL)>>8) & 0xff; \
+                                    (BASE)[(ADDR)+1] = (VAL)&0xff
+#define WRITE_LONG(BASE, ADDR, VAL) (BASE)[ADDR] = ((VAL)>>24) & 0xff; \
+                                    (BASE)[(ADDR)+1] = ((VAL)>>16)&0xff; \
+                                    (BASE)[(ADDR)+2] = ((VAL)>>8)&0xff; \
+                                    (BASE)[(ADDR)+3] = (VAL)&0xff
+                                                        
+                                                        
 
 /* AS AND WHEN I NEED TO ACCESS A PARTICULAR SIZE, I CAN JUST TYPECAST THESE */
 
