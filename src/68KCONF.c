@@ -7,16 +7,21 @@
 
 /* NESTED INCLUDES */
 
-
 #include "68K.h"
+#include "68KOPCODE.h"
 #include "common.h"
+#include "util.h"
 
 #ifdef USE_CONFIG
+#ifdef USE_OPCODE
 
+static U8 MEMORY[MAX_MEMORY_SIZE];
 static unsigned int CPU_TYPE;
 
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
+
+#define NUM_OPCODE_HANDLERS (sizeof(M68K_OPCODE_HANDLER_TABLE) / sizeof(M68K_OPCODE_HANDLER_TABLE[0]))
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -147,43 +152,32 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 
 int M68K_EXEC(int CYCLES) 
 {
-    /* DISCERN THE INITIAL CYCLE COUNT PER CLOCK TICK */
-    /* ASSUME THAT THE CLOCK CYCLES HAVE BEEN RESET UPON INITIAL BOOT */
-
     int RESET_CYCLES = M68K_RESET_CYCLES;
     int INIT_CYCLES = CYCLES;
 
     if (M68K_RESET_CYCLES) 
-	{
+    {
         M68K_RESET_CYCLES = 0;
         return RESET_CYCLES;
     }
 
-    /* SET THE AVAILABLE CLOCK CYCLES */
     M68K_SET_CYCLES(CYCLES);
 
-    /* RECORD THE PREVIOUS INSTRUCTION PASSED THROUGH THE PC */
-    /* PREPARE FOR RESET */
-
     if (!M68K_CPU_STOPPED) 
-	{
-		do 
-		{
-            /* DEDUCT CYCLES FOR THE CURRENT INSTRUCTION */
-            M68K_USE_CYCLES(CYCLES);
-
-            /* INCREMENT THE PROGRAM COUNTER */
-            M68K_REG_PC += 2;
-
-		} while (M68K_GET_CYCLES() > 0);
-	} 
-	else 
-	{
-        /* IF THE CPU IS STOPPED, SET REMAINING CYCLES TO 0 */
+    {
+        while (M68K_GET_CYCLES() > 0) 
+        {
+            U16 INSTRUCTION = M68K_FETCH_INSTR();
+			int CYCLES_USED = M68K_EXECUTE_INSTRUCTION(INSTRUCTION);
+			M68K_USE_CYCLES(CYCLES_USED);
+            printf("Executing instruction: 0x%04X at PC: 0x%04X\n", INSTRUCTION, M68K_REG_PC - 2);
+        }
+    } 
+    else 
+    {
         M68K_SET_CYCLES(0);
     }
 
-    /* RETURN THE NUMBER OF CYCLES CONSUMED */
     return INIT_CYCLES - M68K_GET_CYCLES();
 }
 
@@ -197,28 +191,36 @@ int M68K_CYCLES_REMAINING(void)
     return M68K_GET_CYCLES();
 }
 
+int M68K_EXECUTE_INSTRUCTION(U16 INSTRUCTION)
+{
+    for (size_t i = 0; i < sizeof(M68K_OPCODE_HANDLER_TABLE[i]) / sizeof(OPCODE_HANDLER); i++) 
+    {
+        OPCODE_HANDLER* HANDLER = &M68K_OPCODE_HANDLER_TABLE[i];
+
+        if ((INSTRUCTION & HANDLER->MASK) == HANDLER->MATCH) 
+        {
+            HANDLER->HANDLER();
+            return HANDLER->CYCLES;
+        }
+    }
+
+    printf("Unknown instruction: 0x%04X\n", INSTRUCTION);
+    return 0; 
+}
+
 /* BEGIN TO EVALUATE WHICH INSTRUCTIONS ARE BEING FETCHED IN RELATION TO WHAT */
 /* IS CURRENTLY BEING STORED IN THE PC */
 
 U16 M68K_FETCH_INSTR()
 {
-	unsigned int WORD;
+	/* FETCH THE NEXT INSTRUCTION FROM MEMORY */
+    U16 INSTRUCTION = M68K_READ_16(M68K_REG_PC);
+	printf("Fetched instruction: 0x%04X at PC: 0x%04X\n", INSTRUCTION, M68K_REG_PC);
 
-	/* IF THE PROGRAM COUNTER HAS JUMPED TO ANOTHER SUBROUTINE */
-	/* OR INSTRUCTION, SHIFT LOGICAL TO THE NEXT PROBABLE INSTRUCTION */
+    /* INCREMENT THE PROGRAM COUNTER */
+    M68K_REG_PC += 2;
 
-	if(M68K_REG_PC != M68K_PRV_ADDR)
-	{
-		/* DELIBERATE TYPE CASTING ALLOWS FOR THE CIRCUMSTANCE OF BEING */
-		/* ABLE TO STORE THE DECLARED VARIABLE TYPE IN THIS READ FUNCTION */
-
-		/* THIS WILL STILL BE EVALUATED TO THE PC THE SAME WAY */
-
-		WORD = ((U16)M68K_READ_16(sizeof(M68K_MEMORY_ADDRESS)));
-		M68K_REG_PC = M68K_PRV_ADDR += sizeof(M68K_REG_PC + 2);
-	}
-
-	return WORD;
+    return INSTRUCTION;
 }
 
 /* THIS FUNCTION DISCERNS THE FUNCTIONALITY BASED ON PROVIDING PULSE TO THE RESET LINE */
@@ -275,11 +277,10 @@ unsigned int M68K_READ_8(unsigned int ADDRESS)
 
 unsigned int M68K_READ_16(unsigned int ADDRESS)
 {
-    int INDEX = 0;
+    U16 const HI = M68K_READ_8(ADDRESS + 1);
+	U16 const LO = M68K_READ_8(ADDRESS + 0);
 
-    M68K_MEMORY_MAP[INDEX].MEMORY_BASE = malloc(0x1000);
-
-    return M68K_READ_WORD(M68K_MEMORY_MAP[((ADDRESS)>>16)&0xFF].MEMORY_BASE, (ADDRESS) & 0xFFFF);
+	return (HI << 8) | LO;
 }
 
 unsigned int M68K_READ_32(unsigned int ADDRESS)
@@ -287,26 +288,28 @@ unsigned int M68K_READ_32(unsigned int ADDRESS)
     int INDEX = 0;
 
     M68K_MEMORY_MAP[INDEX].MEMORY_BASE = malloc(0x1000);
-
     return M68K_READ_WORD_LONG(M68K_MEMORY_MAP[((ADDRESS)>>16)&0xFF].MEMORY_BASE, (ADDRESS) & 0xFFFF);
 }
 
 /* THE WRITE FUNCTIONS WILL LOOK TO DISCERN HOW MANY CYCLE TICKS ARE LEFT RELATIVE TO THE INSTRUCTION */
 /* STORE THE RESULT TO EACH RELATIVE BTIWISE VALUE IN THE INDEX REGISTER */
 
-void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
+void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA) 
 {
-    M68K_CYC_REMAIN = M68K_CYCLE[(U8)M68K_REG_IR] + ADDRESS + DATA;
-}   
+    MEMORY[ADDRESS] = (U8)DATA;
+    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
+}
 
 void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA)
 {
-    M68K_CYC_REMAIN = M68K_CYCLE[(U16)M68K_REG_IR] + ADDRESS + DATA;
+    MEMORY[ADDRESS] = (U16)DATA;
+    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
 }
 
 void M68K_WRITE_32(unsigned int ADDRESS, unsigned int DATA)
 {
-    M68K_CYC_REMAIN = M68K_CYCLE[(U32)M68K_REG_IR] + ADDRESS + DATA;
+    MEMORY[ADDRESS] = (U32)DATA;
+    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
 }
 
 void M68K_BRANCH_8(unsigned OFFSET)
@@ -324,4 +327,5 @@ void M68K_BRANCH_32(unsigned OFFSET)
 	M68K_REG_PC += OFFSET;
 }
 
+#endif
 #endif
