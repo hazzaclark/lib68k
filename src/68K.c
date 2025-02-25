@@ -104,7 +104,7 @@ unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
 		case M68K_A6: return CPU->REGISTER_BASE[14];
 		case M68K_A7: return CPU->REGISTER_BASE[15];
 
-        case M68K_PC: return M68K_MASK_OUT_ABOVE_32(CPU->PC);
+        case M68K_PC: return (CPU->PC);
 
 		case M68K_USP:
 			return CPU->S_FLAG;
@@ -285,11 +285,27 @@ void M68K_SET_SR_IRQ(unsigned VALUE)
 
 void M68K_INIT(void)
 {
-	M68K_BUILD_OPCODE_TABLE();
-	M68K_SET_INT_CALLBACK(0);
-	M68K_SET_FUNC_CALLBACK(0);
-	M68K_SET_INSTR_CALLBACK(0, 0);
-	M68K_SET_MOVE_IRQ_INT();
+    printf("INITIALISING OPCODE TABLE...\n");
+    M68K_BUILD_OPCODE_TABLE();
+    printf("OPCODE TABLE INITIALISED.\n");
+
+    printf("SETTING INTERRUPT CALLBACK...\n");
+    M68K_SET_INT_CALLBACK(0);
+    printf("INTERRUPT CALLBACK SET.\n");
+
+    printf("SETTING FUNCTION CALLBACK...\n");
+    M68K_SET_FUNC_CALLBACK(0);
+    printf("FUNCTION CALLBACK SET.\n");
+
+    printf("SETTING INSTRUCTION CALLBACK...\n");
+    M68K_SET_INSTR_CALLBACK(0, 0);
+    printf("INSTRUCTION CALLBACK SET.\n");
+
+    printf("SETTING MOVE IRQ INTERRUPT...\n");
+    M68K_SET_MOVE_IRQ_INT();
+    printf("MOVE IRQ INTERRUPT SET.\n");
+
+    printf("68000 INITIALISATION COMPLETE.\n");
 }
 
 #endif
