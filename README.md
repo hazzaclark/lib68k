@@ -43,7 +43,9 @@ Below is an example provided to showcase how the ``OPCODE_HANDLER_TABLE`` is abl
 
 You can find the provided example Assembly code [here](https://github.com/hazzaclark/lib68k/blob/main/hello.asm)
 
-![image](https://github.com/user-attachments/assets/d425f711-eaed-4545-bc08-4b3917d41955)
+![image](https://github.com/user-attachments/assets/b5b0dda9-a185-433c-9a20-b89427d756af)
+
+![image](https://github.com/user-attachments/assets/efed0817-24ef-493f-87af-03bd1d0e4eba)
 
 
 # NOTE:
