@@ -15,13 +15,12 @@
 #ifdef USE_CONFIG
 #ifdef USE_OPCODE
 
-static U8 MEMORY[MAX_MEMORY_SIZE];
 static unsigned int CPU_TYPE;
+static unsigned char RAM[M68K_MAX_RAM + 1];
 
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
 
-#define NUM_OPCODE_HANDLERS (sizeof(M68K_OPCODE_HANDLER_TABLE) / sizeof(M68K_OPCODE_HANDLER_TABLE[0]))
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -154,36 +153,59 @@ int M68K_EXEC(int CYCLES)
 {
     int RESET_CYCLES = M68K_RESET_CYCLES;
     int INIT_CYCLES = CYCLES;
-
+    
     if (M68K_RESET_CYCLES) 
-    {
+	{
         M68K_RESET_CYCLES = 0;
         return RESET_CYCLES;
     }
-
+    
     M68K_SET_CYCLES(CYCLES);
-
+    
     if (!M68K_CPU_STOPPED) 
-    {
-        while (M68K_GET_CYCLES() > 0) 
-        {
-            U16 INSTRUCTION = M68K_FETCH_INSTR();
-			int CYCLES_USED = M68K_EXECUTE_INSTRUCTION(INSTRUCTION);
-			M68K_USE_CYCLES(CYCLES_USED);
-            printf("Executing instruction: 0x%04X at PC: 0x%04X\n", INSTRUCTION, M68K_REG_PC - 2);
+	{
+        const int MAX_INSTRUCTIONS = 1000;
+        int INSTR_COUNT = 0;
+        
+        while (M68K_GET_CYCLES() > 0 && !M68K_CPU_STOPPED && INSTR_COUNT < MAX_INSTRUCTIONS) 
+		{
+			M68K_REG_PPC = M68K_REG_PC;
+            M68K_REG_IR = M68K_FETCH_INSTR();
+            printf("FETCHED: 0x%04X at PC: 0x%04X\n", M68K_REG_IR, M68K_REG_PPC);
+ 
+            printf("EXECUTED: 0x%04X\n", M68K_REG_IR);
+            int DEFAULT_CYCLES = 4;
+            
+            M68K_USE_CYCLES(DEFAULT_CYCLES);
+            printf("CYCLES USED: %d, REMAINING CYCLES: %d\n", DEFAULT_CYCLES, M68K_GET_CYCLES());
+            
+            if (M68K_GET_CYCLES() <= 0) 
+			{
+                printf("OUT OF CYCLES\n");
+                break;
+            }
+            
+            M68K_REG_PC += 2;
+            INSTR_COUNT++;
         }
+        
+        M68K_REG_PPC = M68K_REG_PC;
+        
     } 
-    else 
-    {
+	else 
+	{
         M68K_SET_CYCLES(0);
     }
+    
+    int CYCLES_EXEC = INIT_CYCLES - M68K_GET_CYCLES();
+    printf("RETURNING: %d CYCLES EXECUTED\n", CYCLES_EXEC);
 
-    return INIT_CYCLES - M68K_GET_CYCLES();
+    return CYCLES_EXEC;
 }
 
 int M68K_CYCLES_RUN(void)
 {
-    return M68K_GET_CYCLES() -= *(int*)M68K_CYCLE;
+    return M68K_GET_CYCLES() - M68K_GET_CYCLES();
 }
 
 int M68K_CYCLES_REMAINING(void)
@@ -191,33 +213,15 @@ int M68K_CYCLES_REMAINING(void)
     return M68K_GET_CYCLES();
 }
 
-int M68K_EXECUTE_INSTRUCTION(U16 INSTRUCTION)
-{
-    for (size_t i = 0; i < sizeof(M68K_OPCODE_HANDLER_TABLE[i]) / sizeof(OPCODE_HANDLER); i++) 
-    {
-        OPCODE_HANDLER* HANDLER = &M68K_OPCODE_HANDLER_TABLE[i];
-
-        if ((INSTRUCTION & HANDLER->MASK) == HANDLER->MATCH) 
-        {
-            HANDLER->HANDLER();
-            return HANDLER->CYCLES;
-        }
-    }
-
-    printf("Unknown instruction: 0x%04X\n", INSTRUCTION);
-    return 0; 
-}
-
 /* BEGIN TO EVALUATE WHICH INSTRUCTIONS ARE BEING FETCHED IN RELATION TO WHAT */
 /* IS CURRENTLY BEING STORED IN THE PC */
 
-U16 M68K_FETCH_INSTR()
+U16 M68K_FETCH_INSTR() 
 {
-	/* FETCH THE NEXT INSTRUCTION FROM MEMORY */
+    printf("FETCHING INSTRUCTION AT PC: 0x%04X\n", M68K_REG_PC);
     U16 INSTRUCTION = M68K_READ_16(M68K_REG_PC);
-	printf("Fetched instruction: 0x%04X at PC: 0x%04X\n", INSTRUCTION, M68K_REG_PC);
 
-    /* INCREMENT THE PROGRAM COUNTER */
+    printf("FETCHED INSTRUCTION: 0x%04X\n", INSTRUCTION);
     M68K_REG_PC += 2;
 
     return INSTRUCTION;
@@ -267,49 +271,73 @@ void M68K_PULSE_HALT(void)
 /*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
 /*===============================================================================*/
 
-unsigned int M68K_READ_8(unsigned int ADDRESS)
+unsigned int M68K_READ_8(unsigned int ADDRESS) 
 {
-    int INDEX = 0;
+    printf("READING 16-BIT VALUE FROM ADDRESS: 0x%08X\n", ADDRESS);
 
-    M68K_MEMORY_MAP[INDEX].MEMORY_BASE = malloc(0x1000);
-    return M68K_READ_BYTE(M68K_MEMORY_MAP[((ADDRESS)>>16)&0xFF].MEMORY_BASE, (ADDRESS) & 0xFFFF);
+	CPU.MEMORY_MAP[0x00].MEMORY_BASE = (unsigned*)malloc(MAX_MEMORY_SIZE);
+
+    unsigned int INDEX = (ADDRESS >> 16) & 0xFF;
+    printf("MEMORY MAP INDEX: 0x%02X\n", INDEX);
+
+    unsigned int OFFSET = ADDRESS & 0xFFFF;
+    printf("OFFSET: 0x%04X\n", OFFSET);
+
+    unsigned int VALUE = *(U8*)(CPU.MEMORY_MAP[INDEX].MEMORY_BASE + OFFSET);
+    printf("READ VALUE: 0x%04X\n", VALUE);
+
+    return VALUE;
 }
 
-unsigned int M68K_READ_16(unsigned int ADDRESS)
+unsigned int M68K_READ_16(unsigned int ADDRESS) 
 {
-    U16 const HI = M68K_READ_8(ADDRESS + 1);
-	U16 const LO = M68K_READ_8(ADDRESS + 0);
+    printf("READING 16-BIT VALUE FROM ADDRESS: 0x%08X\n", ADDRESS);
 
-	return (HI << 8) | LO;
+	CPU.MEMORY_MAP[0x00].MEMORY_BASE = (unsigned*)malloc(MAX_MEMORY_SIZE);
+
+    unsigned int INDEX = (ADDRESS >> 16) & 0xFF;
+    printf("MEMORY MAP INDEX: 0x%02X\n", INDEX);
+
+    unsigned int OFFSET = ADDRESS & 0xFFFF;
+    printf("OFFSET: 0x%04X\n", OFFSET);
+
+    unsigned int VALUE = *(U16*)(CPU.MEMORY_MAP[INDEX].MEMORY_BASE + OFFSET);
+    printf("READ VALUE: 0x%04X\n", VALUE);
+
+    return VALUE;
 }
 
-unsigned int M68K_READ_32(unsigned int ADDRESS)
+unsigned int M68K_READ_32(unsigned int ADDRESS) 
 {
-    int INDEX = 0;
+    printf("READING 16-BIT VALUE FROM ADDRESS: 0x%08X\n", ADDRESS);
 
-    M68K_MEMORY_MAP[INDEX].MEMORY_BASE = malloc(0x1000);
-    return M68K_READ_WORD_LONG(M68K_MEMORY_MAP[((ADDRESS)>>16)&0xFF].MEMORY_BASE, (ADDRESS) & 0xFFFF);
+	CPU.MEMORY_MAP[0x00].MEMORY_BASE = (unsigned*)malloc(MAX_MEMORY_SIZE);
+
+    unsigned int INDEX = (ADDRESS >> 16) & 0xFF;
+    printf("MEMORY MAP INDEX: 0x%02X\n", INDEX);
+
+    unsigned int OFFSET = ADDRESS & 0xFFFF;
+    printf("OFFSET: 0x%04X\n", OFFSET);
+
+    unsigned int VALUE = *(U16*)(CPU.MEMORY_MAP[INDEX].MEMORY_BASE + OFFSET);
+    printf("READ VALUE: 0x%04X\n", VALUE);
+
+    return VALUE;
 }
 
-/* THE WRITE FUNCTIONS WILL LOOK TO DISCERN HOW MANY CYCLE TICKS ARE LEFT RELATIVE TO THE INSTRUCTION */
-/* STORE THE RESULT TO EACH RELATIVE BTIWISE VALUE IN THE INDEX REGISTER */
-
-void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA) 
+void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
 {
-    MEMORY[ADDRESS] = (U8)DATA;
-    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
+	WRITE_BYTE(RAM, ADDRESS, DATA);
 }
 
 void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA)
 {
-    MEMORY[ADDRESS] = (U16)DATA;
-    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
+	WRITE_WORD(RAM, ADDRESS, DATA);
 }
 
 void M68K_WRITE_32(unsigned int ADDRESS, unsigned int DATA)
 {
-    MEMORY[ADDRESS] = (U32)DATA;
-    printf("Wrote Byte: 0x%02X to address 0x%04X\n", DATA, ADDRESS);
+	WRITE_LONG(RAM, ADDRESS, DATA);
 }
 
 void M68K_BRANCH_8(unsigned OFFSET)
