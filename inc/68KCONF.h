@@ -57,6 +57,9 @@
 #define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFF)
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
+#define		M68K_MAX_RAM			0xFF
+#define		M68K_MAX_ROM			0xFFff
+
 /*===============================================================================*/
 /*							68000 CALLBACKS						     			 */
 /*===============================================================================*/
@@ -69,7 +72,6 @@ void M68K_SET_INSTR_CALLBACK(unsigned CALLBACK, unsigned PC);
 void M68K_SET_MOVE_IRQ_INT(void);
 U16 M68K_FETCH_INSTR();
 U32 M68K_FETCH_LONG();
-int M68K_EXECUTE_INSTRUCTION(U16 INSTRUCTION);
 
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
@@ -92,5 +94,6 @@ void CTRL_WRITE_WORD(unsigned int ADDRESS, unsigned int DATA);
 void M68K_SET_CPU_TYPE(unsigned TYPE);
 int M68K_CYCLES_RUN(void);
 int M68K_CYCLES_REMAINING(void);
+void INITIALIZE_MEMORY();
 
 #endif
