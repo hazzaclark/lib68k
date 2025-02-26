@@ -169,6 +169,24 @@
 #define 	    M68K_EXCEPTION_INTERRUPT_AUTOVECTOR          24
 #define 	    M68K_EXCEPTION_TRAP_BASE                     32
 
+#define         M68K_EMULATE_TRACE_MODE                             0
+#define         M68K_EMULATE_TRACE_MODE_OFF                         1
+
+// ENABLE AND DISABLE TRACE FLAG EMULATION
+// THIS WILL PROVE TO BE FRUITFUL TO PROVIDE GREATER CLARITY ON MEMORY READINGS
+
+#if M68K_EMULATE_TRACE_MODE
+    #define     M68K_TRACE_1()          TRACE_MODE = M68K_FLAG_T1
+    #define     M68K_TRACE_0()          TRACE_MODE |= M68K_FLAG_T0
+    #define     M68K_TRACE_CLEAR()      TRACE_MODE = 0
+
+#else
+    #undef M68K_EMULATE_TRACE_MODE_OFF 
+    #define     M68K_TRACE_1()
+    #define     M68K_TRACE_0()
+    #define     M68K_TRACE_CLEAR()
+#endif
+
 typedef struct CPU_68K_MEMORY
 {
     unsigned(*MEMORY_BASE);
@@ -383,6 +401,7 @@ typedef enum CPU_68K_FLAGS
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
 
+extern unsigned int TRACE_MODE = 0;
 void INITIALISE_68K_CYCLES();
 unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER);
 void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
