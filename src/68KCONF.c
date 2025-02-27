@@ -15,6 +15,7 @@
 #ifdef USE_CONFIG
 #ifdef USE_OPCODE
 
+CPU_68K CPU;
 static unsigned int CPU_TYPE;
 static unsigned char RAM[M68K_MAX_RAM + 1];
 
