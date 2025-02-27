@@ -15,107 +15,33 @@ static LIB_BASE* LIB68K;
 #define     PC_MAX_VALUE    0x1000  
 #define     SP_INIT_VALUE   0xFFFFF  
 
-void LOAD_SRC_FILE(const char* FILENAME, uint32_t LOAD_ADDRESS) 
-{
-    FILE* INPUT = fopen(FILENAME, "rb");
-    if (!INPUT) 
-    {
-        perror("Failed to open binary file\n");
-        exit(EXIT_FAILURE);
-    }
 
-    fseek(INPUT, 0, SEEK_END);
-    long FILE_SIZE = ftell(INPUT);
-    fseek(INPUT, 0, SEEK_SET);
-
-    printf("File size: %ld bytes\n", FILE_SIZE);  
-
-    if ((unsigned long)FILE_SIZE > MAX_MEMORY_SIZE - LOAD_ADDRESS) 
-    {
-        fprintf(stderr, "File too large to fit in memory\n");
-        fclose(INPUT);
-        exit(EXIT_FAILURE);
-    }
-
-    uint8_t BUFFER;
-    uint32_t ADDRESS = LOAD_ADDRESS;
-    size_t BYTES_LOADED = 0;
-
-    while (1) 
-    {
-        UNK ITEMS_READ = fread(&BUFFER, 1, 1, INPUT);
-        if (ITEMS_READ != 1) { break; }
-
-        printf("Read byte: 0x%02X\n", BUFFER); 
-        M68K_WRITE_8(ADDRESS, BUFFER);
-
-        ADDRESS++;
-        BYTES_LOADED++;
-    }
-
-    fclose(INPUT);
-    printf("Loaded %zu bytes into memory at address 0x%04X\n", BYTES_LOADED, LOAD_ADDRESS);
-}
-
-int main(int argc, char** argv) 
+int main(void) 
 {
     printf("====================================================\n");
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
 
-    if (argc != 2) 
-    {
-        printf("Usage: %s INPUT_FILE \n", argv[0]);
-        return 1;
-    }
-
-    LIB68K = (LIB_BASE*)malloc(sizeof(LIB_BASE));
-    if (!LIB68K) 
-    {
-        perror("Failed to allocate LIB68K");
-        return 1;
-    }
-
-    strcpy(LIB68K->INPUT_FILE, argv[1]);
-
     printf("Initialising 68000\n");
 
     M68K_INIT();
 
-    uint32_t LOAD_ADDRESS = 0x0000; 
-    LOAD_SRC_FILE(LIB68K->INPUT_FILE, LOAD_ADDRESS);
+    // TESTING MEMORY READS
 
-    /* SET THE PROGRAM COUNTER AND STACK POINTER */
-    printf("Setting 68K Program Counter\n");
-    M68K_SET_REGISTERS(M68K_REG_PC, LOAD_ADDRESS);
-    printf("68K Program Counter defined with Value: %04X\n", LOAD_ADDRESS);
+    U8 ADDRESS_8 = 0x3F;
+    U8 VALUE_8 = M68K_READ_8(ADDRESS_8);
+    
+    printf("M68K READ 8 VALUE FROM ADDRESS 0x%02X: 0x%02X\n", ADDRESS_8, VALUE_8);
 
-    printf("====================================================\n");
+    U16 ADDRESS_16 = 0x1000;
+    U32 VALUE_16 = M68K_READ_16(ADDRESS_16);
 
-    printf("Setting 68K Stack Pointer\n");
-    M68K_SET_REGISTERS(M68K_REG_SP, SP_INIT_VALUE);
-    printf("68K Stack Pointer defined with Value: %04X\n", SP_INIT_VALUE);
+    printf("M68K READ 16 VALUE FROM ADDRESS 0x%04X: 0x%04X\n", ADDRESS_16, VALUE_16);
 
-    printf("====================================================\n");
+    U32 ADDRESS_32 = 0xADFF900;
+    U32 VALUE_32 = M68K_READ_32(ADDRESS_32);
 
-    printf("Executing Simulator...\n");
+    printf("M68K READ 32 VALUE FROM ADDRESS 0x%08X: 0x%08X\n", ADDRESS_32, VALUE_32);
 
-    int CYCLE_COUNT = 0;
-    const int MAX_CYCLES = 100000;
-
-    while (CYCLE_COUNT < MAX_CYCLES && !M68K_CPU_STOPPED) 
-    {
-        printf("CURRENT EXEC\n");
-
-        int CYCLES_EXECUTED = M68K_EXEC(100);
-
-        CYCLE_COUNT += CYCLES_EXECUTED;
-        printf("CYCLES EXECUTED: %d, TOTAL CYCLES: %d\n", CYCLES_EXECUTED, CYCLE_COUNT);
-
-        U32 PC_VALUE = M68K_GET_REGISTERS(NULL, M68K_REG_PC);
-        if (PC_VALUE == MAX_MEMORY_SIZE) { break; }
-    }
-
-    free(LIB68K);
     return 0;
 }
