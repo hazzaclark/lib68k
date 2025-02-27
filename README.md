@@ -37,7 +37,7 @@ lib68k.so
 
 the makefile in question is universal, allowing for ease of use compiling on other systems
 
-# Example:
+# Examples:
 
 Below is an example provided to showcase how the ``OPCODE_HANDLER_TABLE`` is able to store and evaluate respective Opcodes and Operands
 
@@ -46,6 +46,11 @@ You can find the provided example Assembly code [here](https://github.com/hazzac
 ![image](https://github.com/user-attachments/assets/b5b0dda9-a185-433c-9a20-b89427d756af)
 
 ![image](https://github.com/user-attachments/assets/efed0817-24ef-493f-87af-03bd1d0e4eba)
+
+Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
+
+![image](https://github.com/user-attachments/assets/57698db6-5c48-4691-80e2-768a1b89cb0b)
+
 
 
 # NOTE:
