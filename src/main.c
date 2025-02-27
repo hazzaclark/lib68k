@@ -10,10 +10,6 @@
 #include "68KOPCODE.h"
 #include "68KSTD.h"
 
-#define     PC_MAX_VALUE    0x1000  
-#define     SP_INIT_VALUE   0xFFFFF  
-
-
 int main(void) 
 {
     printf("====================================================\n");
