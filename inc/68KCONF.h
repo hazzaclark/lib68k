@@ -58,7 +58,18 @@
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
 #define		M68K_MAX_RAM			0xFF
-#define		M68K_MAX_ROM			0xFFff
+#define		M68K_MAX_ROM			0xFFFF
+
+#define 	M68K_FUNCTION_CODE_USER_DATA          	1
+#define 	M68K_FUNCTION_CODE_USER_PROGRAM       	2
+#define 	M68K_FUNCTION_CODE_SUPERVISOR_DATA    	5
+#define 	M68K_FUNCTION_CODE_SUPERVISOR_PROGRAM 	6
+#define 	M68K_FUNCTION_CODE_CPU_SPACE          	7
+
+#define		M68K_SET_FC(A)			M68K_SET_FC_ACK(A)
+#define		M68K_USE_DS()
+#define		M68K_USE_PS()
+#define		M68K_GET_AS()
 
 /*===============================================================================*/
 /*							68000 CALLBACKS						     			 */
