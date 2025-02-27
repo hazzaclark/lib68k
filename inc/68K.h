@@ -79,6 +79,15 @@
                                     (BASE)[(ADDR)+1] = ((VAL)>>16)&0xff; \
                                     (BASE)[(ADDR)+2] = ((VAL)>>8)&0xff; \
                                     (BASE)[(ADDR)+3] = (VAL)&0xff
+
+#define READ_BYTE(BASE, ADDR) (BASE)[(ADDR)^1]
+
+#define READ_WORD(BASE, ADDR) (((BASE)[ADDR]<<8) | (BASE)[(ADDR)+1])
+
+#define READ_WORD_LONG(BASE, ADDR) (((BASE)[(ADDR)+1]<<24) |      \
+                                    ((BASE)[(ADDR)]<<16) |  \
+                                    ((BASE)[(ADDR)+3]<<8) |   \
+                                    (BASE)[(ADDR)+2])
                                                         
                                                         
 
@@ -180,23 +189,20 @@
     #define     M68K_TRACE_0()          TRACE_MODE |= M68K_FLAG_T0
     #define     M68K_TRACE_CLEAR()      TRACE_MODE = 0
 
-    #define     M68K_EXEC_TRACE()       if(TRACE_MODE) M68K_EXCEPTION_TRACE()
-
 #else
     #undef M68K_EMULATE_TRACE_MODE_OFF 
     #define     M68K_TRACE_1()
     #define     M68K_TRACE_0()
     #define     M68K_TRACE_CLEAR()
-    #define     M68K_EXEC_TRACE()
 #endif
 
 typedef struct CPU_68K_MEMORY
 {
     unsigned(*MEMORY_BASE);
-    U8* MEMORY_READ_8;
-    U16* MEMORY_READ_16;
-    U8* MEMORY_WRITE_8;
-    U16* MEMORY_WRITE_16;
+    U8(*MEMORY_READ_8)(U32 ADDRESS);
+    U16(*MEMORY_READ_16)(U32 ADDRESS);
+    void(*MEMORY_WRITE_8)(U32 ADDRESS, U8 VALUE);
+    void(*MEMORY_WRITE_16)(U32 ADDRESS, U16 VALUE);
 
 
 } CPU_68K_MEMORY;
@@ -275,8 +281,8 @@ typedef struct CPU_68K
     int(*INT_ACK_CALLBACK)(int VALUE);
     void(*RESET_CALLBACK)(void);
     void(*PC_CHANGED_CALLBACK)(unsigned* NEW_PC);
-    void(*SET_FC_CALLBACK)(unsigned* NEW_FC);
-    void(*INSTR_HOOK)(unsigned* PC);
+    void(*SET_FC_CALLBACK)(unsigned NEW_FC);
+    void(*INSTR_HOOK)(unsigned PC);
 
     unsigned int ADDRESS_MASK;
     unsigned int SR_MASK;
@@ -404,7 +410,6 @@ typedef enum CPU_68K_FLAGS
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
 
-extern unsigned int TRACE_MODE = 0;
 void INITIALISE_68K_CYCLES();
 unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER);
 void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
@@ -427,5 +432,5 @@ void M68K_BRANCH_32(unsigned OFFSET);
 /*							        68000 MISC.							         */
 /*===============================================================================*/
 
-static CPU_68K CPU;
+extern CPU_68K CPU;
 #endif
