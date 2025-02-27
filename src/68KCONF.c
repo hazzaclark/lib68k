@@ -199,64 +199,48 @@ void M68K_PULSE_HALT(void)
 /*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
 /*===============================================================================*/
 
-unsigned int M68K_READ_8(unsigned int ADDRESS) 
+U8 M68K_READ_8(unsigned int ADDRESS) 
 {
-	CPU_68K_MEMORY* TEMP = &CPU.MEMORY_MAP[((ADDRESS >> 16)) & 0xFF];
-	unsigned VALUE;
+    CPU_68K_MEMORY* TEMP;
+	U32 VALUE;
 
-	M68K_SET_FC(M68K_FLAG_S);
+	U32 INDEX = (ADDRESS) & 0xFF;
+	TEMP = &CPU.MEMORY_MAP[INDEX];
 
 	if(TEMP->MEMORY_READ_8)
 	{
-		VALUE = (*TEMP->MEMORY_READ_8)(M68K_ADDRESS_LINE(ADDRESS));
-	}
-
-	else
-	{
-		VALUE = READ_BYTE(TEMP->MEMORY_BASE, (ADDRESS) & 0xFFFF);
+		VALUE = (U8)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS) << 16);	
 	}
 
 	return VALUE;
 }
 
 
-unsigned int M68K_READ_16(unsigned int ADDRESS) 
+U16 M68K_READ_16(unsigned int ADDRESS) 
 {
     CPU_68K_MEMORY* TEMP = &CPU.MEMORY_MAP[((ADDRESS >> 16)) & 0xFF];
 	unsigned VALUE;
 
-
 	if(TEMP->MEMORY_READ_16)
 	{
-		VALUE = (*TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS));
-	}
-
-	else
-	{
-		VALUE = READ_WORD(TEMP->MEMORY_BASE, (ADDRESS) & 0xFFFF);
+		VALUE = (U16)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS));
 	}
 
 	return VALUE;
 }
 
-unsigned int M68K_READ_32(unsigned int ADDRESS) 
+U32 M68K_READ_32(unsigned int ADDRESS) 
 {
 	CPU_68K_MEMORY* TEMP = &CPU.MEMORY_MAP[((ADDRESS >> 16)) & 0xFF];
 	unsigned VALUE;
 
-	M68K_SET_FC(M68K_FLAG_S);
-
-	if(TEMP->MEMORY_READ_16)
+	if (TEMP->MEMORY_READ_16)
 	{
-		VALUE = ((*TEMP->MEMORY_READ_16 )(M68K_ADDRESS_LINE(ADDRESS)) << 16 ) | ((*TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS + 2)));
+    	VALUE = ((U32)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS)) << 16);
+    	VALUE |= (U32)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS + 2));
 	}
 
-	else
-	{
-		VALUE = READ_WORD_LONG(TEMP->MEMORY_BASE, (ADDRESS) & 0xFFFF);
-	}
-
-	return VALUE;
+	return (U32)VALUE;
 }
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
