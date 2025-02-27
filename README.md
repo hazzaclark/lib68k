@@ -49,7 +49,7 @@ You can find the provided example Assembly code [here](https://github.com/hazzac
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
-![image](https://github.com/user-attachments/assets/57698db6-5c48-4691-80e2-768a1b89cb0b)
+![image](https://github.com/user-attachments/assets/a8e2b148-081b-4910-b002-9148b121af44)
 
 
 
