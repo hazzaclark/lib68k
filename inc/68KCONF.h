@@ -71,6 +71,8 @@
 #define		M68K_USE_PS()
 #define		M68K_GET_AS()
 
+#define		M68K_ADDRESS_LINE(A)			((A)&M68K_ADDRESS_MASK)
+
 /*===============================================================================*/
 /*							68000 CALLBACKS						     			 */
 /*===============================================================================*/
@@ -80,8 +82,6 @@ int M68K_SET_INT_CALLBACK(int LEVEL);
 void M68K_DEFAULT_INSTR_CALLBACK(void);
 void M68K_SET_FUNC_CALLBACK(unsigned CALLBACK);
 void M68K_SET_INSTR_CALLBACK(unsigned CALLBACK, unsigned PC);
-void M68K_SET_MOVE_IRQ_INT(void);
-U16 M68K_FETCH_INSTR();
 U32 M68K_FETCH_LONG();
 
 /*===============================================================================*/
@@ -89,9 +89,9 @@ U32 M68K_FETCH_LONG();
 /*===============================================================================*/
 
 
-unsigned int M68K_READ_8(unsigned int ADDRESS);
-unsigned int M68K_READ_16(unsigned int ADDRESS);
-unsigned int M68K_READ_32(unsigned int ADDRESS);
+U8 M68K_READ_8(unsigned int ADDRESS);
+U16 M68K_READ_16(unsigned int ADDRESS);
+U32 M68K_READ_32(unsigned int ADDRESS);
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA);
 void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA);
