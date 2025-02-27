@@ -10,8 +10,6 @@
 #include "68KOPCODE.h"
 #include "68KSTD.h"
 
-static LIB_BASE* LIB68K;
-
 #define     PC_MAX_VALUE    0x1000  
 #define     SP_INIT_VALUE   0xFFFFF  
 
