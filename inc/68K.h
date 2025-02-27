@@ -293,6 +293,9 @@ typedef struct CPU_68K
 
 } CPU_68K;
 
+
+extern CPU_68K CPU;
+
 typedef enum CPU_68K_REGS
 {
 	M68K_REG_TYPE,
@@ -431,6 +434,4 @@ void M68K_BRANCH_32(unsigned OFFSET);
 /*===============================================================================*/
 /*							        68000 MISC.							         */
 /*===============================================================================*/
-
-extern CPU_68K CPU;
 #endif
