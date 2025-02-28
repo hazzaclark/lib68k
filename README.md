@@ -41,6 +41,10 @@ the makefile in question is universal, allowing for ease of use compiling on oth
 
 Below is an example provided to showcase how the ``OPCODE_HANDLER_TABLE`` is able to store and evaluate respective Opcodes and Operands
 
+More specifically, this is an example of showcasing the simulator using the designated amount of Cycles provided as an arg.
+
+This is a WIP and will be provided soon
+
 You can find the provided example Assembly code [here](https://github.com/hazzaclark/lib68k/blob/main/hello.asm)
 
 ![image](https://github.com/user-attachments/assets/b5b0dda9-a185-433c-9a20-b89427d756af)
