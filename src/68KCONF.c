@@ -18,10 +18,10 @@
 CPU_68K CPU;
 static unsigned int CPU_TYPE;
 static unsigned char RAM[M68K_MAX_RAM + 1];
+static U8 MAX_MEMORY_BUFFER[M68K_MAX_MEMORY_BUFFER_SIZE];
 
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
-
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -199,47 +199,36 @@ void M68K_PULSE_HALT(void)
 /*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
 /*===============================================================================*/
 
-U8 M68K_READ_8(unsigned int ADDRESS) 
+void INITIALIZE_MEMORY(void)
 {
-    CPU_68K_MEMORY* TEMP;
-	U32 VALUE;
-
-	U32 INDEX = (ADDRESS) & 0xFF;
-	TEMP = &CPU.MEMORY_MAP[INDEX];
-
-	if(TEMP->MEMORY_READ_8)
+    for (unsigned i = 0; i < M68K_MAX_MEMORY_BUFFER_SIZE / sizeof(unsigned int); i++) 
 	{
-		VALUE = (U8)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS));	
-	}
+        MAX_MEMORY_BUFFER[i] = (U8)(i & 0xFF);
+    }
 
-	return VALUE;
+    CPU.MEMORY_MAP->MEMORY_BASE = MAX_MEMORY_BUFFER;
+    CPU.MEMORY_MAP->MEMORY_READ_8 = M68K_READ_8;
+    CPU.MEMORY_MAP->MEMORY_READ_16 = M68K_READ_16;
+    CPU.MEMORY_MAP->MEMORY_READ_32 = M68K_READ_32;
 }
 
 
-U16 M68K_READ_16(unsigned int ADDRESS) 
+U8 M68K_READ_8(U32 ADDRESS) 
 {
-    CPU_68K_MEMORY* TEMP = &CPU.MEMORY_MAP[((ADDRESS >> 16)) & 0xFF];
-	unsigned VALUE;
-
-	if(TEMP->MEMORY_READ_16)
-	{
-		VALUE = (U16)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS));
-	}
-
-	return VALUE;
+    U8 VALUE = *((U8*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
+    return VALUE;
 }
 
-U32 M68K_READ_32(unsigned int ADDRESS) 
+U16 M68K_READ_16(U32 ADDRESS) 
 {
-	CPU_68K_MEMORY* TEMP = &CPU.MEMORY_MAP[((ADDRESS >> 16)) & 0xFF];
-	U32 VALUE;
+    U16 VALUE = *((U16*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
+    return VALUE;
+}
 
-	if (TEMP->MEMORY_READ_16)
-	{
-    	VALUE = ((U32)(TEMP->MEMORY_READ_16)(M68K_ADDRESS_LINE(ADDRESS)) << 16);
-	}
-
-	return VALUE;
+U32 M68K_READ_32(U32 ADDRESS) 
+{
+    U32 VALUE = *((U32*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
+    return VALUE;
 }
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
