@@ -53,9 +53,7 @@ You can find the provided example Assembly code [here](https://github.com/hazzac
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
-![image](https://github.com/user-attachments/assets/a8e2b148-081b-4910-b002-9148b121af44)
-
-
+![image](https://github.com/user-attachments/assets/947d5a5e-4708-4a49-b6b5-288163ceae03)
 
 # NOTE:
 
