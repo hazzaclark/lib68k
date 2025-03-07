@@ -59,6 +59,7 @@
 
 #define		M68K_MAX_RAM			0xFF
 #define		M68K_MAX_ROM			0xFFFF
+#define 	M68K_MAX_MEMORY_BUFFER_SIZE 0x1000000
 
 #define 	M68K_FUNCTION_CODE_USER_DATA          	1
 #define 	M68K_FUNCTION_CODE_USER_PROGRAM       	2
@@ -89,9 +90,9 @@ U32 M68K_FETCH_LONG();
 /*===============================================================================*/
 
 
-U8 M68K_READ_8(unsigned int ADDRESS);
-U16 M68K_READ_16(unsigned int ADDRESS);
-U32 M68K_READ_32(unsigned int ADDRESS);
+U8 M68K_READ_8(U32 ADDRESS);
+U16 M68K_READ_16(U32 ADDRESS);
+U32 M68K_READ_32(U32 ADDRESS);
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA);
 void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA);
