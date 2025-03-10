@@ -1856,142 +1856,141 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
-    {ABCD_8_RR_0,               0xFF,       0x00,       4},
-    {ADD_8_EA_0,                0xFF,       0x00,       4},
-    {ADD_16_EA_0,               0xFFFF,     0x0000,     4},
-    {ADD_32_EA_0,               0xFFFFFFFF, 0x00000000, 4},
-    {ADDA_16_D_0,               0xFFFF,     0x0000,     4},
-    {ADDA_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {ADDI_8_IMM_0,              0xFF,       0x00,       4},
-    {ADDI_16_IMM_0,             0xFFFF,     0x0000,     4},
-    {ADDI_32_IMM_0,             0xFFFFFFFF, 0x00000000, 4},
-    {ADDQ_8_D_0,                0xFF,       0x00,       4},
-    {ADDQ_16_D_0,               0xFFFF,     0x0000,     4},
-    {ADDQ_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {ADDX_8_RR_0,               0xFF,       0x00,       4},
-    {ADDX_16_RR_0,              0xFFFF,     0x0000,     4},
-    {ADDX_32_RR_0,              0xFFFFFFFF, 0x00000000, 4},
-    {AND_8_D_0,                 0xFF,       0x00,       4},
-    {AND_16_D_0,                0xFFFF,     0x0000,     4},
-    {AND_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {ANDI_8_EA_0,               0xFF,       0x00,       4},
-    {ANDI_16_EA_0,              0xFFFF,     0x0000,     4},
-    {ANDI_32_EA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {ANDI_CCR_8_CCR_0,          0xFF,       0x00,       4},
-    {ANDI_SR_16_SR_0,           0xFFFF,     0x0000,     4},
-    {ASL_8_ASR_0,               0xFF,       0x00,       4},
-    {BCC_16_0_0,                0xFFFF,     0x0000,     4},
-    {BCC_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {BRA_8_0_0,                 0xFF,       0x00,       4},
-    {BRA_16_0_0,                0xFFFF,     0x0000,     4},
-    {BRA_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {BSR_16_0_0,                0xFFFF,     0x0000,     4},
-    {BSR_16_0_0,                0xFFFFFF,   0x000000,   4},
-    {BTST_8_D_0,                0xFF,       0x00,       4},
-    {BTST_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {CHK_16_EA_0,               0xFFFF,     0x0000,     4},
-    {CLR_8_D_0,                 0xFF,       0x00,       4},
-    {CLR_16_D_0,                0xFFFF,     0x0000,     4},
-    {CLR_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {CMP_8_D_0,                 0xFF,       0x00,       4},
-    {CMP_16_D_0,                0xFFFF,     0x0000,     4},
-    {CMP_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {CMPA_16_DA_0,              0xFFFF,     0x0000,     4},
-    {CMPA_32_DA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {CMPI_8_DA_0,               0xFF,       0x00,       4},
-    {CMPI_16_DA_0,              0xFFFF,     0x0000,     4},
-    {CMPI_32_DA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {CMPM_8_A_0,                0xFF,       0x00,       4},
-    {CMPM_16_A_0,               0xFFFF,     0x0000,     4},
-    {CMPM_32_A_0,               0xFFFFFFFF, 0x00000000, 4},
-    {DBCC_16_0_0,               0xFFFF,     0x0000,     4},
-    {DIVS_16_D_0,               0xFFFF,     0x0000,     4},
-    {DIVU_16_D_0,               0xFFFF,     0x0000,     4},
-    {EOR_8_D_0,                 0xFF,       0x00,       4},
-    {EOR_16_D_0,                0xFFFF,     0x0000,     4},
-    {EOR_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {EORI_8_D_0,                0xFF,       0x00,       4},
-    {EORI_16_D_0,               0xFFFF,     0x0000,     4},
-    {EORI_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {EORI_CCR_8_0_0,            0xFF,       0x00,       4},
-    {EORI_SR_16_0_0,            0xFFFF,     0x0000,     4},
-    {EXG_32_DA_0,               0xFFFFFFFF, 0x00000000, 4},
-    {EXT_16_0_0,                0xFFFF,     0x0000,     4},
-    {EXT_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {ILLEGAL_0_0_0,             0x0,        0x0,        4},
-    {JMP_32_0_PC,               0xFFFFFFFF, 0x00000000, 4},
-    {JSR_32_0_PC,               0xFFFFFFFF, 0x00000000, 4},
-    {LEA_32_DA_0,               0xFFFFFFFF, 0x00000000, 4},
-    {LINK_32_DA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {LSR_8_S_0,                 0xFF,       0x00,       4},
-    {LSR_16_S_0,                0xFFFF,     0x0000,     4},
-    {LSR_32_S_0,                0xFFFFFFFF, 0x00000000, 4},
-    {MOVE_8_D_0,                0xFF,       0x00,       4},
-    {MOVE_16_D_0,               0xFFFF,     0x0000,     4},
-    {MOVE_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {MOVEA_16_DA_0,             0xFFFF,     0x0000,     4},
-    {MOVEA_32_DA_0,             0xFFFFFFFF, 0x00000000, 4},
-    {MOVE_CCR_16_DA_0,          0xFFFF,     0x0000,     4},
-    {MOVE_SR_16_DA_0,           0xFFFF,     0x0000,     4},
-    {MOVE_USP_32_DA_0,          0xFFFFFFFF, 0x00000000, 4},
-    {MOVEM_16_DA_0,             0xFFFF,     0x0000,     4},
-    {MOVEM_32_DA_0,             0xFFFFFFFF, 0x00000000, 4},
-    {MOVEP_16_ER_0,             0xFFFF,     0x0000,     4},
-    {MOVEP_32_ER_0,             0xFFFFFFFF, 0x00000000, 4},
-    {MOVEQ_32_D_0,              0xFFFFFFFF, 0x00000000, 4},
-    {MULS_16_D_0,               0xFFFF,     0x0000,     4},
-    {MULU_16_D_0,               0xFFFF,     0x0000,     4},
-    {NBCD_8_D_0,                0xFF,       0x00,       4},
-    {NEG_8_D_0,                 0xFF,       0x00,       4},
-    {NEG_16_D_0,                0xFFFF,     0x0000,     4},
-    {NEG_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {NEGX_8_DA_0,               0xFF,       0x00,       4},
-    {NEGX_16_DA_0,              0xFFFF,     0x0000,     4},
-    {NEGX_32_DA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {NOT_8_D_0,                 0xFF,       0x00,       4},
-    {NOT_16_D_0,                0xFFFF,     0x0000,     4},
-    {NOT_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {OR_8_D_0,                  0xFF,       0x00,       4},
-    {OR_16_D_0,                 0xFFFF,     0x0000,     4},
-    {OR_32_D_0,                 0xFFFFFFFF, 0x00000000, 4},
-    {ORI_8_D_0,                 0xFF,       0x00,       4},
-    {ORI_16_D_0,                0xFFFF,     0x0000,     4},
-    {ORI_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {ORI_CCR_8_0_0,             0xFF,       0x00,       4},
-    {ORI_SR_16_0_0,             0xFFFF,     0x0000,     4},
-    {PEA_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {RESET_0_0_0,               0x0,        0x0,        4},
-    {ROL_8_S_0,                 0xFF,       0x00,       4},
-    {ROL_16_S_0,                0xFFFF,     0x0000,     4},
-    {ROL_32_S_0,                0xFFFFFFFF, 0x00000000, 4},
-    {ROXL_8_S_0,                0x000000FF, 0x00000000, 4},
-    {ROXL_16_S_0,               0x0000FFFF, 0x00000000, 4},
-    {ROXL_32_S_0,               0xFFFFFFFF, 0x00000000, 4},
-    {RTS_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {RTE_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {RTR_32_0_0,                0xFFFFFFFF, 0x00000000, 4},
-    {SBCD_8_RR_0,               0x000000FF, 0x00000000, 4},
-    {STOP_0_0_0,                0x00000000, 0x00000000, 4},
-    {SUB_8_D_0,                 0x000000FF, 0x00000000, 4},
-    {SUB_16_D_0,                0x0000FFFF, 0x00000000, 4},
-    {SUB_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {SUBA_16_DA_0,              0x0000FFFF, 0x00000000, 4},
-    {SUBA_32_DA_0,              0xFFFFFFFF, 0x00000000, 4},
-    {SUBI_8_D_0,                0x000000FF, 0x00000000, 4},
-    {SUBI_16_D_0,               0x0000FFFF, 0x00000000, 4},
-    {SUBI_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {SUBQ_8_D_0,                0x000000FF, 0x00000000, 4},
-    {SUBQ_16_D_0,               0x0000FFFF, 0x00000000, 4},
-    {SUBQ_32_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {SUBX_8_RR_0,               0x000000FF, 0x00000000, 4},
-    {SUBX_16_RR_0,              0x0000FFFF, 0x00000000, 4},
-    {SUBX_32_RR_0,              0xFFFFFFFF, 0x00000000, 4},
-    {SWAP_16_D_0,               0xFFFFFFFF, 0x00000000, 4},
-    {TAS_8_D_0,                 0x000000FF, 0x00000000, 4},
-    {TST_8_D_0,                 0x000000FF, 0x00000000, 4},
-    {TST_16_D_0,                0x0000FFFF, 0x00000000, 4},
-    {TST_32_D_0,                0xFFFFFFFF, 0x00000000, 4},
-    {UNLK_32_0_0,               0xFFFFFFFF, 0x00000000, 4}
+    {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
+    {ADD_8_EA_0,                0xF1C0,     0xD000,     4},  // ADD.B <ea>,Dn
+    {ADD_16_EA_0,               0xF1C0,     0xD040,     4},  // ADD.W <ea>,Dn
+    {ADD_32_EA_0,               0xF1C0,     0xD080,     8},  // ADD.L <ea>,Dn
+    {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
+    {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
+    {ADDI_8_IMM_0,              0xFF00,     0x0600,     8},  // ADDI.B #<data>,<ea>
+    {ADDI_16_IMM_0,             0xFF00,     0x0640,     8},  // ADDI.W #<data>,<ea>
+    {ADDI_32_IMM_0,             0xFF00,     0x0680,     16}, // ADDI.L #<data>,<ea>
+    {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
+    {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
+    {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
+    {ADDX_8_RR_0,               0xF1F8,     0xD100,     4},  // ADDX.B Dy,Dx
+    {ADDX_16_RR_0,              0xF1F8,     0xD140,     4},  // ADDX.W Dy,Dx
+    {ADDX_32_RR_0,              0xF1F8,     0xD180,     8},  // ADDX.L Dy,Dx
+    {AND_8_D_0,                 0xF1C0,     0xC000,     4},  // AND.B <ea>,Dn
+    {AND_16_D_0,                0xF1C0,     0xC040,     4},  // AND.W <ea>,Dn
+    {AND_32_D_0,                0xF1C0,     0xC080,     8},  // AND.L <ea>,Dn
+    {ANDI_8_EA_0,               0xFF00,     0x0200,     8},  // ANDI.B #<data>,<ea>
+    {ANDI_16_EA_0,              0xFF00,     0x0240,     8},  // ANDI.W #<data>,<ea>
+    {ANDI_32_EA_0,              0xFF00,     0x0280,     16}, // ANDI.L #<data>,<ea>
+    {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
+    {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
+    {ASL_8_ASR_0,               0xF1F8,     0xE100,     6},  // ASL.B Dn,Dy
+    {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
+    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displacement)
+    {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
+    {BRA_16_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (16-bit displacement)
+    {BRA_32_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (32-bit displacement)
+    {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
+    {BTST_8_D_0,                0xF1C0,     0x0100,     4},  // BTST Dn,<ea>
+    {BTST_32_D_0,               0xF1C0,     0x0100,     4},  // BTST Dn,<ea> (32-bit)
+    {CHK_16_EA_0,               0xF1C0,     0x4180,     10}, // CHK <ea>,Dn
+    {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B <ea>
+    {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W <ea>
+    {CLR_32_D_0,                0xF1C0,     0x4280,     6},  // CLR.L <ea>
+    {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
+    {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
+    {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
+    {CMPA_16_DA_0,              0xF1C0,     0xB0C0,     6},  // CMPA.W <ea>,An
+    {CMPA_32_DA_0,              0xF1C0,     0xB1C0,     6},  // CMPA.L <ea>,An
+    {CMPI_8_DA_0,               0xFF00,     0x0C00,     8},  // CMPI.B #<data>,<ea>
+    {CMPI_16_DA_0,              0xFF00,     0x0C40,     8},  // CMPI.W #<data>,<ea>
+    {CMPI_32_DA_0,              0xFF00,     0x0C80,     14}, // CMPI.L #<data>,<ea>
+    {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
+    {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
+    {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
+    {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
+    {DIVS_16_D_0,               0xF1C0,     0x81C0,     158},// DIVS.W <ea>,Dn
+    {DIVU_16_D_0,               0xF1C0,     0x80C0,     140},// DIVU.W <ea>,Dn
+    {EOR_8_D_0,                 0xF1C0,     0xB000,     4},  // EOR.B Dn,<ea>
+    {EOR_16_D_0,                0xF1C0,     0xB040,     4},  // EOR.W Dn,<ea>
+    {EOR_32_D_0,                0xF1C0,     0xB080,     8},  // EOR.L Dn,<ea>
+    {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
+    {EORI_16_D_0,               0xFF00,     0x0A40,     8},  // EORI.W #<data>,<ea>
+    {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
+    {EORI_CCR_8_0_0,            0xFF00,     0x0A3C,     20}, // EORI #<data>,CCR
+    {EORI_SR_16_0_0,            0xFF00,     0x0A7C,     20}, // EORI #<data>,SR
+    {EXG_32_DA_0,               0xF1F8,     0xC140,     6},  // EXG Dx,Dy
+    {EXT_16_0_0,                0xFFF8,     0x4880,     4},  // EXT.W Dn
+    {EXT_32_0_0,                0xFFF8,     0x48C0,     4},  // EXT.L Dn
+    {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
+    {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
+    {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
+    {LEA_32_DA_0,               0xF1C0,     0x41C0,     4},  // LEA <ea>,An
+    {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
+    {LSR_8_S_0,                 0xF1F8,     0xE008,     6},  // LSR.B Dn,Dy
+    {LSR_16_S_0,                0xF1F8,     0xE048,     6},  // LSR.W Dn,Dy
+    {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
+    {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
+    {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
+    {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
+    {MOVEA_16_DA_0,             0xF1C0,     0x3040,     4},  // MOVEA.W <ea>,An
+    {MOVEA_32_DA_0,             0xF1C0,     0x2040,     4},  // MOVEA.L <ea>,An
+    {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
+    {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
+    {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
+    {MOVEM_16_DA_0,             0xFB80,     0x4880,     8},  // MOVEM.W <ea>,Regs
+    {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
+    {MOVEP_16_ER_0,             0xF1F8,     0x0108,     16}, // MOVEP.W Dn,(d16,An)
+    {MOVEP_32_ER_0,             0xF1F8,     0x0148,     24}, // MOVEP.L Dn,(d16,An)
+    {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
+    {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
+    {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
+    {NBCD_8_D_0,                0xF1F8,     0x4800,     6},  // NBCD <ea>
+    {NEG_8_D_0,                 0xF1F8,     0x4400,     4},  // NEG.B <ea>
+    {NEG_16_D_0,                0xF1F8,     0x4440,     4},  // NEG.W <ea>
+    {NEG_32_D_0,                0xF1F8,     0x4480,     6},  // NEG.L <ea>
+    {NEGX_8_DA_0,               0xF1F8,     0x4000,     4},  // NEGX.B <ea>
+    {NEGX_16_DA_0,              0xF1F8,     0x4040,     4},  // NEGX.W <ea>
+    {NEGX_32_DA_0,              0xF1F8,     0x4080,     6},  // NEGX.L <ea>
+    {NOT_8_D_0,                 0xF1F8,     0x4600,     4},  // NOT.B <ea>
+    {NOT_16_D_0,                0xF1F8,     0x4640,     4},  // NOT.W <ea>
+    {NOT_32_D_0,                0xF1F8,     0x4680,     6},  // NOT.L <ea>
+    {OR_8_D_0,                  0xF1C0,     0x8000,     4},  // OR.B <ea>,Dn
+    {OR_16_D_0,                 0xF1C0,     0x8040,     4},  // OR.W <ea>,Dn
+    {OR_32_D_0,                 0xF1C0,     0x8080,     6},  // OR.L <ea>,Dn
+    {ORI_8_D_0,                 0xFF00,     0x0000,     8},  // ORI.B #<data>,<ea>
+    {ORI_16_D_0,                0xFF00,     0x0040,     8},  // ORI.W #<data>,<ea>
+    {ORI_32_D_0,                0xFF00,     0x0080,     16}, // ORI.L #<data>,<ea>
+    {ORI_CCR_8_0_0,             0xFF00,     0x003C,     20}, // ORI #<data>,CCR
+    {ORI_SR_16_0_0,             0xFF00,     0x007C,     20}, // ORI #<data>,SR
+    {PEA_32_D_0,                0xFFC0,     0x4840,     12}, // PEA <ea>
+    {RESET_0_0_0,               0xFFFF,     0x4E70,     132},// RESET
+    {ROL_8_S_0,                 0xF1F8,     0xE118,     6},  // ROL.B Dn,Dy
+    {ROL_16_S_0,                0xF1F8,     0xE158,     6},  // ROL.W Dn,Dy
+    {ROL_32_S_0,                0xF1F8,     0xE198,     8},  // ROL.L Dn,Dy
+    {ROXL_8_S_0,                0xF1F8,     0xE110,     6},  // ROXL.B Dn,Dy
+    {ROXL_16_S_0,               0xF1F8,     0xE150,     6},  // ROXL.W Dn,Dy
+    {ROXL_32_S_0,               0xF1F8,     0xE190,     8},  // ROXL.L Dn,Dy
+    {RTS_32_0_0,                0xFFFF,     0x4E75,     16}, // RTS
+    {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
+    {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
+    {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
+    {STOP_0_0_0,                0xFFFF,     0x4E72,     4},  // STOP #<data>
+    {SUB_8_D_0,                 0xF1C0,     0x9000,     4},  // SUB.B <ea>,Dn
+    {SUB_16_D_0,                0xF1C0,     0x9040,     4},  // SUB.W <ea>,Dn
+    {SUB_32_D_0,                0xF1C0,     0x9080,     6},  // SUB.L <ea>,Dn
+    {SUBA_16_DA_0,              0xF1C0,     0x90C0,     8},  // SUBA.W <ea>,An
+    {SUBA_32_DA_0,              0xF1C0,     0x91C0,     8},  // SUBA.L <ea>,An
+    {SUBI_8_D_0,                0xFF00,     0x0400,     8},  // SUBI.B #<data>,<ea>
+    {SUBI_16_D_0,               0xFF00,     0x0440,     8},  // SUBI.W #<data>,<ea>
+    {SUBI_32_D_0,               0xFF00,     0x0480,     16}, // SUBI.L #<data>,<ea>
+    {SUBQ_8_D_0,                0xF1C0,     0x5100,     4},  // SUBQ.B #<data>,<ea>
+    {SUBQ_16_D_0,               0xF1C0,     0x5140,     4},  // SUBQ.W #<data>,<ea>
+    {SUBQ_32_D_0,               0xF1C0,     0x5180,     8},  // SUBQ.L #<data>,<ea>
+    {SUBX_8_RR_0,               0xF1F8,     0x9100,     4},  // SUBX.B Dy,Dx
+    {SUBX_16_RR_0,              0xF1F8,     0x9140,     4},  // SUBX.W Dy,Dx
+    {SUBX_32_RR_0,              0xF1F8,     0x9180,     8},  // SUBX.L Dy,Dx
+    {SWAP_16_D_0,               0xFFF8,     0x4840,     4},  // SWAP Dn
+    {TAS_8_D_0,                 0xFFC0,     0x4AC0,     4},  // TAS <ea>
+    {TST_8_D_0,                 0xFF00,     0x4A00,     4},  // TST.B <ea>
+    {TST_16_D_0,                0xFF00,     0x4A40,     4},  // TST.W <ea>
+    {TST_32_D_0,                0xFF00,     0x4A80,     4},  // TST.L <ea>
+    {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
 };
 
 /* BUILD THE OVERARCHING OPCODE TABLE BASED ON ALL OF THE DIRECTIVES AND PRE-REQUISITIES */
@@ -2002,39 +2001,47 @@ void M68K_BUILD_OPCODE_TABLE(void)
 {
     int INDEX;
     const OPCODE_HANDLER* OSTRUCT;
-   
+
     for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
         M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE_ILLEGAL_MASK;
         CYCLE_INDEX[INDEX] = 0;
     }
-   
+
     OSTRUCT = &M68K_OPCODE_HANDLER_TABLE[0];
     printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
-   
-    while (OSTRUCT->MASK != 0) 
+
+    while (OSTRUCT->MASK != 0)
     {
-        printf("Processing entry: MASK = 0x%08X, MATCH = 0x%08X, HANDLER = %p\n",
+        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
                OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
-               
-        if (OSTRUCT->MASK != 0)
+
+        U16 START = OSTRUCT->MATCH & OSTRUCT->MASK;
+        U16 END = START | ~OSTRUCT->MASK;
+
+        for (INDEX = START; INDEX <= END; INDEX++)
         {
-            for (INDEX = 0; INDEX < 0x10000; INDEX++)
+            if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
             {
-                if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
-                {
-                    M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                    CYCLE_INDEX[INDEX] = OSTRUCT->CYCLES * 4;
-                }
+                M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
+                CYCLE_INDEX[INDEX] = OSTRUCT->CYCLES * 4;
             }
         }
-       
+
         OSTRUCT++;
     }
-   
-    M68K_OPCODE_JUMP_TABLE[0x4E70] = RESET_0_0_0;
-    CYCLE_INDEX[0x4E70] = 132;
-   
+
+    if (M68K_OPCODE_JUMP_TABLE[0x4E70] == OPCODE_ILLEGAL_MASK)
+    {
+        M68K_OPCODE_JUMP_TABLE[0x4E70] = RESET_0_0_0;
+        CYCLE_INDEX[0x4E70] = 132;
+    }
+    else
+    {
+        printf("SKIPPING RESET (0x4E70): HANDLER: (%p).\n",
+               (void*)&M68K_OPCODE_JUMP_TABLE[0x4E70]);
+    }
+
     printf("OPCODE TABLE BUILDING COMPLETED SUCCESSFULLY.\n");
 }
 
