@@ -2002,31 +2002,40 @@ void M68K_BUILD_OPCODE_TABLE(void)
 {
     int INDEX;
     const OPCODE_HANDLER* OSTRUCT;
-
+   
     for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
         M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE_ILLEGAL_MASK;
-        CYCLE_INDEX[INDEX] = 0; 
+        CYCLE_INDEX[INDEX] = 0;
     }
-
+   
     OSTRUCT = &M68K_OPCODE_HANDLER_TABLE[0];
-
-    while (OSTRUCT->MASK == 0xFF00)
+    printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
+   
+    while (OSTRUCT->MASK != 0) 
     {
-        for (INDEX = 0; INDEX < 0x10000; INDEX++)
+        printf("Processing entry: MASK = 0x%08X, MATCH = 0x%08X, HANDLER = %p\n",
+               OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
+               
+        if (OSTRUCT->MASK != 0)
         {
-            if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
+            for (INDEX = 0; INDEX < 0x10000; INDEX++)
             {
-                M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                CYCLE_INDEX[INDEX] = OSTRUCT->CYCLES * 4;
+                if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
+                {
+                    M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
+                    CYCLE_INDEX[INDEX] = OSTRUCT->CYCLES * 4;
+                }
             }
         }
-
+       
         OSTRUCT++;
     }
-
+   
     M68K_OPCODE_JUMP_TABLE[0x4E70] = RESET_0_0_0;
     CYCLE_INDEX[0x4E70] = 132;
+   
+    printf("OPCODE TABLE BUILDING COMPLETED SUCCESSFULLY.\n");
 }
 
 #endif
