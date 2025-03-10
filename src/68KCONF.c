@@ -202,7 +202,7 @@ void M68K_PULSE_HALT(void)
 void INITIALIZE_MEMORY(void)
 {
     for (unsigned i = 0; i < M68K_MAX_MEMORY_BUFFER_SIZE / sizeof(unsigned int); i++) 
-	{
+    {
         MAX_MEMORY_BUFFER[i] = (U8)(i & 0xFF);
     }
 
