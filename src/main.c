@@ -12,7 +12,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* FUNCTION DECLARATIONS */
+
 void SIMULATOR(const char* FILE_PATH);
+void PRINT_REGISTERS(void);
+
+/* SIMULATOR FUNCTION: LOADS AND EXECUTES A BINARY FILE */
 
 void SIMULATOR(const char* FILE_PATH)
 {
@@ -23,6 +28,7 @@ void SIMULATOR(const char* FILE_PATH)
     /* INITIALISE THE CPU */
     M68K_INIT();
 
+    /* OPEN THE BINARY FILE */
     FILE* FILE = fopen(FILE_PATH, "rb");
     if (!FILE)
     {
@@ -30,10 +36,12 @@ void SIMULATOR(const char* FILE_PATH)
         exit(EXIT_FAILURE);
     }
 
+    /* DETERMINE THE FILE SIZE */
     fseek(FILE, 0, SEEK_END);
     long FILE_SIZE = ftell(FILE);
     fseek(FILE, 0, SEEK_SET);
 
+    /* ALLOCATE MEMORY FOR THE BINARY FILE */
     U8* MEMORY = (U8*)malloc(FILE_SIZE);
     if (!MEMORY)
     {
@@ -42,26 +50,30 @@ void SIMULATOR(const char* FILE_PATH)
         exit(EXIT_FAILURE);
     }
 
+    /* READ THE BINARY FILE INTO MEMORY */
     fread(MEMORY, 1, FILE_SIZE, FILE);
     fclose(FILE);
 
     /* SET THE PROGRAM COUNTER TO THE START OF THE LOADED BINARY */
-    M68K_SET_REGISTERS(M68K_PC, 0x0000);
+    M68K_SET_REGISTERS(M68K_REG_PC, 0x0000);
 
+    /* PRINT INITIAL REGISTER VALUES */
     printf("INITIAL REGISTER VALUES:\n");
-    printf("D0: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_D0));
-    printf("D1: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_D1));
-    printf("A0: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_A0));
-    printf("A1: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_A1));
-    printf("PC: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_PC));
+    PRINT_REGISTERS();
 
     printf("\nSIMULATING INSTRUCTIONS...\n");
 
-    while (M68K_GET_REGISTERS(&CPU, M68K_PC) < (unsigned long)FILE_SIZE)
+    /* MAIN SIMULATION LOOP */
+    while (M68K_GET_REGISTERS(&CPU, M68K_REG_PC) < (UNK)FILE_SIZE)
     {
-        U16 OPCODE = (MEMORY[M68K_GET_REGISTERS(&CPU, M68K_PC)] << 8) | MEMORY[M68K_GET_REGISTERS(&CPU, M68K_PC) + 1];
-        printf("EXECUTING OPCODE: 0x%04X at PC: 0x%08X\n", OPCODE, M68K_GET_REGISTERS(&CPU, M68K_PC));
+        /* FETCH THE NEXT OPCODE */
+        U16 OPCODE = (MEMORY[M68K_GET_REGISTERS(&CPU, M68K_REG_PC)] << 8) | 
+                     MEMORY[M68K_GET_REGISTERS(&CPU, M68K_REG_PC) + 1];
 
+        printf("\nEXECUTING OPCODE: 0x%04X at PC: 0x%08X\n", 
+               OPCODE, M68K_GET_REGISTERS(&CPU, M68K_REG_PC));
+
+        /* EXECUTE THE OPCODE IF IT EXISTS IN THE JUMP TABLE */
         if (M68K_OPCODE_JUMP_TABLE[OPCODE])
         {
             M68K_OPCODE_JUMP_TABLE[OPCODE]();
@@ -72,18 +84,39 @@ void SIMULATOR(const char* FILE_PATH)
             break;
         }
 
-        M68K_SET_REGISTERS(M68K_PC, M68K_GET_REGISTERS(&CPU, M68K_PC) + 2);
+        /* INCREMENT THE PROGRAM COUNTER */
+        M68K_SET_REGISTERS(M68K_REG_PC, M68K_GET_REGISTERS(&CPU, M68K_REG_PC) + 2);
+        PRINT_REGISTERS();
     }
 
     printf("\nFINAL REGISTER VALUES:\n");
-    printf("D0: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_D0));
-    printf("D1: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_D1));
-    printf("A0: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_A0));
-    printf("A1: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_A1));
-    printf("PC: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_PC));
+    PRINT_REGISTERS();
 
     printf("\nSIMULATION COMPLETE.\n");
     free(MEMORY);
+}
+
+
+/* FUNCTION TO PRINT REGISTER VALUES */
+
+void PRINT_REGISTERS(void)
+{
+    printf("----------------------------------------------------\n");
+    printf("REGISTER VALUES:\n");
+    
+    for (int i = 0; i < 8; ++i)
+    {
+        printf("D%d: 0x%08X\n", i, M68K_GET_REGISTERS(&CPU, CPU.DATA_REGISTER[0] + i));
+    }
+
+    for (int i = 0; i < 8; ++i)
+    {
+        printf("A%d: 0x%08X\n", i, M68K_GET_REGISTERS(&CPU, CPU.ADDRESS_REGISTER[0] + i));
+    }
+
+    printf("PC: 0x%08X\n", M68K_GET_REGISTERS(&CPU, M68K_REG_PC));
+    printf("SR: 0x%04X\n", M68K_GET_REGISTERS(&CPU, M68K_REG_SR));
+    printf("----------------------------------------------------\n");
 }
 
 int main(int argc, char** argv) 
