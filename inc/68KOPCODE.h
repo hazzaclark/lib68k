@@ -29,11 +29,11 @@
 
         #undef USE_68K
 
-        #define     M68K_DATA_HIGH          (M68K_REG_D[(M68K_REG_IR >> 9) & 7])
-        #define     M68K_DATA_LOW           (M68K_REG_D[(M68K_REG_IR) & 7])
+        #define     M68K_DATA_HIGH          (CPU.DATA_REGISTER[(M68K_REG_IR >> 9) & 7])
+        #define     M68K_DATA_LOW           (CPU.DATA_REGISTER[(M68K_REG_IR) & 7])
 
-        #define     M68K_ADDRESS_HIGH       (M68K_REG_A[(M68K_REG_IR >> 9) & 7])
-        #define     M68K_ADDRESS_LOW        (M68K_REG_A[(M68K_REG_IR) & 7])
+        #define     M68K_ADDRESS_HIGH       (CPU.ADDRESS_REGISTER[(M68K_REG_IR >> 9) & 7])
+        #define     M68K_ADDRESS_LOW        (CPU.ADDRESS_REGISTER[(M68K_REG_IR) & 7])
 
 #endif
 
@@ -65,7 +65,7 @@
 
     #ifndef USE_OPCODE_HANDLER_TABLE
 
-    typedef struct
+    typedef struct 
     {
         void(*HANDLER)(void);
         unsigned MASK;
