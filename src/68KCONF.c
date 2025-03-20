@@ -201,8 +201,8 @@ void M68K_PULSE_HALT(void)
 
 void INITIALIZE_MEMORY(void)
 {
-    for (unsigned i = 0; i < M68K_MAX_MEMORY_BUFFER_SIZE / sizeof(unsigned int); i++) 
-    {
+    for (int i = 0; i < M68K_MAX_MEMORY_BUFFER_SIZE; i++) 
+	{
         MAX_MEMORY_BUFFER[i] = (U8)(i & 0xFF);
     }
 
@@ -212,23 +212,19 @@ void INITIALIZE_MEMORY(void)
     CPU.MEMORY_MAP->MEMORY_READ_32 = M68K_READ_32;
 }
 
-
 U8 M68K_READ_8(U32 ADDRESS) 
 {
-    U8 VALUE = *((U8*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
-    return VALUE;
+    return MAX_MEMORY_BUFFER[ADDRESS];
 }
 
 U16 M68K_READ_16(U32 ADDRESS) 
 {
-    U16 VALUE = *((U16*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
-    return VALUE;
+    return (MAX_MEMORY_BUFFER[ADDRESS] << 8) | MAX_MEMORY_BUFFER[ADDRESS + 1];
 }
 
 U32 M68K_READ_32(U32 ADDRESS) 
 {
-    U32 VALUE = *((U32*)(CPU.MEMORY_MAP->MEMORY_BASE + ADDRESS));
-    return VALUE;
+	return (MAX_MEMORY_BUFFER[ADDRESS] << 24) | (MAX_MEMORY_BUFFER[ADDRESS + 1] << 16) | (MAX_MEMORY_BUFFER[ADDRESS + 2] << 8) | MAX_MEMORY_BUFFER[ADDRESS + 3];
 }
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
