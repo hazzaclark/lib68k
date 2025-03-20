@@ -75,67 +75,29 @@ void INITIALISE_68K_CYCLES(void)
 
 unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
 {
-    /* IF THERE IS NO ACCESSIBLE METHODS */
-	/* WE SPECIFICALLY ALLOCATE MEMORY SAID ACCESSING OF REGISTERS */
+    switch (REGISTER)
+    {
+        case M68K_D0: return CPU->DATA_REGISTER[0];
+        case M68K_D1: return CPU->DATA_REGISTER[1];
+        case M68K_D2: return CPU->DATA_REGISTER[2];
+        case M68K_D3: return CPU->DATA_REGISTER[3];
+        case M68K_D4: return CPU->DATA_REGISTER[4];
+        case M68K_D5: return CPU->DATA_REGISTER[5];
+        case M68K_D6: return CPU->DATA_REGISTER[6];
+        case M68K_D7: return CPU->DATA_REGISTER[7];
+        case M68K_A0: return CPU->ADDRESS_REGISTER[0];
+        case M68K_A1: return CPU->ADDRESS_REGISTER[1];
+        case M68K_A2: return CPU->ADDRESS_REGISTER[2];
+        case M68K_A3: return CPU->ADDRESS_REGISTER[3];
+        case M68K_A4: return CPU->ADDRESS_REGISTER[4];
+        case M68K_A5: return CPU->ADDRESS_REGISTER[5];
+        case M68K_A6: return CPU->ADDRESS_REGISTER[6];
+        case M68K_A7: return CPU->ADDRESS_REGISTER[7];
+        case M68K_PC: return CPU->PC;
+        case M68K_SR: return CPU->STATUS_REGISTER;
 
-	/* THE REASON AS TO WHY THERE ARE TWO SEPERATE CASTS IS DUE TO THE FACT */
-	/* THAT THE UINTPTR WILL HOUSE THE CORRESPONDING POINTER OF THE RESPECTIVE 32 BIT INTEGER */
-
-	/* IT HAS NOW BEEN UPDATED TO ACCOMODATE FOR THE ACTUAL RETURN OF A 32 BIT INT */
-	/* AKIN TO THE MAX SIZE OF THE REGISTERS */
-
-	switch(REGISTER)
-	{
-		case M68K_D0: return CPU->REGISTER_BASE[0];
-		case M68K_D1: return CPU->REGISTER_BASE[1];
-		case M68K_D2: return CPU->REGISTER_BASE[2];
-		case M68K_D3: return CPU->REGISTER_BASE[3];
-		case M68K_D4: return CPU->REGISTER_BASE[4];
-		case M68K_D5: return CPU->REGISTER_BASE[5];
-		case M68K_D6: return CPU->REGISTER_BASE[6];
-		case M68K_D7: return CPU->REGISTER_BASE[7];
-	
-		case M68K_A0: return CPU->REGISTER_BASE[8];
-		case M68K_A1: return CPU->REGISTER_BASE[9];
-		case M68K_A2: return CPU->REGISTER_BASE[10];
-		case M68K_A3: return CPU->REGISTER_BASE[11];
-		case M68K_A4: return CPU->REGISTER_BASE[12];
-		case M68K_A5: return CPU->REGISTER_BASE[13];
-		case M68K_A6: return CPU->REGISTER_BASE[14];
-		case M68K_A7: return CPU->REGISTER_BASE[15];
-
-        case M68K_PC: return (CPU->PC);
-
-		case M68K_USP:
-			return CPU->S_FLAG;
-
-		case M68K_ISP:
-				return CPU->S_FLAG + CPU->STACK_POINTER;
-
-		case M68K_SP:
-			return CPU->REGISTER_BASE[15];
-
-		case M68K_SFC:
-			return CPU->SOURCE_FUNCTION_COUNTER;
-
-		case M68K_DFC:
-			return CPU->DEST_FUNCTION_COUNTER;
-
-		case M68K_VBR:
-			return CPU->VBR;
-
-		case M68K_CACR:
-			return CPU->CACHE_CONTROL;
-
-		case M68K_CAAR:
-			return CPU->CACHE_ADDRESS;
-
-		case M68K_IR:
-			return CPU->INDEX_REGISTER;
-
-		default:
-			return 0;
-	}
+        default: return 0;
+    }
 }
 
 /* IN A SIMILAR VEIN TO THE FUNCTION ABOVE, THIS FUNCTION WILL FOCUS MOREOVER */
@@ -146,58 +108,28 @@ unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
 
 void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
 {
-	switch (REGISTER)
-	{
-		case M68K_D0: M68K_REG_D[0] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D1: M68K_REG_D[1] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_D2: M68K_REG_D[2] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D3: M68K_REG_D[3] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D4: M68K_REG_D[4] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D5: M68K_REG_D[5] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D6: M68K_REG_D[6] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_D7: M68K_REG_D[7] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return; 
-		case M68K_A0: M68K_REG_A[8] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE);  return;
-		case M68K_A1: M68K_REG_A[9] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE);  return;
-		case M68K_A2: M68K_REG_A[10] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_A3: M68K_REG_A[11] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_A4: M68K_REG_A[12] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_A5: M68K_REG_A[13] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_A6: M68K_REG_A[14] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-		case M68K_A7: M68K_REG_A[15] += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); return;
-
-		case M68K_PC: M68K_JUMP(M68K_MASK_OUT_ABOVE_32(VALUE)); break;
-		case M68K_SR: M68K_SET_SR_IRQ(VALUE); break; 
-		case M68K_SP: M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(VALUE); break;
-
-		case M68K_USP: 
-
-				if(FLAG_S) 
-				{
-					M68K_REG_USP = M68K_MASK_OUT_ABOVE_32(VALUE);
-				}
-
-				else
-				{
-					M68K_REG_SP += (U32)M68K_MASK_OUT_ABOVE_32(VALUE); 
-				}
-				return;
-
-		case M68K_ISP:
-		
-				if(FLAG_S && !FLAG_M)
-				{
-					M68K_REG_SP += (U32)M68K_MASK_OUT_ABOVE_32(VALUE);
-				}
-
-				else
-				{
-					M68K_REG_ISP = M68K_MASK_OUT_ABOVE_32(VALUE);
-				}
-				return;
-
-				default:
-					return;
-	}
+    switch (REGISTER)
+    {
+        case M68K_D0: CPU.DATA_REGISTER[0] = VALUE; break;
+        case M68K_D1: CPU.DATA_REGISTER[1] = VALUE; break;
+        case M68K_D2: CPU.DATA_REGISTER[2] = VALUE; break;
+        case M68K_D3: CPU.DATA_REGISTER[3] = VALUE; break;
+        case M68K_D4: CPU.DATA_REGISTER[4] = VALUE; break;
+        case M68K_D5: CPU.DATA_REGISTER[5] = VALUE; break;
+        case M68K_D6: CPU.DATA_REGISTER[6] = VALUE; break;
+        case M68K_D7: CPU.DATA_REGISTER[7] = VALUE; break;
+        case M68K_A0: CPU.ADDRESS_REGISTER[0] = VALUE; break;
+        case M68K_A1: CPU.ADDRESS_REGISTER[1] = VALUE; break;
+        case M68K_A2: CPU.ADDRESS_REGISTER[2] = VALUE; break;
+        case M68K_A3: CPU.ADDRESS_REGISTER[3] = VALUE; break;
+        case M68K_A4: CPU.ADDRESS_REGISTER[4] = VALUE; break;
+        case M68K_A5: CPU.ADDRESS_REGISTER[5] = VALUE; break;
+        case M68K_A6: CPU.ADDRESS_REGISTER[6] = VALUE; break;
+        case M68K_A7: CPU.ADDRESS_REGISTER[7] = VALUE; break;
+        case M68K_PC: CPU.PC = VALUE; break;
+        case M68K_SR: CPU.STATUS_REGISTER = VALUE; break;
+        default: break;
+    }
 }
 
 /*===============================================================================*/
@@ -268,7 +200,16 @@ void M68K_SET_SR_IRQ(unsigned VALUE)
 }
 
 void M68K_INIT(void)
-{
+{    
+    for (int i = 0; i < 8; i++) 
+    {
+        CPU.DATA_REGISTER[i] = i;
+        CPU.ADDRESS_REGISTER[i] = i + 8;
+    }
+    
+    CPU.STATUS_REGISTER = 0x2000;
+    CPU.PC = 0x0000;
+
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
     printf("OPCODE TABLE INITIALISED.\n");
