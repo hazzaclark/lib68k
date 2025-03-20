@@ -47,6 +47,12 @@ This is a WIP and will be provided soon
 
 You can find the provided example Assembly code [here](https://github.com/hazzaclark/lib68k/blob/main/hello.asm)
 
+## Running the samples (w/ simulator)
+
+In my experience, I have found that compiling with [clownassembler](https://github.com/Clownacy/clownassembler) works the best - for it's ease of use means of being able to provide input and output as well as providing in depth and concise warnings and error messages.
+
+Follow the repository's instructions on how to work with that, or alternatively, use a 68K Assembler of your choosing
+
 ![image](https://github.com/user-attachments/assets/b5b0dda9-a185-433c-9a20-b89427d756af)
 
 ![image](https://github.com/user-attachments/assets/efed0817-24ef-493f-87af-03bd1d0e4eba)
