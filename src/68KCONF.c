@@ -217,34 +217,60 @@ void INITIALIZE_MEMORY(void)
 
 U8 M68K_READ_8(U32 ADDRESS)
 {
-    CPU_68K_MEMORY* TEMP;
-    U8 MAP_INDEX = (ADDRESS >> 16) & 0xFF;
-
-    TEMP = &CPU.MEMORY_MAP[MAP_INDEX];
-    return TEMP->MEMORY_BASE[ADDRESS & 0xFFFF];
+    U8 BANK = (ADDRESS >> 24) & 0xFF;
+    U32 OFFSET = ADDRESS & 0xFFFFFF;
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
+	{
+        return CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET];
+    }
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_8 != NULL) 
+	{
+        return CPU.MEMORY_MAP[BANK].MEMORY_READ_8(ADDRESS);
+    }
+    
+    return 0;
 }
 
 U16 M68K_READ_16(U32 ADDRESS)
 {
-    CPU_68K_MEMORY* TEMP;
-    U8 MAP_INDEX = (ADDRESS >> 16) & 0xFF;
-
-    TEMP = &CPU.MEMORY_MAP[MAP_INDEX];
-    return (TEMP->MEMORY_BASE[ADDRESS & 0xFFFF] << 8) |
-           TEMP->MEMORY_BASE[(ADDRESS + 1) & 0xFFFF];
+    U8 BANK = (ADDRESS >> 24) & 0xFF;
+    U32 OFFSET = ADDRESS & 0xFFFFFF;
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
+	{
+        return (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET] << 8) | 
+               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 1]);
+    }
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_16 != NULL) 
+	{
+        return CPU.MEMORY_MAP[BANK].MEMORY_READ_16(ADDRESS);
+    }
+    
+    return 0; 
 }
 
 U32 M68K_READ_32(U32 ADDRESS)
 {
-    CPU_68K_MEMORY* TEMP;
-    U8 MAP_INDEX = (ADDRESS >> 16) & 0xFF;
-
-    TEMP = &CPU.MEMORY_MAP[MAP_INDEX];
-
-    return (TEMP->MEMORY_BASE[ADDRESS & 0xFFFF] << 24) |
-           (TEMP->MEMORY_BASE[(ADDRESS + 1) & 0xFFFF] << 16) |
-           (TEMP->MEMORY_BASE[(ADDRESS + 2) & 0xFFFF] << 8) |
-           TEMP->MEMORY_BASE[(ADDRESS + 3) & 0xFFFF];
+    U8 BANK = (ADDRESS >> 24) & 0xFF;
+    U32 OFFSET = ADDRESS & 0xFFFFFF;
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
+	{
+        return (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET] << 24) | 
+               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 1] << 16) |
+               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 2] << 8) |
+               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 3]);
+    }
+    
+    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_32 != NULL) 
+	{
+        return CPU.MEMORY_MAP[BANK].MEMORY_READ_32(ADDRESS);
+    }
+    
+    return 0;
 }
 
 void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
