@@ -282,5 +282,34 @@ unsigned int READ_IMM_16(void)
 	#endif
 }
 
+unsigned int READ_IMM_32(void)
+{
+	#if M68K_OPT_OFF
+
+	unsigned TEMP;
+
+	if(~(M68K_MASK_OUT_ABOVE_16(M68K_REG_PC)))
+	{
+		M68K_PREF_ADDRESS = ~M68K_MASK_OUT_ABOVE_8(M68K_REG_PC);
+		M68K_PREF_MODE = M68K_READ_IMM_32(M68K_PREF_ADDRESS);
+	}
+
+	TEMP = M68K_PREF_MODE;
+	M68K_REG_PC += 2;
+	TEMP = M68K_MASK_OUT_ABOVE_32((TEMP << 16) | (M68K_PREF_MODE >> 16));
+
+	M68K_REG_PC += 2;
+	return TEMP;
+
+	#else
+
+	unsigned PC = M68K_REG_PC;
+    M68K_REG_PC += 4;
+
+    return M68K_READ_IMM_32(PC);
+
+	#endif
+}
+
 #endif
 #endif
