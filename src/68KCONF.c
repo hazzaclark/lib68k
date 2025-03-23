@@ -259,10 +259,24 @@ void M68K_BRANCH_32(unsigned OFFSET)
 
 unsigned int READ_IMM_16(void)
 {
+	#if M68K_OPT_OFF
+
+	if(~(M68K_MASK_OUT_ABOVE_16(M68K_REG_PC)))
+	{
+		M68K_PREF_ADDRESS = ~M68K_MASK_OUT_ABOVE_8(M68K_REG_PC);
+		M68K_PREF_MODE = M68K_READ_IMM_32(M68K_PREF_ADDRESS);
+	}
+
+	return M68K_MASK_OUT_ABOVE_16(M68K_PREF_MODE >> ((2 - ((M68K_REG_PC - 2) & 2)) < 3));
+
+	#else
+
     unsigned PC = M68K_REG_PC;
     M68K_REG_PC += 2;
 
     return M68K_READ_IMM_16(PC);
+
+	#endif
 }
 
 #endif
