@@ -7,8 +7,14 @@
 
 #include "util.h"
 #include "68K.h"
+#include "68KCONF.h"
 #include "68KOPCODE.h"
 #include "68KSTD.h"
+
+void CALLBACK(void)
+{
+    printf("CALLBACK CALLED");
+}
 
 int main(void) 
 {
@@ -28,6 +34,16 @@ int main(void)
 
     U32 VALUE_32 = 0x10000;
     printf("U32 VALUE:%u\n", M68K_READ_32(VALUE_32));
+
+    // TESTING FUNCTION CALLBACK TO BE ABLE TO PROPERLY ALLOCATE
+    // AND DESIGNATE MEMORY IN SPECIFIC PREFETCH INSTANCES
+
+    M68K_SET_FUNC_CALLBACK(CALLBACK);
+
+    if(M68K_SET_FC_ACK != NULL)
+    {
+        M68K_SET_FC_ACK();
+    }
 
     return 0;
 }
