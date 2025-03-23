@@ -67,11 +67,7 @@
 #define 	M68K_FUNCTION_CODE_SUPERVISOR_PROGRAM 	6
 #define 	M68K_FUNCTION_CODE_CPU_SPACE          	7
 
-#define		M68K_SET_FC(A)			M68K_SET_FUNC_CALLBACK(A)
-#define		M68K_USE_DS()
-#define		M68K_USE_PS()
-#define		M68K_GET_AS()
-
+#define		M68K_SET_FC(A)					M68K_SET_FUNC_CALLBACK(A)
 #define		M68K_ADDRESS_LINE(A)			((A)&M68K_ADDRESS_MASK)
 
 /*===============================================================================*/
@@ -81,7 +77,7 @@
 extern U8 M68K_VECTOR_TABLE[5][256];
 int M68K_SET_INT_CALLBACK(int LEVEL);
 void M68K_DEFAULT_INSTR_CALLBACK(void);
-void M68K_SET_FUNC_CALLBACK(unsigned CALLBACK);
+void M68K_SET_FUNC_CALLBACK(void (*CALLBACK)(void));
 void M68K_SET_INSTR_CALLBACK(unsigned CALLBACK, unsigned PC);
 U32 M68K_FETCH_LONG();
 
