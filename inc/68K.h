@@ -408,7 +408,8 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_MEMORY_WRITE_8      CPU_MEMORY.MEMORY_WRITE_8
 #define         M68K_MEMORY_WRITE_16     CPU_MEMORY.MEMORY_WRITE_16
 
-
+#define         M68K_READ_IMM_16(ADDRESS)       *(U16*)(CPU.MEMORY_MAP[((ADDRESS) >> 16) & 0xFF].MEMORY_BASE + ((ADDRESS) & 0xFFFF))
+#define         M68K_READ_IMM_32(ADDRESS)       (M68K_READ_IMM_16(ADDRESS) << 16) | (M68K_READ_IMM_16(ADDRESS + 2))
 
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
@@ -420,7 +421,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
-int M68K_EXEC(int CYCLES);
+void M68K_EXEC(int CYCLES);
 void M68K_JUMP(unsigned NEW_PC);
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
@@ -431,6 +432,9 @@ void M68K_BUILD_OPCODE_TABLE(void);
 void M68K_BRANCH_8(unsigned OFFSET);
 void M68K_BRANCH_16(unsigned OFFSET);
 void M68K_BRANCH_32(unsigned OFFSET);
+
+unsigned int READ_IMM_16(void);
+unsigned int READ_IMM_32(void);
 
 /*===============================================================================*/
 /*							        68000 MISC.							         */
