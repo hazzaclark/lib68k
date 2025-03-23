@@ -212,6 +212,7 @@ void INITIALIZE_MEMORY(void)
     CPU.MEMORY_MAP->MEMORY_READ_32 = M68K_READ_32;
 }
 
+
 U8 M68K_READ_8(U32 ADDRESS) 
 {
     return MAX_MEMORY_BUFFER[ADDRESS];
@@ -255,6 +256,14 @@ void M68K_BRANCH_16(unsigned OFFSET)
 void M68K_BRANCH_32(unsigned OFFSET)
 {
 	M68K_REG_PC += OFFSET;
+}
+
+unsigned int READ_IMM_16(void)
+{
+    unsigned PC = M68K_REG_PC;
+    M68K_REG_PC += 2;
+
+    return M68K_READ_IMM_16(PC);
 }
 
 #endif
