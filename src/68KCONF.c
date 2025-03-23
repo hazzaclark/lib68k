@@ -214,7 +214,13 @@ void INITIALIZE_MEMORY(void)
 
 U8 M68K_READ_8(U32 ADDRESS) 
 {
-    return MAX_MEMORY_BUFFER[ADDRESS];
+    CPU_68K_MEMORY* TEMP;
+	unsigned VALUE;
+
+	TEMP = &CPU.MEMORY_MAP[((ADDRESS) >> 16) & 0xFF];
+	VALUE = READ_BYTE(TEMP->MEMORY_BASE, (ADDRESS) & 0xFFFF);
+
+	return VALUE;
 }
 
 U16 M68K_READ_16(U32 ADDRESS) 
@@ -304,7 +310,7 @@ unsigned int READ_IMM_32(void)
 	#else
 
 	unsigned PC = M68K_REG_PC;
-    M68K_REG_PC += 4;
+	M68K_REG_PC += 4;
 
     return M68K_READ_IMM_32(PC);
 
