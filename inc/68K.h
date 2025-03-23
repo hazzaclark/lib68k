@@ -282,7 +282,7 @@ typedef struct CPU_68K
     int(*INT_ACK_CALLBACK)(int VALUE);
     void(*RESET_CALLBACK)(void);
     void(*PC_CHANGED_CALLBACK)(unsigned* NEW_PC);
-    void(*SET_FC_CALLBACK)(unsigned NEW_FC);
+    void(*SET_FC_CALLBACK)(void);
     void(*INSTR_HOOK)(unsigned PC);
 
     unsigned int ADDRESS_MASK;
