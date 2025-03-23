@@ -290,6 +290,9 @@ typedef struct CPU_68K
 
     unsigned int RESET_MODE;
 
+    unsigned PREFETCH_ADDRESS;
+    unsigned PREFETCH_MODE;
+
     CPU_68K_MEMORY MEMORY_MAP[256];
 
 } CPU_68K;
@@ -400,6 +403,9 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_PRV_DATA           CPU.PREVIOUS_DATA
 #define         M68K_PRV_ADDR           CPU.PREVIOUS_ADDRESS
 #define         M68K_TRA_ADDR           CPU.ADDRESS_RT_CHECK
+
+#define         M68K_PREF_ADDRESS       CPU.PREFETCH_ADDRESS
+#define         M68K_PREF_MODE          CPU.PREFETCH_MODE
 
 #define         M68K_MEMORY_MAP          CPU.MEMORY_MAP
 #define         M68K_MEMORY_BASE         CPU_MEMORY.MEMORY_BASE
