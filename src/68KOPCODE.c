@@ -994,6 +994,22 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
     M68K_FLAG_C = 0;
 }
 
+M68K_MAKE_OPCODE(MOVE_L_IMM_TO_REG, 32, D, 0)
+{
+    U32 IMM = (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 2] << 24) |
+                (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 3] << 16) |
+                (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 4] << 8) |
+                CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 5];
+
+    CPU.DATA_REGISTER[M68K_DATA_HIGH] = IMM;
+    CPU.PC += 6;
+
+    M68K_FLAG_N = (IMM >> 31) & 1;
+    M68K_FLAG_Z = (IMM == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
 M68K_MAKE_OPCODE(MOVEA, 16, DA, 0)
 {
     M68K_DATA_LOW = M68K_READ_16(M68K_DATA_HIGH);
@@ -1105,7 +1121,7 @@ M68K_MAKE_OPCODE(MOVEP, 32, ER, 0)
 
 M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
 {
-    unsigned RESULT = M68K_DATA_LOW = M68K_READ_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    unsigned RESULT = M68K_DATA_LOW = M68K_READ_8(M68K_REG_IR);
     
     M68K_FLAG_N = M68K_READ_32(RESULT);
     M68K_FLAG_Z = RESULT;
@@ -1936,6 +1952,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
     {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
     {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
+    {MOVE_L_IMM_TO_REG_32_D_0,  0xF1C0,     0x203C,     12},
     {MOVEA_16_DA_0,             0xF1C0,     0x3040,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x2040,     4},  // MOVEA.L <ea>,An
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
@@ -2012,7 +2029,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
 
     for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
-        M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE_ILLEGAL_MASK;
+        M68K_OPCODE_JUMP_TABLE[INDEX] = NULL;
         CYCLE_INDEX[INDEX] = 0;
     }
 
