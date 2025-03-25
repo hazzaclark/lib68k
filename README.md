@@ -1,8 +1,6 @@
 # lib68k
 Motorola 680x0 Standalone Emulation Library
 
-![image](https://github.com/user-attachments/assets/9ad47554-e6a1-4380-9e8b-47e53ebf5483)
-
 # Motive:
 
 The motive behind this repository is to provide a surrogate means of aiding in relevant Motorola 68000 developments.
