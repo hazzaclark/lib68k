@@ -21,9 +21,7 @@ int main(void)
     printf("====================================================\n");
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
-
-    printf("Initialising 68000\n");
-
+    
     M68K_INIT();
 
     U8 VALUE = 0xF;
@@ -33,7 +31,7 @@ int main(void)
     printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
 
     U32 VALUE_32 = 0x10000;
-    printf("U32 VALUE:%u\n", M68K_READ_32(VALUE_32));
+    printf("U32 VALUE: %u\n", M68K_READ_32(VALUE_32));
 
     // TESTING FUNCTION CALLBACK TO BE ABLE TO PROPERLY ALLOCATE
     // AND DESIGNATE MEMORY IN SPECIFIC PREFETCH INSTANCES
