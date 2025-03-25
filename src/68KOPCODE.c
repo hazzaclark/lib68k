@@ -20,7 +20,6 @@ static int CYCLE_INDEX[OPCODE_MAX];
 
 void M68K_OP_1010(void)
 {
-    M68K_SET_FUNC_CALLBACK(M68K_REG_PC);
     M68K_JUMP_VECTOR(M68K_EXCEPTION_1010);
 
     /* USE THE INTEGREAL POINTER NOTATION TO ACCESS THE EXCEPTION FROM THE CURRENT A-LINE INSTRUCTION */
@@ -34,7 +33,6 @@ void M68K_OP_1010(void)
 
 void M68K_OP_1111(void)
 {
-    M68K_SET_FUNC_CALLBACK(M68K_REG_PC);
     M68K_JUMP_VECTOR(M68K_EXCEPTION_1111);
 
     M68K_USE_CYCLES(M68K_CYC_EXCE[M68K_EXCEPTION_1111]);
@@ -120,6 +118,24 @@ M68K_MAKE_OPCODE(ADD, 32, EA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
 
     RESULT = FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADD, 32, D, 0)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = CPU.DATA_REGISTER[SRC_REG];
+    U32 DEST_VALUE = CPU.DATA_REGISTER[DEST_REG];
+    U64 RESULT = (U64)(SRC_VALUE) + (U64)(DEST_VALUE);
+
+    CPU.DATA_REGISTER[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+    CPU.PC += 2;
+
+    M68K_FLAG_N = (RESULT >> 31) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 31 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 32) & 1;
 }
 
 M68K_MAKE_OPCODE(ADDA, 16, D, 0)
@@ -1884,6 +1900,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_EA_0,                0xF1C0,     0xD000,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_0,               0xF1C0,     0xD040,     4},  // ADD.W <ea>,Dn
     {ADD_32_EA_0,               0xF1C0,     0xD080,     8},  // ADD.L <ea>,Dn
+    {ADD_32_D_0,                0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
     {ADDI_8_IMM_0,              0xFF00,     0x0600,     8},  // ADDI.B #<data>,<ea>
