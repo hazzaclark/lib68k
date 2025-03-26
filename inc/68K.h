@@ -205,7 +205,6 @@ typedef struct CPU_68K_MEMORY
     void(*MEMORY_WRITE_8)(U32 ADDRESS, U8 VALUE);
     void(*MEMORY_WRITE_16)(U32 ADDRESS, U16 VALUE);
 
-
 } CPU_68K_MEMORY;
 
 typedef struct CPU_68K
@@ -427,7 +426,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
-void M68K_EXEC(int CYCLES);
+int M68K_EXEC(int CYCLES);
 void M68K_JUMP(unsigned NEW_PC);
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
