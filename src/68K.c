@@ -228,4 +228,85 @@ void M68K_INIT(void)
     printf("68000 INITIALISATION COMPLETE.\n");
 }
 
+// EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
+// TYPICALLY IN ANY OTHER CONTEXT, THERE WONT BE A HARD-CODED AMOUNT OF CYCLES TO REACH BEFORE THE PROGRAM HALTS
+
+int M68K_EXEC(int CYCLES)
+{
+    if(M68K_REG_PC == 0)
+    {
+        M68K_REG_PC = 0x00000000;
+    }
+
+    printf("INIT PC: 0x%08X\n", M68K_REG_PC);
+
+    if(M68K_RESET_CYCLES > 0)
+    {
+        int RC = M68K_RESET_CYCLES;
+        M68K_RESET_CYCLES = 0;
+        CYCLES -= RC;
+        if(CYCLES <= 0) return RC; 
+    }
+
+    int INIT_CYCLES = CYCLES;
+    int REMAINING_CYCLES = CYCLES;
+    M68K_CYC_REMAIN = REMAINING_CYCLES;
+
+    if(!M68K_CPU_STOPPED)
+    {
+        int SAFETY_COUNTER = 0;
+        const int MAX_INSTR = 10000; 
+
+        while(REMAINING_CYCLES > 0 && SAFETY_COUNTER++ < MAX_INSTR)
+        {
+            printf("PC BEFORE FETCH: 0x%08X\n", M68K_REG_PC);
+
+            M68K_REG_PPC = M68K_REG_PC;
+            M68K_REG_IR = READ_IMM_16();
+            
+            M68K_REG_PC += 2;
+            
+            printf("PC AFTER FETCH 0x%08X, Instruction: 0x%04X\n", 
+                   M68K_REG_PC, M68K_REG_IR);
+            
+            if(M68K_REG_IR) 
+            {
+                if(M68K_OPCODE_JUMP_TABLE[M68K_REG_IR])
+                {
+                    M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
+                }
+
+                else
+                {
+                    M68K_REG_PC += 2;
+                    continue;
+                }
+                
+                int INSTR_CYCLES = 4; 
+                if(CPU.INSTRUCTION_CYCLES && CPU.INSTRUCTION_CYCLES[M68K_REG_IR] > 0)
+                {
+                    INSTR_CYCLES = CPU.INSTRUCTION_CYCLES[M68K_REG_IR];
+                }
+
+                REMAINING_CYCLES -= INSTR_CYCLES;
+                M68K_CYC_REMAIN = REMAINING_CYCLES;
+            }
+            else
+            {
+                fprintf(stderr, "ZERO INSTRUCTION AT PC=0x%08X\n", M68K_REG_PPC);
+                break;
+            }
+        }
+
+        if(SAFETY_COUNTER >= MAX_INSTR)
+        {
+            fprintf(stderr, "MAX INSTR LIMIT REACHED PC=0x%08X\n",
+                   M68K_REG_PC);
+        }
+    }
+
+    printf("EXEC COMPLETE, FINAL PC: 0x%08X\n", M68K_REG_PC);
+    return INIT_CYCLES - REMAINING_CYCLES;
+}
+
 #endif
