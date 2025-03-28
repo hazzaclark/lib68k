@@ -277,8 +277,6 @@ int M68K_EXEC(int CYCLES)
             M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
             M68K_USE_CYCLES(CYCLES);
 
-
-            // CHECK IF IT WORKED LMAO
             printf("M68K CURRENT PC STATE: %d\n", M68K_GET_CYCLES());
         }
     }
@@ -286,8 +284,6 @@ int M68K_EXEC(int CYCLES)
     else
         M68K_SET_CYCLES(0);
 
-
-    printf("YIPPIE, EVERYTHING WORKS :steamhappy:\n");
     return INIT_CYCLES - M68K_GET_CYCLES();
 }
 
