@@ -346,6 +346,7 @@ typedef enum CPU_68K_FLAGS
 
 } CPU_68K_FLAGS;
 
+#define         M68K_REG_BASE           CPU.REGISTER_BASE
 #define 		M68K_REG_DA				CPU.DATA_REGISTER
 #define			M68K_REG_D				CPU.DATA_REGISTER
 #define			M68K_REG_A				CPU.ADDRESS_REGISTER
