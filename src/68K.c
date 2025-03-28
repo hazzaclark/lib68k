@@ -235,6 +235,8 @@ int M68K_EXEC(int CYCLES)
 {
     int INIT_CYCLES = 0;
 
+    // SAFETY CHECK TO DETERMINE WHETHER THE INITIAL CYCLES HAVE BEEN EXECUTED
+
     if(M68K_RESET_CYCLES)
     {
         int RET_CYCLES = M68K_RESET_CYCLES;
@@ -245,10 +247,30 @@ int M68K_EXEC(int CYCLES)
         if(CYCLES <= 0) return RET_CYCLES;
     }
 
+    // SET THE CURRENT CYCLES BASED OFF OF THE LOCAL ARG PROVIDED
+
     M68K_SET_CYCLES(CYCLES);
-    printf("M68K CYCLES SET WITH VALUE:%d\n", CYCLES);
+    printf("M68K CYCLES SET WITH VALUE: %d\n", CYCLES);
 
     INIT_CYCLES = CYCLES;
+
+    if(!M68K_CPU_STOPPED)
+    {
+        if(M68K_GET_CYCLES() > 0)
+        {
+            M68K_REG_PPC = M68K_REG_PC;
+
+            // CALL EXT. HOOK TO JUMP TO THE CURRENT ROUTINE IN THE PC
+            M68K_BASE_INSTR_HOOK(M68K_REG_PC);
+
+            // CHECK IF IT WORKED LMAO
+            printf("M68K CURRENT PC STATE: %d\n", M68K_GET_CYCLES());
+        }
+    }
+
+    else
+        M68K_SET_CYCLES(0);
+
 
     printf("YIPPIE, EVERYTHING WORKS :steamhappy:\n");
     return INIT_CYCLES - M68K_GET_CYCLES();
