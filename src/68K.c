@@ -258,10 +258,25 @@ int M68K_EXEC(int CYCLES)
     {
         if(M68K_GET_CYCLES() > 0)
         {
-            M68K_REG_PPC = M68K_REG_PC;
-
             // CALL EXT. HOOK TO JUMP TO THE CURRENT ROUTINE IN THE PC
             M68K_BASE_INSTR_HOOK(M68K_REG_PC);
+            M68K_REG_PPC = M68K_REG_PC;
+
+            // COPY ALL REGISTERS FROM THE CURRENT SET TO THE
+            // REGISTER BASE - ALLOWING THESE TO TAKE INTO ACCOUNT CYCLE COUNTS
+            // IN RELATION TO INSTRUCTIONS
+
+            for(int INDEX = 15; INDEX >= 0; INDEX--)
+            {
+                M68K_REG_BASE[INDEX] = M68K_REG_DA[INDEX];
+            }
+
+            // READ AND SAVE THE CURRENT INSTRUCTION
+            M68K_REG_IR = READ_IMM_16();
+            
+            M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
+            M68K_USE_CYCLES(CYCLES);
+
 
             // CHECK IF IT WORKED LMAO
             printf("M68K CURRENT PC STATE: %d\n", M68K_GET_CYCLES());
