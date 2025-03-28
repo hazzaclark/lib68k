@@ -59,12 +59,6 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ![image](https://github.com/user-attachments/assets/e909fa4b-4a60-4f26-a969-4fa499449c71)
 
-# NOTE:
-
-Some of the Opcodes and their extended addressing capabilities such as IMM, EA, DI, PI, etc - are all reserved for an eventual expansion on this Library.
-
-As of right now, I wanted to focus on getting everything working with 68000 emulation to prioritise [mdemu](https://github.com/hazzaclark/mdemu/blob/main) developments
-
  # Sources:
 
 [Motorola 680x0 Programmer Manual](https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf)
