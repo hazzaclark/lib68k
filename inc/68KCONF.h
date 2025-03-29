@@ -65,8 +65,11 @@
 
 #endif
 
-#define	USE_BE 		M68K_OPT_OFF
-#define	USE_LE 		M68K_OPT_ON
+#if defined(__linux__) || defined(_WIN32)
+	#define	USE_BE 		M68K_OPT_OFF
+#else
+	#define	USE_LE 		M68K_OPT_ON
+#endif
 
 #define 	M68K_MASK_OUT_ABOVE_8(A)            ((A) & 0xFF)
 #define 	M68K_MASK_OUT_ABOVE_16(A)           ((A) & 0xFFFF)
