@@ -35,25 +35,11 @@ lib68k.so
 
 the makefile in question is universal, allowing for ease of use compiling on other systems
 
-# Examples:
-
-Below is an example provided to showcase how the ``OPCODE_HANDLER_TABLE`` is able to store and evaluate respective Opcodes and Operands
-
-More specifically, this is an example of showcasing the simulator using the designated amount of Cycles provided as an arg.
-
-This is a WIP and will be provided soon
-
-You can find the provided example Assembly code [here](https://github.com/hazzaclark/lib68k/blob/main/hello.asm)
-
 ## Running the samples (w/ simulator)
 
 In my experience, I have found that compiling with [clownassembler](https://github.com/Clownacy/clownassembler) works the best - for it's ease of use means of being able to provide input and output as well as providing in depth and concise warnings and error messages.
 
 Follow the repository's instructions on how to work with that, or alternatively, use a 68K Assembler of your choosing
-
-![image](https://github.com/user-attachments/assets/b5b0dda9-a185-433c-9a20-b89427d756af)
-
-![image](https://github.com/user-attachments/assets/efed0817-24ef-493f-87af-03bd1d0e4eba)
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
