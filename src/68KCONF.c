@@ -320,10 +320,8 @@ unsigned int READ_IMM_16(void)
 
 	#else
 
-    unsigned PC = M68K_REG_PC;
     M68K_REG_PC += 2;
-
-    return M68K_READ_IMM_16(PC);
+	return M68K_READ_IMM_16(M68K_REG_PC - 2);
 
 	#endif
 }
@@ -349,10 +347,8 @@ unsigned int READ_IMM_32(void)
 
 	#else
 
-	unsigned PC = M68K_REG_PC;
 	M68K_REG_PC += 4;
-
-    return M68K_READ_IMM_32(PC);
+    return M68K_READ_IMM_32(M68K_REG_PC - 4);
 
 	#endif
 }
