@@ -43,7 +43,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
-![image](https://github.com/user-attachments/assets/e909fa4b-4a60-4f26-a969-4fa499449c71)
+![image](https://github.com/user-attachments/assets/7bc0a2cd-fce5-4a0b-a3c4-eee1179c5a79)
 
  # Sources:
 
