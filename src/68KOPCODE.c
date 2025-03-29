@@ -1969,7 +1969,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
     {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
     {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
-    {MOVE_L_IMM_TO_REG_32_D_0,  0xF1C0,     0x203C,     12},
+    {MOVE_L_IMM_TO_REG_32_D_0,  0xF1C0,     0x203C,     12}, // MOVE.L #<imm>, Dn
     {MOVEA_16_DA_0,             0xF1C0,     0x3040,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x2040,     4},  // MOVEA.L <ea>,An
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
