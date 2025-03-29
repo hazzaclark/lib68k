@@ -23,6 +23,7 @@ int main(void)
     printf("====================================================\n");
     
     M68K_INIT();
+    M68K_EXEC(100);
 
     U8 VALUE = 0xF;
     printf("U8 VALUE:%u\n", M68K_READ_8(VALUE));
@@ -30,8 +31,8 @@ int main(void)
     U16 VALUE_16 = 0xFF;
     printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
 
-    U32 VALUE_32 = 0x10000;
-    printf("U32 VALUE: %u\n", M68K_READ_32(VALUE_32));
+    U32 VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16 + 2);
+    printf("U32 VALUE: %u\n", VALUE_32);
 
     // TESTING FUNCTION CALLBACK TO BE ABLE TO PROPERLY ALLOCATE
     // AND DESIGNATE MEMORY IN SPECIFIC PREFETCH INSTANCES
@@ -44,4 +45,5 @@ int main(void)
     }
 
     return 0;
+    
 }
