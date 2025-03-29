@@ -13,7 +13,7 @@
 
 void CALLBACK(void)
 {
-    printf("CALLBACK CALLED");
+    printf("CALLBACK CALLED\n");
 }
 
 int main(void) 
@@ -31,7 +31,8 @@ int main(void)
     U16 VALUE_16 = 0xFF;
     printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
 
-    U32 VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16 + 2);
+    U32 VALUE_32 = 0x10000;
+    VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16 + 2);
     printf("U32 VALUE: %u\n", VALUE_32);
 
     // TESTING FUNCTION CALLBACK TO BE ABLE TO PROPERLY ALLOCATE
