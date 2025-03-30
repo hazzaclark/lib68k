@@ -11,11 +11,6 @@
 #include "68KOPCODE.h"
 #include "68KSTD.h"
 
-void CALLBACK(void)
-{
-    printf("CALLBACK CALLED\n");
-}
-
 int main(void) 
 {
     printf("====================================================\n");
@@ -31,19 +26,17 @@ int main(void)
     U16 VALUE_16 = 0xFF;
     printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
 
-    U32 VALUE_32 = 0x10000;
-    VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16 + 2);
+    U32 VALUE_32 = 0x100000;
+    VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16);
     printf("U32 VALUE: %u\n", VALUE_32);
+    
+    U8 VALUE_8 = 0xAB;
+    U32 ADDRESS_8 = 0x10000;
 
-    // TESTING FUNCTION CALLBACK TO BE ABLE TO PROPERLY ALLOCATE
-    // AND DESIGNATE MEMORY IN SPECIFIC PREFETCH INSTANCES
-
-    M68K_SET_FUNC_CALLBACK(CALLBACK);
-
-    if(M68K_SET_FC_ACK != NULL)
-    {
-        M68K_SET_FC_ACK();
-    }
+    M68K_WRITE_8(ADDRESS_8, VALUE_8);
+    U8 READ_8 = M68K_READ_8(ADDRESS_8);
+    printf("U8: WROTE 0x%02X, READ 0x%02X\n", 
+           VALUE_8, READ_8);
 
     return 0;
     
