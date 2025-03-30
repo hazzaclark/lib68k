@@ -23,14 +23,14 @@ int main(void)
     U8 VALUE = 0xF;
     printf("U8 VALUE:%u\n", M68K_READ_8(VALUE));
 
-    U16 VALUE_16 = 0xFF;
+    U16 VALUE_16 = 0xFFFF;
     printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
 
     U32 VALUE_32 = 0x100000;
     VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16);
     printf("U32 VALUE: %u\n", VALUE_32);
     
-    U8 VALUE_8 = 0xAB;
+    U8 VALUE_8 = 0xFF;
     U8 ADDRESS_8 = 0x10;
 
     M68K_WRITE_8(ADDRESS_8, VALUE_8);
@@ -39,5 +39,4 @@ int main(void)
            VALUE_8, READ_8);
 
     return 0;
-    
 }
