@@ -21,14 +21,15 @@ int main(void)
     M68K_EXEC(100);
 
     U8 VALUE = 0xF;
-    printf("U8 VALUE:%u\n", M68K_READ_8(VALUE));
+    printf("U8 VALUE:0x%02X, DEC: %d\n", M68K_READ_8(VALUE), VALUE);
 
     U16 VALUE_16 = 0xFFFF;
-    printf("U16 VALUE:%u\n", M68K_READ_16(VALUE_16));
+    printf("U16 VALUE:0x%04X, DEC: %d\n", M68K_READ_16(VALUE_16), VALUE_16);
 
-    U32 VALUE_32 = 0x100000;
-    VALUE_32 = (M68K_READ_16(VALUE_16) << 16) | M68K_READ_16(VALUE_16);
-    printf("U32 VALUE: %u\n", VALUE_32);
+    U32 ADDRESS_32 = 0x1000;
+    U32 VALUE_32 = 0x12345678;
+    M68K_WRITE_32(ADDRESS_32, VALUE_32);
+    printf("U32 VALUE:0x%08X, DEC: %d\n", M68K_READ_32(ADDRESS_32), VALUE_32);
     
     U8 VALUE_8 = 0xFF;
     U8 ADDRESS_8 = 0x10;
