@@ -17,11 +17,12 @@
 
 CPU_68K CPU;
 static unsigned int CPU_TYPE;
-static unsigned char RAM[M68K_MAX_RAM + 1];
 static U8 MAX_MEMORY_BUFFER[M68K_MAX_MEMORY_BUFFER_SIZE];
 
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
+
+#define			RAM			MAX_MEMORY_BUFFER
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -219,39 +220,23 @@ void INITIALIZE_MEMORY(void)
 
 U8 M68K_READ_8(U32 ADDRESS)
 {
-    U8 BANK = (ADDRESS >> 24) & 0xFF;
-    U32 OFFSET = ADDRESS & 0xFFFFFF;
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
-	{
-        return CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET];
+    if (ADDRESS < M68K_MAX_MEMORY_BUFFER_SIZE)
+    {
+        return CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS];
     }
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_8 != NULL) 
-	{
-        return CPU.MEMORY_MAP[BANK].MEMORY_READ_8(ADDRESS);
-    }
-    
+
     return 0;
 }
 
 U16 M68K_READ_16(U32 ADDRESS)
 {
-    U16 BANK = (ADDRESS >> 24) & 0xFF;
-    U32 OFFSET = ADDRESS & 0xFFFFFF;
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
+    if (ADDRESS < M68K_MAX_MEMORY_BUFFER_SIZE - 1)
     {
-        return (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET] << 8) | 
-               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 1]);
+        return (CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS] << 8) | 
+               CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS + 1];
     }
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_16 != NULL) 
-	{
-        return CPU.MEMORY_MAP[BANK].MEMORY_READ_16(ADDRESS);
-    }
-    
-    return 0; 
+	
+    return 0;
 }
 
 
@@ -262,37 +247,27 @@ U16 M68K_READ_16(U32 ADDRESS)
 
 U32 M68K_READ_32(U32 ADDRESS)
 {
-    U8 BANK = (ADDRESS >> 24) & 0xFF;
-    U32 OFFSET = ADDRESS & 0xFFFFFF;
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_BASE != NULL) 
+    if (ADDRESS < M68K_MAX_MEMORY_BUFFER_SIZE - 3)
     {
-        return (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET] << 24) |
-               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 1] << 16) |
-               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 2] << 8) |
-               (CPU.MEMORY_MAP[BANK].MEMORY_BASE[OFFSET + 3]);
+        return (CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS] << 24) |
+               (CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS + 1] << 16) |
+               (CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS + 2] << 8) |
+               CPU.MEMORY_MAP[0].MEMORY_BASE[ADDRESS + 3];
     }
-    
-    if (CPU.MEMORY_MAP[BANK].MEMORY_READ_32 != NULL) 
-    {
-        return CPU.MEMORY_MAP[BANK].MEMORY_READ_32(ADDRESS);
-    }
-    
     return 0;
 }
 
-
-void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA)
+void M68K_WRITE_8(U32 ADDRESS, U8 DATA)
 {
 	WRITE_BYTE(RAM, ADDRESS, DATA);
 }
 
-void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA)
+void M68K_WRITE_16(U32 ADDRESS, U16 DATA)
 {
 	WRITE_WORD(RAM, ADDRESS, DATA);
 }
 
-void M68K_WRITE_32(unsigned int ADDRESS, unsigned int DATA)
+void M68K_WRITE_32(U32 ADDRESS, U32 DATA)
 {
 	WRITE_LONG(RAM, ADDRESS, DATA);
 }
