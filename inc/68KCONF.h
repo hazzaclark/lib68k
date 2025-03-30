@@ -70,9 +70,9 @@
 #define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFF)
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
-#define		M68K_MAX_RAM						0xFF
-#define		M68K_MAX_ROM						0xFFFF
-#define 	M68K_MAX_MEMORY_BUFFER_SIZE 		0x10000
+#define		M68K_MAX_RAM						0xFFFF
+#define		M68K_MAX_ROM						0xFFFFFFFF
+#define 	M68K_MAX_MEMORY_BUFFER_SIZE 		0x100000
 
 #define 	M68K_FUNCTION_CODE_USER_DATA          	1
 #define 	M68K_FUNCTION_CODE_USER_PROGRAM       	2
@@ -103,9 +103,9 @@ U8 M68K_READ_8(U32 ADDRESS);
 U16 M68K_READ_16(U32 ADDRESS);
 U32 M68K_READ_32(U32 ADDRESS);
 
-void M68K_WRITE_8(unsigned int ADDRESS, unsigned int DATA);
-void M68K_WRITE_16(unsigned int ADDRESS, unsigned int DATA);
-void M68K_WRITE_32(unsigned int ADDRESS, unsigned int DATA);
+void M68K_WRITE_8(U32 ADDRESS, U8 DATA);
+void M68K_WRITE_16(U32 ADDRESS, U16 DATA);
+void M68K_WRITE_32(U32 ADDRESS, U32 DATA);
 
 unsigned int CTRL_READ_BYTE(unsigned int ADDRESS);
 unsigned int CTRL_READ_WORD(unsigned int ADDRESS);
