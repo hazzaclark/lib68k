@@ -22,8 +22,8 @@ INC			=		inc
 ##			    TARGET LINKING			       ##
 #########################################################################
 
-TARGET 		= 		lib68k.exe  
-LIBRARY		= 		lib68k.so lib68k.a     
+TARGET 		= 		lib68k
+LIBRARY		= 		lib68k.so     
 
 all: $(TARGET)
 
