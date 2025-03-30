@@ -43,6 +43,8 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
+``Motorola 68K-specific Big Endian Reads, handled with LE in mind``
+
 ![image](https://github.com/user-attachments/assets/57cf7e9c-d389-4f33-b0af-3fdcb11d1457)
 
  # Sources:
