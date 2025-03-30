@@ -31,7 +31,7 @@ int main(void)
     printf("U32 VALUE: %u\n", VALUE_32);
     
     U8 VALUE_8 = 0xAB;
-    U32 ADDRESS_8 = 0x10000;
+    U8 ADDRESS_8 = 0x10;
 
     M68K_WRITE_8(ADDRESS_8, VALUE_8);
     U8 READ_8 = M68K_READ_8(ADDRESS_8);
