@@ -281,7 +281,7 @@ int M68K_EXEC(int CYCLES)
             printf("INIT CYCLES: %d\n", M68K_GET_CYCLES());
 
             M68K_USE_CYCLES(CYCLES);
-            printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES(), M68K_CYC_REMAIN);
+            printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES());
 
         } while(M68K_GET_CYCLES() > 0);
 
