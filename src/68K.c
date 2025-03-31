@@ -233,7 +233,7 @@ void M68K_INIT(void)
 
 int M68K_EXEC(int CYCLES)
 {
-    int INIT_CYCLES = 0;
+    int INIT_CYCLES;
 
     // SAFETY CHECK TO DETERMINE WHETHER THE INITIAL CYCLES HAVE BEEN EXECUTED
 
@@ -256,7 +256,7 @@ int M68K_EXEC(int CYCLES)
 
     if(!M68K_CPU_STOPPED)
     {
-        if(M68K_GET_CYCLES() > 0)
+        do
         {
             // CALL EXT. HOOK TO JUMP TO THE CURRENT ROUTINE IN THE PC
             M68K_BASE_INSTR_HOOK(M68K_REG_PC);
@@ -281,8 +281,11 @@ int M68K_EXEC(int CYCLES)
             M68K_USE_CYCLES(CYCLES);
 
             printf("M68K CURRENT PC STATE: %d\n", M68K_GET_CYCLES());
-        }
-    }
+
+        } while(M68K_GET_CYCLES() > 0);
+
+        M68K_REG_PPC = M68K_REG_PC;
+    } 
 
     else
         M68K_SET_CYCLES(0);
