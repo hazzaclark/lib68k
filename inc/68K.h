@@ -294,6 +294,8 @@ typedef struct CPU_68K
 
     CPU_68K_MEMORY MEMORY_MAP[256];
 
+    signed int CYCLE_INSTR;
+
 } CPU_68K;
 
 
@@ -407,6 +409,8 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_PREF_ADDRESS       CPU.PREFETCH_ADDRESS
 #define         M68K_PREF_MODE          CPU.PREFETCH_MODE
 
+#define         M68K_CYC_INSTR          CPU.CYC_INSTR
+
 #define         M68K_MEMORY_MAP          CPU.MEMORY_MAP
 #define         M68K_MEMORY_BASE         CPU_MEMORY.MEMORY_BASE
 #define         M68K_MEMORY_READ_8       CPU_MEMORY.MEMORY_READ_8
@@ -427,7 +431,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
-int M68K_EXEC(int CYCLES);
+void M68K_EXEC(int CYCLES);
 void M68K_JUMP(unsigned NEW_PC);
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
