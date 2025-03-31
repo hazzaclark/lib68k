@@ -216,6 +216,7 @@ typedef struct CPU_68K
     unsigned int RESET_CYCLES;
     unsigned char MEMORY_BASE;
     unsigned int* CYCLE_EXCEPTION;
+    unsigned int CYCLE_END;
 
     unsigned(*MEMORY_DATA);
     unsigned(*MEMORY_ADDRESS);
@@ -293,8 +294,6 @@ typedef struct CPU_68K
     unsigned PREFETCH_MODE;
 
     CPU_68K_MEMORY MEMORY_MAP[256];
-
-    signed int CYCLE_INSTR;
 
 } CPU_68K;
 
@@ -408,8 +407,6 @@ typedef enum CPU_68K_FLAGS
 
 #define         M68K_PREF_ADDRESS       CPU.PREFETCH_ADDRESS
 #define         M68K_PREF_MODE          CPU.PREFETCH_MODE
-
-#define         M68K_CYC_INSTR          CPU.CYC_INSTR
 
 #define         M68K_MEMORY_MAP          CPU.MEMORY_MAP
 #define         M68K_MEMORY_BASE         CPU_MEMORY.MEMORY_BASE
