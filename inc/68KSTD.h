@@ -17,13 +17,13 @@
 #else
     #define USE_STD_LIB
 
-    #define M68K_ERROR_EXIT(MESSAGE, ...)                           \
-        fprintf(stderr, "Error: " MESSAGE "\n", ##__VA_ARGS__);     \
+    #define M68K_ERROR_EXIT(MESSAGE)                           \
+        fprintf(stderr, "Error: " MESSAGE "\n");     \
         exit(1);                                                    \
 
 
-    #define M68K_PERROR_EXIT(MESSAGE, ...)                              \
-        perror("Error: " MESSAGE "\n", ##__VA_ARGS__);                  \
+    #define M68K_PERROR_EXIT(MESSAGE)                              \
+        perror("Error: " MESSAGE "\n");                  \
         exit(1);                                                        \
 
     // GET THE CORRESPONDING AMOUNT OF LINE PERTAINS FILE
