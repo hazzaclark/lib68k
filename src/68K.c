@@ -20,6 +20,8 @@
 
 #ifndef USE_68K
 
+static unsigned char CYCLE_RANGE[0x10000];
+
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
@@ -35,32 +37,30 @@
 
 void INITIALISE_68K_CYCLES(void)
 {
-	char* CPU_68K_CYCLES = (char*)malloc(sizeof((char)M68K_BASE_BITMASK));
-
 	/* THIS LOOP WILL CHECK FOR EVERY SUBSEQUENT BITWISE */
 	/* OPERATION AND EVALUATE IT'S DESIGNATED MEMORY */
 
 	/* THE FIRST CO-EFFICIENT REPRESENTS THE BITWISE LENGTH OF THE OPERATION */
 	/* THE SECOND CO-EFFICIENT REPRESENTS THE SIZE OF THE REGISTER */
 
-	for (size_t INDEX = 0; INDEX < sizeof(CPU_68K_CYCLES); INDEX++)
+	for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
 	{	
-		switch (INDEX / 16)
+		switch (INDEX / 0x4000)
 		{
 			case 0:
-				CPU_68K_CYCLES[INDEX] += (int)M68K_LOW_BITMASK;
+				CYCLE_RANGE[INDEX] += (int)M68K_LOW_BITMASK;
 				break;
 
 			case 1:
-				CPU_68K_CYCLES[INDEX] += (int)M68K_MID_BITMASK;
+                CYCLE_RANGE[INDEX] += (int)M68K_MID_BITMASK;
 				break;
 
 			case 2:
-				CPU_68K_CYCLES[INDEX] += (int)M68K_HIGH_BITMASK;
+                CYCLE_RANGE[INDEX] += (int)M68K_HIGH_BITMASK;
 				break;
 
 			default:
-				CPU_68K_CYCLES[INDEX] += (int)M68K_MAX_BITMASK;
+                CYCLE_RANGE[INDEX] += (int)M68K_MAX_BITMASK;
 				break;
 		}
 	}
@@ -233,19 +233,21 @@ void M68K_INIT(void)
 
 void M68K_EXEC(int CYCLES)
 {
+    int REMAIN = CYCLES;
+
     // SAFETY CHECK TO DETERMINE WHETHER THE INITIAL CYCLES HAVE BEEN EXECUTED
 
     if(M68K_RESET_CYCLES)
     {
-        int RET_CYCLES = M68K_RESET_CYCLES;
+        REMAIN -= M68K_RESET_CYCLES;
         M68K_RESET_CYCLES = 0;
-
-        CYCLES -= RET_CYCLES;
+        printf("RESET APPLIED, REMAINING: %d\n", REMAIN);
     }
 
     // SET THE CURRENT CYCLES BASED OFF OF THE LOCAL ARG PROVIDED
 
     M68K_SET_CYCLES(CYCLES);
+
     printf("M68K CYCLES SET WITH VALUE: %d\n", CYCLES);
 
     if(!M68K_CPU_STOPPED)
@@ -273,6 +275,7 @@ void M68K_EXEC(int CYCLES)
             
             M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
             printf("INIT CYCLES: %d\n", M68K_GET_CYCLES());
+
 
             M68K_USE_CYCLES(CYCLES);
             printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES());
