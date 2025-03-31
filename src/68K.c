@@ -278,9 +278,10 @@ int M68K_EXEC(int CYCLES)
             // LIASSE WITH THE INDEX REGISTER AND USE THE RELEVANT CYCLES PER INSTRUCTIONS
             
             M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
-            M68K_USE_CYCLES(CYCLES);
+            printf("INIT CYCLES: %d\n", M68K_GET_CYCLES());
 
-            printf("M68K CURRENT PC STATE: %d\n", M68K_GET_CYCLES());
+            M68K_USE_CYCLES(CYCLES);
+            printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES(), M68K_CYC_REMAIN);
 
         } while(M68K_GET_CYCLES() > 0);
 
