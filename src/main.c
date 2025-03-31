@@ -18,9 +18,12 @@ int main(void)
     printf("====================================================\n");
     
     M68K_INIT();
+    M68K_SET_CPU_TYPE(M68K_CPU_000);
     M68K_EXEC(100);
 
-    U8 VALUE = 0xF;
+    printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
+
+    U8 VALUE = 0xFF;
     printf("U8 VALUE:0x%02X, DEC: %d\n", M68K_READ_8(VALUE), VALUE);
 
     U16 VALUE_16 = 0xFFFF;
