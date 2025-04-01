@@ -19,7 +19,7 @@ int main(void)
     
     M68K_INIT();
     M68K_SET_CPU_TYPE(M68K_CPU_000);
-    M68K_EXEC(50);
+    M68K_EXEC(100000);
 
     printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
 
