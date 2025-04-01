@@ -421,9 +421,6 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_READ_IMM_16(ADDRESS)       *(U16*)(CPU.MEMORY_MAP[((ADDRESS) >> 16) & 0xFF].MEMORY_BASE + ((ADDRESS) & 0xFFFF))
 #define         M68K_READ_IMM_32(ADDRESS)       (M68K_READ_IMM_16(ADDRESS) << 16) | (M68K_READ_IMM_16(ADDRESS + 2))
 
-                const U8 INSTRUCTION_CYCLES[OPCODE_MAX];
-#define         M68K_GET_INSTRUCTION_CYCLES(OPCODE) INSTRUCTION_CYCLES[OPCODE]
-
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
