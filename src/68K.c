@@ -269,9 +269,7 @@ void M68K_EXEC(int CYCLES)
         M68K_REG_PPC = M68K_REG_PC;
     } 
     else
-    {
         M68K_SET_CYCLES(0);
-    }
 }
 
 #endif
