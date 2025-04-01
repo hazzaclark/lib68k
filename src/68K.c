@@ -39,20 +39,23 @@ void INITIALISE_68K_CYCLES(unsigned int* CYCLE_RANGE)
 {
     for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
     {
-        int SHIFT = (INDEX / 0x4000);
-
+        // Calculate SHIFT based on the opcode pattern
+        // Using a better distribution method
+        int SHIFT = (INDEX >> 14) & 0x3; // This extracts bits 14-15
+        
+        // Define cycle values explicitly instead of using bitmasks
         static const int CYCLE_MULTIPLIERS[] = 
         {
-            M68K_LOW_BITMASK,  
-            M68K_MID_BITMASK,  
-            M68K_HIGH_BITMASK, 
-            M68K_MAX_BITMASK   
+            4,   // Fast instructions
+            12,  // Medium instructions
+            24,  // Slow instructions
+            56   // Very slow instructions
         };
-
-        CYCLE_RANGE[INDEX] += CYCLE_MULTIPLIERS[(SHIFT > 3) ? 3 : SHIFT];  
+        
+        // Assign the appropriate cycle value based on opcode type
+        CYCLE_RANGE[INDEX] = CYCLE_MULTIPLIERS[SHIFT];
     }
 }
-
 
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
@@ -195,6 +198,8 @@ void M68K_INIT(void)
     CPU.STATUS_REGISTER = 0x2000;
     CPU.PC = 0x0000;
 
+    INITIALISE_68K_CYCLES(CYCLE_RANGE);
+
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
     printf("OPCODE TABLE INITIALISED.\n");
@@ -232,7 +237,6 @@ void M68K_EXEC(int CYCLES)
         printf("RESET APPLIED, REMAINING: %d\n", REMAIN);
     }
 
-    INITIALISE_68K_CYCLES(CYCLE_RANGE);
     M68K_SET_CYCLES(CYCLES);
     printf("M68K CYCLES SET WITH VALUE: %d\n", CYCLES);
 
@@ -251,8 +255,7 @@ void M68K_EXEC(int CYCLES)
             M68K_REG_IR = READ_IMM_16();
             
             int CY = CYCLE_RANGE[M68K_REG_IR];
-
-            M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
+            M68K_OPCODE_JUMP_TABLE[CYCLE_RANGE[M68K_REG_IR]]();
 
             if (M68K_GET_CYCLES() >= (unsigned)CY) 
             {
