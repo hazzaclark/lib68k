@@ -20,7 +20,7 @@
 
 #ifndef USE_68K
 
-static unsigned char CYCLE_RANGE[0x10000];
+static unsigned int CYCLE_RANGE[0x10000];
 
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
@@ -35,36 +35,24 @@ static unsigned char CYCLE_RANGE[0x10000];
 
 /* SEE 1.1 USER PROGRAMMING MODEL https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=13 */
 
-void INITIALISE_68K_CYCLES(void)
+void INITIALISE_68K_CYCLES(unsigned int* CYCLE_RANGE)
 {
-	/* THIS LOOP WILL CHECK FOR EVERY SUBSEQUENT BITWISE */
-	/* OPERATION AND EVALUATE IT'S DESIGNATED MEMORY */
+    for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
+    {
+        int SHIFT = (INDEX / 0x4000);
 
-	/* THE FIRST CO-EFFICIENT REPRESENTS THE BITWISE LENGTH OF THE OPERATION */
-	/* THE SECOND CO-EFFICIENT REPRESENTS THE SIZE OF THE REGISTER */
+        static const int CYCLE_MULTIPLIERS[] = 
+        {
+            M68K_LOW_BITMASK,  
+            M68K_MID_BITMASK,  
+            M68K_HIGH_BITMASK, 
+            M68K_MAX_BITMASK   
+        };
 
-	for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
-	{	
-		switch (INDEX / 0x4000)
-		{
-			case 0:
-				CYCLE_RANGE[INDEX] += (int)M68K_LOW_BITMASK;
-				break;
-
-			case 1:
-                CYCLE_RANGE[INDEX] += (int)M68K_MID_BITMASK;
-				break;
-
-			case 2:
-                CYCLE_RANGE[INDEX] += (int)M68K_HIGH_BITMASK;
-				break;
-
-			default:
-                CYCLE_RANGE[INDEX] += (int)M68K_MAX_BITMASK;
-				break;
-		}
-	}
+        CYCLE_RANGE[INDEX] += CYCLE_MULTIPLIERS[(SHIFT > 3) ? 3 : SHIFT];  
+    }
 }
+
 
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
@@ -233,60 +221,58 @@ void M68K_INIT(void)
 
 void M68K_EXEC(int CYCLES)
 {
-    int REMAIN = CYCLES;
+    if (CYCLES < 0) CYCLES = 0;
 
-    // SAFETY CHECK TO DETERMINE WHETHER THE INITIAL CYCLES HAVE BEEN EXECUTED
+    int REMAIN = CYCLES;
 
     if(M68K_RESET_CYCLES)
     {
-        REMAIN -= M68K_RESET_CYCLES;
+        REMAIN = (REMAIN > (int)M68K_RESET_CYCLES) ? (REMAIN - M68K_RESET_CYCLES) : 0;
         M68K_RESET_CYCLES = 0;
         printf("RESET APPLIED, REMAINING: %d\n", REMAIN);
     }
 
-    // SET THE CURRENT CYCLES BASED OFF OF THE LOCAL ARG PROVIDED
-
+    INITIALISE_68K_CYCLES(CYCLE_RANGE);
     M68K_SET_CYCLES(CYCLES);
-
     printf("M68K CYCLES SET WITH VALUE: %d\n", CYCLES);
 
     if(!M68K_CPU_STOPPED)
     {
         do
         {
-            // CALL EXT. HOOK TO JUMP TO THE CURRENT ROUTINE IN THE PC
             M68K_BASE_INSTR_HOOK(M68K_REG_PC);
             M68K_REG_PPC = M68K_REG_PC;
-
-            // COPY ALL REGISTERS FROM THE CURRENT SET TO THE
-            // REGISTER BASE - ALLOWING THESE TO TAKE INTO ACCOUNT CYCLE COUNTS
-            // IN RELATION TO INSTRUCTIONS
 
             for(int INDEX = 15; INDEX >= 0; INDEX--)
             {
                 M68K_REG_BASE[INDEX] = M68K_REG_DA[INDEX];
             }
 
-            // READ AND SAVE THE CURRENT INSTRUCTION
             M68K_REG_IR = READ_IMM_16();
-
-            // VALIDATE IF THE CORRESPONDING INSTRUCTION IS WITHIN THE JUMP TABLE
-            // LIASSE WITH THE INDEX REGISTER AND USE THE RELEVANT CYCLES PER INSTRUCTIONS
             
+            int CY = CYCLE_RANGE[M68K_REG_IR];
+
             M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
-            printf("INIT CYCLES: %d\n", M68K_GET_CYCLES());
 
+            if (M68K_GET_CYCLES() >= (unsigned)CY) 
+            {
+                M68K_USE_CYCLES(CY);
+            } 
+            else 
+            {
+                M68K_USE_CYCLES(M68K_GET_CYCLES());
+            }
 
-            M68K_USE_CYCLES(CYCLES);
             printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES());
 
         } while(M68K_GET_CYCLES() > 0);
 
         M68K_REG_PPC = M68K_REG_PC;
     } 
-
     else
+    {
         M68K_SET_CYCLES(0);
+    }
 }
 
 #endif
