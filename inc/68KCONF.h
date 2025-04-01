@@ -63,6 +63,8 @@
 #define		M68K_GET_CYCLES()					M68K_CYC_REMAIN
 #define		M68K_ALL_CYCLES()					M68K_CYC_REMAIN %= M68K_CYCLE[M68K_REG_IR]
 
+#define		M68K_USE_MASTER_CYCLES(VALUE)		CPU.MASTER_CYCLES += (VALUE)
+
 #endif
 
 #define 	M68K_MASK_OUT_ABOVE_8(A)            ((A) & 0xFF)
