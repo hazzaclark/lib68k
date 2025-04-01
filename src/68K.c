@@ -39,20 +39,16 @@ void INITIALISE_68K_CYCLES(unsigned int* CYCLE_RANGE)
 {
     for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
     {
-        // Calculate SHIFT based on the opcode pattern
-        // Using a better distribution method
-        int SHIFT = (INDEX >> 14) & 0x3; // This extracts bits 14-15
+        int SHIFT = (INDEX >> 14) & 0x3;
         
-        // Define cycle values explicitly instead of using bitmasks
         static const int CYCLE_MULTIPLIERS[] = 
         {
-            4,   // Fast instructions
-            12,  // Medium instructions
-            24,  // Slow instructions
-            56   // Very slow instructions
+            4,  
+            12,  
+            24,  
+            56   
         };
         
-        // Assign the appropriate cycle value based on opcode type
         CYCLE_RANGE[INDEX] = CYCLE_MULTIPLIERS[SHIFT];
     }
 }
