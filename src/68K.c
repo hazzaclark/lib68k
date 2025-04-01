@@ -37,22 +37,14 @@ static unsigned int CYCLE_RANGE[0x10000];
 
 void INITIALISE_68K_CYCLES(unsigned int* CYCLE_RANGE)
 {
+    static int CYCLE_MULTIPLIERS[] = {4, 8, 12, 24, 32, 38, 40, 56};
+    
     for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
     {
         int SHIFT = (INDEX >> 14) & 0x3;
-        
-        static const int CYCLE_MULTIPLIERS[] = 
-        {
-            4,  
-            12,  
-            24,  
-            56   
-        };
-        
         CYCLE_RANGE[INDEX] = CYCLE_MULTIPLIERS[SHIFT];
     }
 }
-
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
 
@@ -251,9 +243,10 @@ void M68K_EXEC(int CYCLES)
             M68K_REG_IR = READ_IMM_16();
             
             int CY = CYCLE_RANGE[M68K_REG_IR];
+
             M68K_OPCODE_JUMP_TABLE[CYCLE_RANGE[M68K_REG_IR]]();
 
-            if (M68K_GET_CYCLES() >= (unsigned)CY) 
+            if (M68K_GET_CYCLES() > (unsigned)CY) 
             {
                 M68K_USE_CYCLES(CY);
             } 
@@ -262,7 +255,7 @@ void M68K_EXEC(int CYCLES)
                 M68K_USE_CYCLES(M68K_GET_CYCLES());
             }
 
-            printf("CYCLES REMAINING: %d\n", M68K_GET_CYCLES());
+            printf("CYCLES REMAINING: %d, %d\n", M68K_GET_CYCLES(), CY);
 
         } while(M68K_GET_CYCLES() > 0);
 
