@@ -20,6 +20,10 @@
 
 #ifndef USE_68K
 
+int M68K_INITIAL_CYCLES;
+int M68K_REMAINING_CYCLES = 0;
+unsigned int M68K_ADDRESSING_SPACE; 
+
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
@@ -202,6 +206,10 @@ int M68K_EXEC(int CYCLES)
 
     M68K_SET_CYCLES(CYCLES);
     printf("M68K SET WITH CYCLES: %d\n", M68K_SET_CYCLES(CYCLES));
+
+    M68K_INITIAL_CYCLES = CYCLES;
+
+    printf("M68K INITIAL CYCLES: %d\n", M68K_INITIAL_CYCLES);
 
     return 0;
 }
