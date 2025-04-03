@@ -228,7 +228,7 @@ int M68K_EXEC(int CYCLES)
             M68K_REG_D[INDEX] = M68K_REG_DA[INDEX];
         }
 
-
+        M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
         M68K_USE_CYCLES(CYCLE_RANGE[M68K_REG_IR]);
 
         printf("SO FAR SO GOOD\n");
