@@ -20,31 +20,10 @@
 
 #ifndef USE_68K
 
-static unsigned int CYCLE_RANGE[0x10000];
-
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
 
-/* FOLLOWING THE INITIAL DECLARATION OF THE VECTOR TABLE */
-/* DISCERN THE RUDIMENTARY AMOUNT OF CPU CYCLES */
-/* THE CPU WILL GOVERN OVER THE COURSE OF IT'S RUN TIME */
-
-/* THIS WILL ENCOMPASS THE WIDE BITWISE VARIETY */
-/* THROUGH THE MEANS OF EVALUATING THE SIZE OF THE DESIGNATED MEMORY */
-
-/* SEE 1.1 USER PROGRAMMING MODEL https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=13 */
-
-void INITIALISE_68K_CYCLES(unsigned int* CYCLE_RANGE)
-{
-    static int CYCLE_MULTIPLIERS[] = {4, 8, 12, 24, 32, 38, 40, 56};
-    
-    for (size_t INDEX = 0; INDEX < 0x10000; INDEX++)
-    {
-        int SHIFT = (INDEX >> 14) & 0x3;
-        CYCLE_RANGE[INDEX] = CYCLE_MULTIPLIERS[SHIFT];
-    }
-}
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
 
@@ -186,8 +165,6 @@ void M68K_INIT(void)
     CPU.STATUS_REGISTER = 0x2000;
     CPU.PC = 0x0000;
 
-    INITIALISE_68K_CYCLES(CYCLE_RANGE);
-
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
     printf("OPCODE TABLE INITIALISED.\n");
@@ -212,57 +189,21 @@ void M68K_INIT(void)
 // EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
 // TYPICALLY IN ANY OTHER CONTEXT, THERE WONT BE A HARD-CODED AMOUNT OF CYCLES TO REACH BEFORE THE PROGRAM HALTS
 
-void M68K_EXEC(int CYCLES)
+int M68K_EXEC(int CYCLES)
 {
-    if (CYCLES < 0) CYCLES = 0;
-
-    int REMAIN = CYCLES;
-
     if(M68K_RESET_CYCLES)
     {
-        REMAIN = (REMAIN > (int)M68K_RESET_CYCLES) ? (REMAIN - M68K_RESET_CYCLES) : 0;
+        int RES_COUNT = M68K_RESET_CYCLES;
         M68K_RESET_CYCLES = 0;
-        printf("RESET APPLIED, REMAINING: %d\n", REMAIN);
+        CYCLES -= RES_COUNT;
+
+        if(CYCLES <= 0) return RES_COUNT;
     }
 
     M68K_SET_CYCLES(CYCLES);
-    printf("M68K CYCLES SET WITH VALUE: %d\n", CYCLES);
+    printf("M68K SET WITH CYCLES: %d\n", M68K_SET_CYCLES(CYCLES));
 
-    if(!M68K_CPU_STOPPED)
-    {
-        do
-        {
-            M68K_BASE_INSTR_HOOK(M68K_REG_PC);
-            M68K_REG_PPC = M68K_REG_PC;
-
-            for(int INDEX = 15; INDEX >= 0; INDEX--)
-            {
-                M68K_REG_BASE[INDEX] = M68K_REG_DA[INDEX];
-            }
-
-            M68K_REG_IR = READ_IMM_16();
-            
-            int CY = CYCLE_RANGE[M68K_REG_IR];
-
-            M68K_OPCODE_JUMP_TABLE[CYCLE_RANGE[M68K_REG_IR]]();
-
-            if (M68K_GET_CYCLES() > (unsigned)CY) 
-            {
-                M68K_USE_CYCLES(CY);
-            } 
-            else 
-            {
-                M68K_USE_CYCLES(M68K_GET_CYCLES());
-            }
-
-            printf("CYCLES REMAINING: %d, %d\n", M68K_GET_CYCLES(), CY);
-
-        } while(M68K_GET_CYCLES() > 0);
-
-        M68K_REG_PPC = M68K_REG_PC;
-    } 
-    else
-        M68K_SET_CYCLES(0);
+    return 0;
 }
 
 #endif
