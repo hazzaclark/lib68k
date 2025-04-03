@@ -450,4 +450,7 @@ unsigned int READ_IMM_32(void);
 /*							        68000 MISC.							         */
 /*===============================================================================*/
 
+extern int M68K_REMAINING_CYCLES;
+extern unsigned int M68K_ADDRESSING_SPACE; 
+
 #endif
