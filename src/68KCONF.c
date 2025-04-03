@@ -201,8 +201,8 @@ void M68K_PULSE_HALT(void)
 
 void INITIALIZE_MEMORY(void)
 {
-    U8* RAM  = malloc(0x10000);
-    memset(RAM, 0, 0x10000);
+    U8* RAM  = malloc(0x10);
+    memset(RAM, 0, 0x10);
     
     CPU.MEMORY_MAP[0x00].MEMORY_BASE = RAM;
     CPU.MEMORY_MAP[0x00].MEMORY_READ_8 = NULL;
