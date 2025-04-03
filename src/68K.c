@@ -211,6 +211,19 @@ int M68K_EXEC(int CYCLES)
 
     printf("M68K INITIAL CYCLES: %d\n", M68K_INITIAL_CYCLES);
 
+    if(!M68K_CPU_STOPPED)
+    {
+        printf("CPU IS BEING USED\n");
+
+        do
+        {
+            printf("CYCLES ARE BEING USED\n");
+
+            M68K_BASE_INSTR_HOOK(M68K_REG_PC);
+
+        } while(M68K_GET_CYCLES() > 0);
+    }
+
     return 0;
 }
 
