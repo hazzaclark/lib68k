@@ -167,7 +167,11 @@ void M68K_INIT(void)
         CPU.DATA_REGISTER[i] = i;
         CPU.ADDRESS_REGISTER[i] = i + 8;
     }
-    
+
+    CPU.PC = 0x00001000;
+    CPU.PREVIOUS_PC = 0x00000000;
+    CPU.INDEX_REGISTER = 0x0000;
+
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
     printf("OPCODE TABLE INITIALISED.\n");
@@ -187,33 +191,33 @@ void M68K_INIT(void)
     MEMORY_MAP(0x0000, 0xFF8000, true);
 
     printf("68000 INITIALISATION COMPLETE.\n");
+
+    printf("PC: 0x%08x\n", M68K_REG_PC);
 }
 
 // EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
 // TYPICALLY IN ANY OTHER CONTEXT, THERE WONT BE A HARD-CODED AMOUNT OF CYCLES TO REACH BEFORE THE PROGRAM HALTS
 
-int M68K_EXEC(int CYCLES)
+int M68K_EXEC(int CYCLES) 
 {
-    if(CPU.MASTER_CYCLES >= CYCLES) return 0;
-
     M68K_SET_CYCLES(CYCLES);
     M68K_INITIAL_CYCLES = CYCLES;
-
-    printf("M68K SETUP WITH CYCLES %d\n", M68K_INITIAL_CYCLES);
-
-    if(M68K_CPU_STOPPED)
+    
+    printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
+    
+    if(!M68K_CPU_STOPPED && M68K_GET_CYCLES() > 0) 
     {
-        CPU.MASTER_CYCLES = CYCLES;
-        return 0;
+        while(M68K_GET_CYCLES() > 0) 
+        {
+            M68K_REMAINING_CYCLES = M68K_GET_CYCLES();
+
+            M68K_USE_CYCLES(4);
+            printf("CYCLES: %d\n", M68K_REMAINING_CYCLES);
+        }
     }
-
-    U16 IR = 0xBBCC;
-        M68K_WRITE_16(0x1010, IR);
-        U16 READ_16_2 = M68K_READ_16(0x1010);
-        printf("16-BIT-IR: WROTE: 0x%04X, READ: 0x%04X\n", IR, READ_16_2);
-
-
-    return 0;
+    
+    printf("CYCLES LEFT %d\n", M68K_GET_CYCLES());
+    return M68K_INITIAL_CYCLES - M68K_GET_CYCLES();
 }
 
 #endif
