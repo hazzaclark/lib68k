@@ -414,7 +414,7 @@ M68K_MAKE_OPCODE(BCHG, 8, D, EA)
 {
     unsigned* DESTINATION = &M68K_DATA_LOW;
     unsigned EA = 0;
-    unsigned SRC = M68K_READ_8(EA);
+    unsigned SRC = M68K_READ_MEMORY_8(EA);
 
     M68K_FLAG_Z = *DESTINATION & SRC;
     M68K_WRITE_8(EA, SRC ^ *DESTINATION);
