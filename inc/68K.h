@@ -441,7 +441,7 @@ unsigned int READ_IMM_32(void);
 
 extern int M68K_REMAINING_CYCLES;
 extern unsigned int M68K_ADDRESSING_SPACE; 
-extern unsigned char CYCLE_RANGE[0x10];
+extern unsigned char CYCLE_RANGE[0x10000];
 
 
 #endif
