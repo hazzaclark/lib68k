@@ -199,6 +199,16 @@ void M68K_PULSE_HALT(void)
 /*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
 /*===============================================================================*/
 
+unsigned int READ_IMM_16(void) 
+{
+    return M68K_READ_16(M68K_REG_PC); 
+}
+
+unsigned int READ_IMM_32(void) 
+{
+    return M68K_READ_32(0x1000); 
+}
+
 void M68K_BRANCH_8(unsigned OFFSET)
 {
 	M68K_REG_PC += (U8)OFFSET;
