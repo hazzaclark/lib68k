@@ -43,7 +43,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
-``Motorola 68K-specific Big Endian Reads, handled with LE in mind``
+### Motorola 68K-specific Big Endian Reads, handled with LE in mind
 
 ![Screenshot_20250404_133538-1](https://github.com/user-attachments/assets/b695e25c-307f-4621-aea2-a84a8c4c88c1)
 
