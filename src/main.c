@@ -19,6 +19,7 @@ int main(void)
     printf("====================================================\n");
     
     M68K_INIT();
+    M68K_EXEC(100);
     M68K_SET_CPU_TYPE(M68K_CPU_000);
 
     printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
@@ -54,6 +55,5 @@ int main(void)
     M68K_WRITE_MEMORY_32(0x1000, IMM_32);
     U32 IMM_READ_32 = M68K_READ_IMM_32(0x1000);
     printf("32-BIT IMM: WROTE: 0x%08X, READ: 0x%08X\n", IMM_32, IMM_READ_32);
-
     return 0;
 }
