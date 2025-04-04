@@ -10,6 +10,7 @@
 #include "68KCONF.h"
 #include "68KOPCODE.h"
 #include "68KSTD.h"
+#include "68KMEM.h"
 
 int main(void) 
 {
@@ -19,28 +20,30 @@ int main(void)
     
     M68K_INIT();
     M68K_SET_CPU_TYPE(M68K_CPU_000);
-    M68K_EXEC(100000);
 
     printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
 
-    U8 VALUE = 0xFF;
-    printf("U8 VALUE:0x%02X, DEC: %d\n", M68K_READ_8(VALUE), VALUE);
+    SHOW_TRACE_STATUS();
+    ENABLE_TRACE_FLAG(M68K_OPT_BASIC);
 
-    U16 VALUE_16 = 0xFFFF;
-    printf("U16 VALUE:0x%04X, DEC: %d\n", M68K_READ_16(VALUE_16), VALUE_16);
+    MEMORY_MAP(0x00001000, 0x1000, true);
 
-    U32 ADDRESS_32 = 0x1000;
-    U32 VALUE_32 = 0x12345678;
-    M68K_WRITE_32(ADDRESS_32, VALUE_32);
-    printf("U32 VALUE:0x%08X, DEC: %d\n", M68K_READ_32(ADDRESS_32), VALUE_32);
-    
-    U8 VALUE_8 = 0xFF;
-    U8 ADDRESS_8 = 0x10;
+    printf("TESTING BASIC READ AND WRITES\n");
 
-    M68K_WRITE_8(ADDRESS_8, VALUE_8);
-    U8 READ_8 = M68K_READ_8(ADDRESS_8);
-    printf("U8: WROTE 0x%02X, READ 0x%02X\n", 
-           VALUE_8, READ_8);
+    U8 TEST_8 = 0xAA;
+    M68K_WRITE_MEMORY_8(0x1000, TEST_8);
+    U8 READ_8 = M68K_READ_MEMORY_8(0x1000);
+    printf("8-BIT: WROTE: 0x%02X, READ: 0x%02X\n", TEST_8, READ_8);
+
+    U16 TEST_16 = 0xBBCC;
+    M68K_WRITE_MEMORY_16(0x1010, TEST_16);
+    U16 READ_16 = M68K_READ_MEMORY_16(0x1010);
+    printf("16-BIT: WROTE: 0x%04X, READ: 0x%04X\n", TEST_16, READ_16);
+
+    U32 TEST_32 = 0x13400000;
+    M68K_WRITE_MEMORY_32(0x1020, TEST_32);
+    U32 READ_32 = M68K_READ_MEMORY_32(0x1020);
+    printf("32-BIT: WROTE: 0x%08X, READ: 0x%08X\n", TEST_32, READ_32);
 
     return 0;
 }
