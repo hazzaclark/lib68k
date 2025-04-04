@@ -295,7 +295,7 @@ typedef struct CPU_68K
     unsigned PREFETCH_MODE;
     unsigned PREFETCH_DATA;
 
-    signed int MASTER_CYCLES;
+    const U8* MASTER_CYCLES;
     signed int REFRESH_CYCLES;
 
 } CPU_68K;
@@ -434,9 +434,6 @@ void M68K_BRANCH_8(unsigned OFFSET);
 void M68K_BRANCH_16(unsigned OFFSET);
 void M68K_BRANCH_32(unsigned OFFSET);
 
-unsigned int READ_IMM_16(void);
-unsigned int READ_IMM_32(void);
-
 /*===============================================================================*/
 /*							        68000 MISC.							         */
 /*===============================================================================*/
@@ -444,6 +441,5 @@ unsigned int READ_IMM_32(void);
 extern int M68K_REMAINING_CYCLES;
 extern unsigned int M68K_ADDRESSING_SPACE; 
 extern unsigned char CYCLE_RANGE[0x10000];
-
 
 #endif
