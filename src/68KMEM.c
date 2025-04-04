@@ -12,6 +12,7 @@
 static M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
 static unsigned MEM_NUM_BUFFERS = 0;
 U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
+bool TRACE_ENABLED;
 
 void ENABLE_TRACE_FLAG(U8 FLAG)
 {
@@ -201,4 +202,26 @@ void M68K_WRITE_MEMORY_16(unsigned int ADDRESS, uint16_t VALUE)
 void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, uint32_t VALUE) 
 {
     MEMORY_WRITE(ADDRESS, MEM_SIZE_32, VALUE);
+}
+
+unsigned int M68K_READ_IMM_16(unsigned int ADDRESS)
+{
+    bool TRACE = TRACE_ENABLED;
+    TRACE_ENABLED = false;
+
+    unsigned int RESULT = M68K_READ_MEMORY_16(ADDRESS);
+    TRACE_ENABLED = TRACE;
+
+    return RESULT;
+}
+
+unsigned int M68K_READ_IMM_32(unsigned int ADDRESS)
+{
+    bool TRACE = TRACE_ENABLED;
+    TRACE_ENABLED = false;
+
+    unsigned int RESULT = M68K_READ_MEMORY_32(ADDRESS);
+    TRACE_ENABLED = TRACE;
+
+    return RESULT;
 }
