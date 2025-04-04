@@ -184,6 +184,8 @@ void M68K_INIT(void)
     M68K_SET_INSTR_CALLBACK(0, 0);
     printf("INSTRUCTION CALLBACK SET.\n");
 
+    MEMORY_MAP(0x0000, 0xFF8000, true);
+
     printf("68000 INITIALISATION COMPLETE.\n");
 }
 
@@ -192,16 +194,24 @@ void M68K_INIT(void)
 
 int M68K_EXEC(int CYCLES)
 {
+    if(CPU.MASTER_CYCLES >= CYCLES) return 0;
+
     M68K_SET_CYCLES(CYCLES);
     M68K_INITIAL_CYCLES = CYCLES;
 
     printf("M68K SETUP WITH CYCLES %d\n", M68K_INITIAL_CYCLES);
 
-    if(!M68K_CPU_STOPPED)
+    if(M68K_CPU_STOPPED)
     {
-        M68K_REG_IR = (unsigned)M68K_READ_IMM_16 & 0xFFFF;
-        printf("IR VALUE READ %d\n", M68K_REG_IR);
+        CPU.MASTER_CYCLES = CYCLES;
+        return 0;
     }
+
+    U16 IR = 0xBBCC;
+        M68K_WRITE_16(0x1010, IR);
+        U16 READ_16_2 = M68K_READ_16(0x1010);
+        printf("16-BIT-IR: WROTE: 0x%04X, READ: 0x%04X\n", IR, READ_16_2);
+
 
     return 0;
 }
