@@ -58,6 +58,7 @@ unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
         case M68K_A7: return CPU->ADDRESS_REGISTER[7];
         case M68K_PC: return CPU->PC;
         case M68K_SR: return CPU->STATUS_REGISTER;
+        case M68K_IR: return CPU->INDEX_REGISTER;
 
         default: return 0;
     }
@@ -167,9 +168,6 @@ void M68K_INIT(void)
         CPU.ADDRESS_REGISTER[i] = i + 8;
     }
     
-    CPU.STATUS_REGISTER = 0x2000;
-    CPU.PC = 0x0000;
-
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
     printf("OPCODE TABLE INITIALISED.\n");
