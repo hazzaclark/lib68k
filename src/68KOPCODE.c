@@ -414,7 +414,7 @@ M68K_MAKE_OPCODE(BCHG, 8, D, EA)
 {
     unsigned* DESTINATION = &M68K_DATA_LOW;
     unsigned EA = 0;
-    unsigned SRC = M68K_READ_MEMORY_8(EA);
+    unsigned SRC = M68K_READ_8(EA);
 
     M68K_FLAG_Z = *DESTINATION & SRC;
     M68K_WRITE_8(EA, SRC ^ *DESTINATION);
@@ -1005,22 +1005,6 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
 
     M68K_FLAG_N = M68K_READ_32(RESULT);
     M68K_FLAG_Z = RESULT;
-    M68K_FLAG_V = 0;
-    M68K_FLAG_C = 0;
-}
-
-M68K_MAKE_OPCODE(MOVE_L_IMM_TO_REG, 32, D, 0)
-{
-    U32 IMM = (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 2] << 24) |
-                (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 3] << 16) |
-                (CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 4] << 8) |
-                CPU.MEMORY_MAP->MEMORY_BASE[CPU.PC + 5];
-
-    CPU.DATA_REGISTER[M68K_DATA_HIGH] = IMM;
-    CPU.PC += 6;
-
-    M68K_FLAG_N = (IMM >> 31) & 1;
-    M68K_FLAG_Z = (IMM == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 }
@@ -1968,7 +1952,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
     {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
     {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
-    {MOVE_L_IMM_TO_REG_32_D_0,  0xF1C0,     0x203C,     12}, // MOVE.L #<imm>, Dn
     {MOVEA_16_DA_0,             0xF1C0,     0x3040,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x2040,     4},  // MOVEA.L <ea>,An
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
