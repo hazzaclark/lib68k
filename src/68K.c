@@ -194,44 +194,16 @@ void M68K_INIT(void)
 
 int M68K_EXEC(int CYCLES)
 {
-    if(CPU.MASTER_CYCLES >= CYCLES)
-    {
-        return 1;
-    }
-
+    M68K_SET_CYCLES(CYCLES);
     M68K_INITIAL_CYCLES = CYCLES;
 
-    if(M68K_CPU_STOPPED)
+    printf("M68K SETUP WITH CYCLES %d\n", M68K_INITIAL_CYCLES);
+
+    if(!M68K_CPU_STOPPED)
     {
-        CPU.MASTER_CYCLES = CYCLES;
-        printf("CYCLES HAVE BEEN USED\n");
-        return 0;   
+        M68K_REG_IR = (unsigned)M68K_READ_IMM_16 & 0xFFFF;
+        printf("IR VALUE READ %d\n", M68K_REG_IR);
     }
-
-    printf("CPU IS BEING USED\n");
-
-    while(CPU.MASTER_CYCLES < CYCLES)
-    {
-        M68K_BASE_INSTR_HOOK(M68K_REG_PC);
-
-        printf("CURRENT INSTRUCTION HOOKED AT PC: 0x%08x\n", M68K_REG_PC);
-
-        M68K_REG_PPC = M68K_REG_PC;
-        printf("PREVIOUS PC STATE: 0x%08x\n", M68K_REG_PPC);
-
-        for(int INDEX = 15; INDEX >= 0; INDEX--)
-        {
-            M68K_REG_D[INDEX] = M68K_REG_DA[INDEX];
-        }
-
-        M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
-        M68K_USE_CYCLES(CYCLE_RANGE[M68K_REG_IR]);
-
-        printf("SO FAR SO GOOD\n");
-    }
-
-    printf("ALL CYCLES HAVE BEEN USED\n");
-
 
     return 0;
 }
