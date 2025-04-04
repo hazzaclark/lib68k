@@ -200,24 +200,23 @@ void M68K_INIT(void)
 
 int M68K_EXEC(int CYCLES) 
 {
-    M68K_SET_CYCLES(CYCLES);
     M68K_INITIAL_CYCLES = CYCLES;
+    CPU.MASTER_CYCLES = CYCLES;
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
-    
-    if(!M68K_CPU_STOPPED && M68K_GET_CYCLES() > 0) 
-    {
-        while(M68K_GET_CYCLES() > 0) 
-        {
-            M68K_REMAINING_CYCLES = M68K_GET_CYCLES();
 
-            M68K_USE_CYCLES(4);
-            printf("CYCLES: %d\n", M68K_REMAINING_CYCLES);
-        }
+    while(CPU.MASTER_CYCLES > 0 && !M68K_CPU_STOPPED)
+    {
+        M68K_REG_PPC = M68K_REG_PC;
+        M68K_REG_IR = READ_IMM_16();
+
+        M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
+
+        CPU.MASTER_CYCLES -= CYCLE_RANGE[M68K_REG_IR];    
     }
     
     printf("CYCLES LEFT %d\n", M68K_GET_CYCLES());
-    return M68K_INITIAL_CYCLES - M68K_GET_CYCLES();
+    return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
 
 #endif
