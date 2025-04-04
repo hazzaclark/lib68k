@@ -13,10 +13,6 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-// SYSTEM INCLUDES
-
-#include <string.h>
-
 #define     M68K_MAX_BUFFERS            10
 #define     M68K_OPT_BASIC              (1 << 0)
 #define     M68K_OPT_VERB               (1 << 1)
