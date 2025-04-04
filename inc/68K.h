@@ -295,7 +295,7 @@ typedef struct CPU_68K
     unsigned PREFETCH_MODE;
     unsigned PREFETCH_DATA;
 
-    const U8* MASTER_CYCLES;
+    signed int MASTER_CYCLES;
     signed int REFRESH_CYCLES;
 
 } CPU_68K;
