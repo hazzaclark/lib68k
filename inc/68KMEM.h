@@ -13,7 +13,7 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-#define     M68K_MAX_BUFFERS            10
+#define     M68K_MAX_BUFFERS            16
 #define     M68K_OPT_BASIC              (1 << 0)
 #define     M68K_OPT_VERB               (1 << 1)
 #define     M68K_OPT_DEVICE             (1 << 2)
@@ -96,5 +96,9 @@ void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
 
 extern U8 ENABLED_FLAGS;
 extern bool TRACE_ENABLED;
+
+extern M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
+extern unsigned MEM_NUM_BUFFERS;
+extern U32 MEM_FUNCTION_CALL;
 
 #endif
