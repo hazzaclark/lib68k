@@ -11,6 +11,8 @@
 
 static M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
 static unsigned MEM_NUM_BUFFERS = 0;
+static uint32_t MEM_FUNCTION_CALL;
+
 U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
 bool TRACE_ENABLED;
 
@@ -224,4 +226,9 @@ unsigned int M68K_READ_IMM_32(unsigned int ADDRESS)
     TRACE_ENABLED = TRACE;
 
     return RESULT;
+}
+
+void MEM_SET_FC(unsigned int NEW_FUNC_CALL)
+{
+    MEM_FUNCTION_CALL = NEW_FUNC_CALL;
 }
