@@ -2031,7 +2031,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
         CYCLE_RANGE[INDEX] = 4;
     }
 
-    OSTRUCT = &M68K_OPCODE_HANDLER_TABLE[0];
+    OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
     printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
 
     while (OSTRUCT->MASK != 0)
@@ -2039,10 +2039,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
                OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
 
-        U16 START = OSTRUCT->MATCH & OSTRUCT->MASK;
-        U16 END = START | ~OSTRUCT->MASK;
-
-        for (INDEX = START; INDEX <= END; INDEX++)
+        for (INDEX = 0; INDEX < 0x10000; INDEX++)
         {
             if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
             {
