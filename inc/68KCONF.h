@@ -103,6 +103,8 @@ U32 M68K_FETCH_LONG();
 /*							68000 READ AND WRITE							     */
 /*===============================================================================*/
 
+extern unsigned int READ_IMM_16(void);
+
 unsigned int CTRL_READ_BYTE(unsigned int ADDRESS);
 unsigned int CTRL_READ_WORD(unsigned int ADDRESS);
 void CTRL_WRITE_BYTE(unsigned int ADDRESS, unsigned int DATA);
