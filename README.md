@@ -13,7 +13,7 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
 
 ```
 git clone this repository
-
+Update 68KOPCODE.c
 make clean
 
 make
@@ -45,7 +45,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ``Motorola 68K-specific Big Endian Reads, handled with LE in mind``
 
-![image](https://github.com/user-attachments/assets/57cf7e9c-d389-4f33-b0af-3fdcb11d1457)
+![Screenshot_20250404_133538-1](https://github.com/user-attachments/assets/b695e25c-307f-4621-aea2-a84a8c4c88c1)
 
  # Sources:
 
