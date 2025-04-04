@@ -45,6 +45,12 @@
         #include "68KOPCODE.h"
         #endif
 
+            #if defined(USE_MEM)
+            #define USE_MEM
+                #else
+            #define USE_MEM
+            #include "68KMEM.h"
+            #endif
 #endif
 
 /*===============================================================================*/
@@ -214,7 +220,6 @@ typedef struct CPU_68K
     unsigned int REMAINING_CYCLES;
     unsigned int CYCLE_RATE;
     unsigned int RESET_CYCLES;
-    unsigned char MEMORY_BASE;
     unsigned int* CYCLE_EXCEPTION;
     unsigned int CYCLE_END;
 
@@ -452,7 +457,7 @@ unsigned int READ_IMM_32(void);
 
 extern int M68K_REMAINING_CYCLES;
 extern unsigned int M68K_ADDRESSING_SPACE; 
-extern unsigned char CYCLE_RANGE[0x10000];
+extern unsigned char CYCLE_RANGE[0x10];
 
 
 #endif
