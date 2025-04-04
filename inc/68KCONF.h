@@ -11,6 +11,7 @@
 /* NESTED INCLUDES */
 
 #include "common.h"
+#include "68KMEM.h"
 
 /*===============================================================================*/
 /*							68000 DEBUG											 */
@@ -53,6 +54,8 @@
 	#define	M68K_BASE_INSTR_HOOK(PC)
 #endif
 
+#define			M68K_EMU_PREF		M68K_OPT_OFF
+
 #ifdef USE_CYCLES
 #define USE_CYCLES
 #else
@@ -82,7 +85,7 @@
 #define 	M68K_FUNCTION_CODE_SUPERVISOR_PROGRAM 	6
 #define 	M68K_FUNCTION_CODE_CPU_SPACE          	7
 
-#define		M68K_SET_FC(A)					M68K_SET_FUNC_CALLBACK(A)
+#define		M68K_SET_FC(A)					MEM_SET_FC(A)
 #define		M68K_ADDRESS_LINE(A)			((A)&M68K_ADDRESS_MASK)
 
 /*===============================================================================*/
@@ -99,15 +102,6 @@ U32 M68K_FETCH_LONG();
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
 /*===============================================================================*/
-
-
-U8 M68K_READ_8(U32 ADDRESS);
-U16 M68K_READ_16(U32 ADDRESS);
-U32 M68K_READ_32(U32 ADDRESS);
-
-void M68K_WRITE_8(U32 ADDRESS, U8 DATA);
-void M68K_WRITE_16(U32 ADDRESS, U16 DATA);
-void M68K_WRITE_32(U32 ADDRESS, U32 DATA);
 
 unsigned int CTRL_READ_BYTE(unsigned int ADDRESS);
 unsigned int CTRL_READ_WORD(unsigned int ADDRESS);
