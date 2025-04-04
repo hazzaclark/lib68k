@@ -89,5 +89,7 @@ void M68K_WRITE_MEMORY_8(unsigned int ADDRESS, U8 VALUE);
 void M68K_WRITE_MEMORY_16(unsigned int ADDRESS, U16 VALUE);
 void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, U32 VALUE);
 
+extern U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
+
 
 #endif
