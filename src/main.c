@@ -17,17 +17,15 @@ int main(void)
     printf("====================================================\n");
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
+
+    SHOW_TRACE_STATUS();
+    ENABLE_TRACE_FLAG(M68K_OPT_BASIC);
     
     M68K_INIT();
     M68K_EXEC(100);
     M68K_SET_CPU_TYPE(M68K_CPU_000);
 
     printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
-
-    SHOW_TRACE_STATUS();
-    ENABLE_TRACE_FLAG(M68K_OPT_BASIC);
-
-    MEMORY_MAP(0x00001000, 0x1000, true);
 
     printf("TESTING BASIC READ AND WRITES\n");
 
@@ -55,5 +53,17 @@ int main(void)
     M68K_WRITE_MEMORY_32(0x1000, IMM_32);
     U32 IMM_READ_32 = M68K_READ_IMM_32(0x1000);
     printf("32-BIT IMM: WROTE: 0x%08X, READ: 0x%08X\n", IMM_32, IMM_READ_32);
+
+    U16 IR = 0xFFFF;
+    M68K_WRITE_16(0x1000, IR);
+    U16 READ_16_2 = M68K_READ_16(0x1010);
+    printf("16-BIT-IR: WROTE: 0x%04X, READ: 0x%04X\n", IR, READ_16_2);
+
+    U16 IMM_HELPER = 0xBAAF;
+    M68K_WRITE_16(0x1000, IMM_HELPER);
+
+    U16 IMM_READ = READ_IMM_16();
+    printf("16-BIT-IMM HELPER: WROTE: 0x%04X, READ: 0x%04X\n", IMM_HELPER, IMM_READ);
+
     return 0;
 }
