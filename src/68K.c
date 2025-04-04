@@ -186,8 +186,6 @@ void M68K_INIT(void)
     M68K_SET_INSTR_CALLBACK(0, 0);
     printf("INSTRUCTION CALLBACK SET.\n");
 
-	INITIALIZE_MEMORY();
-
     printf("68000 INITIALISATION COMPLETE.\n");
 }
 
@@ -221,8 +219,6 @@ int M68K_EXEC(int CYCLES)
         M68K_REG_PPC = M68K_REG_PC;
         printf("PREVIOUS PC STATE: 0x%08x\n", M68K_REG_PPC);
 
-        M68K_REG_IR = READ_IMM_16();
-
         for(int INDEX = 15; INDEX >= 0; INDEX--)
         {
             M68K_REG_D[INDEX] = M68K_REG_DA[INDEX];
@@ -237,7 +233,7 @@ int M68K_EXEC(int CYCLES)
     printf("ALL CYCLES HAVE BEEN USED\n");
 
 
-    return M68K_INITIAL_CYCLES - M68K_GET_CYCLES();
+    return 0;
 }
 
 #endif
