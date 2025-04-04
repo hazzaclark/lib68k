@@ -92,6 +92,8 @@ void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, U32 VALUE);
 unsigned int M68K_READ_IMM_16(unsigned int ADDRESS);
 unsigned int M68K_READ_IMM_32(unsigned int ADDRESS);
 
+void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
+
 extern U8 ENABLED_FLAGS;
 extern bool TRACE_ENABLED;
 
