@@ -293,6 +293,7 @@ typedef struct CPU_68K
 
     unsigned PREFETCH_ADDRESS;
     unsigned PREFETCH_MODE;
+    unsigned PREFETCH_DATA;
 
     signed int MASTER_CYCLES;
     signed int REFRESH_CYCLES;
@@ -409,6 +410,7 @@ typedef enum CPU_68K_FLAGS
 
 #define         M68K_PREF_ADDRESS       CPU.PREFETCH_ADDRESS
 #define         M68K_PREF_MODE          CPU.PREFETCH_MODE
+#define         M68K_PREF_DATA          CPU.PREFETCH_DATA
 
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
