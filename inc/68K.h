@@ -95,7 +95,14 @@
                                     ((BASE)[(ADDR)+3]<<8) |   \
                                     (BASE)[(ADDR)+2])
                                                         
-                                                        
+
+#define     M68K_READ_8(VALUE)                              M68K_READ_MEMORY_8(VALUE)
+#define     M68K_READ_16(VALUE)                             M68K_READ_MEMORY_16(VALUE)
+#define     M68K_READ_32(VALUE)                             M68K_READ_MEMORY_32(VALUE)
+#define     M68K_WRITE_8(ADDRESS, VALUE)                    M68K_WRITE_MEMORY_8(ADDRESS, VALUE)
+#define     M68K_WRITE_16(ADDRESS, VALUE)                   M68K_WRITE_MEMORY_16(ADDRESS, VALUE)
+#define     M68K_WRITE_32(ADDRESS, VALUE)                   M68K_WRITE_MEMORY_32(ADDRESS, VALUE)
+                                                     
 
 /* AS AND WHEN I NEED TO ACCESS A PARTICULAR SIZE, I CAN JUST TYPECAST THESE */
 
@@ -202,17 +209,6 @@
     #define     M68K_TRACE_CLEAR()
 #endif
 
-typedef struct CPU_68K_MEMORY
-{
-    U8(*MEMORY_BASE);
-    U8(*MEMORY_READ_8)(U32 ADDRESS);
-    U16(*MEMORY_READ_16)(U32 ADDRESS);
-    U32(*MEMORY_READ_32)(U32 ADDRESS);                          // USED ONLY FOR OPCODES DUE TO THEIR MAX SIZE 
-    void(*MEMORY_WRITE_8)(U32 ADDRESS, U8 VALUE);
-    void(*MEMORY_WRITE_16)(U32 ADDRESS, U16 VALUE);
-
-} CPU_68K_MEMORY;
-
 typedef struct CPU_68K
 {
     unsigned int PC;
@@ -297,8 +293,6 @@ typedef struct CPU_68K
 
     unsigned PREFETCH_ADDRESS;
     unsigned PREFETCH_MODE;
-
-    CPU_68K_MEMORY MEMORY_MAP[256];
 
     signed int MASTER_CYCLES;
     signed int REFRESH_CYCLES;
@@ -415,16 +409,6 @@ typedef enum CPU_68K_FLAGS
 
 #define         M68K_PREF_ADDRESS       CPU.PREFETCH_ADDRESS
 #define         M68K_PREF_MODE          CPU.PREFETCH_MODE
-
-#define         M68K_MEMORY_MAP          CPU.MEMORY_MAP
-#define         M68K_MEMORY_BASE         CPU_MEMORY.MEMORY_BASE
-#define         M68K_MEMORY_READ_8       CPU_MEMORY.MEMORY_READ_8
-#define         M68K_MEMORY_READ_16      CPU_MEMORY.MEMORY_READ_16
-#define         M68K_MEMORY_WRITE_8      CPU_MEMORY.MEMORY_WRITE_8
-#define         M68K_MEMORY_WRITE_16     CPU_MEMORY.MEMORY_WRITE_16
-
-#define         M68K_READ_IMM_16(ADDRESS)       *(U16*)(CPU.MEMORY_MAP[((ADDRESS) >> 16) & 0xFF].MEMORY_BASE + ((ADDRESS) & 0xFFFF))
-#define         M68K_READ_IMM_32(ADDRESS)       (M68K_READ_IMM_16(ADDRESS) << 16) | (M68K_READ_IMM_16(ADDRESS + 2))
 
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
