@@ -104,6 +104,7 @@ U32 M68K_FETCH_LONG();
 /*===============================================================================*/
 
 extern unsigned int READ_IMM_16(void);
+extern unsigned int READ_IMM_32(void);
 
 unsigned int CTRL_READ_BYTE(unsigned int ADDRESS);
 unsigned int CTRL_READ_WORD(unsigned int ADDRESS);
