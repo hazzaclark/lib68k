@@ -13,7 +13,7 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
 
 ```
 git clone this repository
-Update 68KOPCODE.c
+
 make clean
 
 make
