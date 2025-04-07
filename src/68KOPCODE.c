@@ -1339,6 +1339,12 @@ M68K_MAKE_OPCODE(NOT, 32, D, 0)
     M68K_FLAG_V = 0;
 }
 
+M68K_MAKE_OPCODE(NOP, 0, 0, 0)
+{
+    #undef M68K_EMULATE_TRACE_MODE
+    M68K_TRACE_0();
+}
+
 M68K_MAKE_OPCODE(OR, 8, D, 0)
 {
     unsigned RESULT = M68K_MASK_OUT_ABOVE_8((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH)));
@@ -1439,7 +1445,7 @@ M68K_MAKE_OPCODE(RESET, 0, 0, 0)
     if(M68K_FLAG_S)
     {
         M68K_PULSE_RESET();
-        M68K_USE_CYCLES(M68K_CYC_REMAIN);
+        M68K_USE_CYCLES(M68K_RESET_CYCLES);
         return;
     }
 }
@@ -1973,6 +1979,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NOT_8_D_0,                 0xF1F8,     0x4600,     4},  // NOT.B <ea>
     {NOT_16_D_0,                0xF1F8,     0x4640,     4},  // NOT.W <ea>
     {NOT_32_D_0,                0xF1F8,     0x4680,     6},  // NOT.L <ea>
+    {NOP_0_0_0,                 0xFFFF,     0x4E71,     4},  // NOP
     {OR_8_D_0,                  0xF1C0,     0x8000,     4},  // OR.B <ea>,Dn
     {OR_16_D_0,                 0xF1C0,     0x8040,     4},  // OR.W <ea>,Dn
     {OR_32_D_0,                 0xF1C0,     0x8080,     6},  // OR.L <ea>,Dn
