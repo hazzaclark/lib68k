@@ -1885,9 +1885,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_32_D_0,                0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
-    {ADDI_8_IMM_0,              0xFF00,     0x0600,     8},  // ADDI.B #<data>,<ea>
-    {ADDI_16_IMM_0,             0xFF00,     0x0640,     8},  // ADDI.W #<data>,<ea>
-    {ADDI_32_IMM_0,             0xFF00,     0x0680,     16}, // ADDI.L #<data>,<ea>
+    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
+    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
+    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
@@ -2044,7 +2044,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
             if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
             {
                 M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES * 7;
+                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;
             }
         }
 
