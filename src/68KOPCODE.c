@@ -890,7 +890,8 @@ M68K_MAKE_OPCODE(EXT, 32, 0, 0)
 
 M68K_MAKE_OPCODE(ILLEGAL, 0, 0, 0)
 {
-    M68K_OP_ILLEGAL_EX();
+    printf("ILLEGAL INSTRUCTION\n");
+    M68K_CPU_STOPPED = 1;
 }
 
 M68K_MAKE_OPCODE(JMP, 32, 0, PC)
@@ -1961,8 +1962,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
     {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
     {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
-    {MOVEA_16_DA_0,             0xF1C0,     0x3040,     4},  // MOVEA.W <ea>,An
-    {MOVEA_32_DA_0,             0xF1C0,     0x2040,     4},  // MOVEA.L <ea>,An
+    {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
+    {MOVEA_32_DA_0,             0xF1C0,     0x207C,     4},  // MOVEA.L <ea>,An
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
     {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
@@ -2040,7 +2041,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
         M68K_OPCODE_JUMP_TABLE[INDEX] = ILLEGAL_0_0_0;
-        CYCLE_RANGE[INDEX] = 4;
+        CYCLE_RANGE[INDEX] = 0;
     }
 
     OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
