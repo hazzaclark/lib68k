@@ -25,9 +25,9 @@ int M68K_REMAINING_CYCLES = 0;
 unsigned int M68K_ADDRESSING_SPACE; 
 unsigned char CYCLE_RANGE[0x10000];
 
-/*===============================================================================*/
-/*							68000 MAIN CPU FUNCTIONALIY							 */
-/*===============================================================================*/
+/*==================================================================================*/
+/*                          68000 MAIN CPU FUNCTIONALIY                             */
+/*==================================================================================*/
 
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
@@ -96,9 +96,9 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
     }
 }
 
-/*===============================================================================*/
-/*									68000 CALLBACKS							     */
-/*===============================================================================*/
+/*===================================================================================*/
+/*                                  68000 CALLBACKS                                 */
+/*==================================================================================*/
 
 /* THE FOLLOWING ARE A BUNCH OF ARBITRARY CALLBACKS PERTAINING TOWARDS THE CPU */
 
@@ -171,7 +171,7 @@ void M68K_INIT(void)
     CPU.PC = 0x00001000;
     CPU.PREVIOUS_PC = 0x00000000;
     CPU.INDEX_REGISTER = 0x0000;
-    CPU.STACK_POINTER = 0x0000;
+    CPU.STACK_POINTER = 0x1000;
 
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
@@ -229,6 +229,7 @@ int M68K_EXEC(int CYCLES)
         CPU.MASTER_CYCLES -= CURRENT_CYCLES;
 
         printf("CYCLE: %d, REMAINING: %d\n", CURRENT_CYCLES, CPU.MASTER_CYCLES);
+
     }
 
     // SET PPC TO NEXT ENTRY IN THE EXEC
@@ -236,6 +237,7 @@ int M68K_EXEC(int CYCLES)
 
     printf("------------------------------------------------------------\n");
     printf("CYCLES LEFT %d\n", M68K_GET_CYCLES());
+
     return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
 
