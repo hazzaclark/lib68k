@@ -116,5 +116,6 @@ int M68K_CYCLES_RUN(void);
 int M68K_CYCLES_REMAINING(void);
 void INITIALIZE_MEMORY();
 
+int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR);
 
 #endif
