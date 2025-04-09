@@ -203,7 +203,7 @@
     #define     M68K_TRACE_CLEAR()      TRACE_MODE = 0
 
 #else
-    #undef M68K_EMULATE_TRACE_MODE_OFF 
+    #undef      M68K_EMULATE_TRACE_MODE_OFF 
     #define     M68K_TRACE_1()
     #define     M68K_TRACE_0()
     #define     M68K_TRACE_CLEAR()
