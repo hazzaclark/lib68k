@@ -21,7 +21,7 @@ static unsigned int CPU_TYPE;
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
 
-#define			RAM			MAX_MEMORY_BUFFER
+#define			RAM			0x10000
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -222,6 +222,46 @@ void M68K_BRANCH_16(unsigned OFFSET)
 void M68K_BRANCH_32(unsigned OFFSET)
 {
 	M68K_REG_PC += OFFSET;
+}
+
+int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
+{
+    FILE* FILE_PTR = fopen(FILE_PATH, "rb");
+    if(!FILE_PTR)
+    {
+        printf("ERROR: COULD NOT OPEN FILE %s\n", FILE_PATH);
+        return -1;
+    }
+
+    fseek(FILE_PTR, 0, SEEK_END);
+    size_t FILE_SIZE = ftell(FILE_PTR);
+    fseek(FILE_PTR, 0, SEEK_SET);
+
+    U8* BUFFER = (U8*)malloc(FILE_SIZE);
+    if(!BUFFER)
+    {
+        printf("ERROR: MEMORY ALLOCATION FAILED\n");
+        fclose(FILE_PTR);
+        return -1;
+    }
+
+    size_t BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
+    fclose(FILE_PTR);
+
+    if(BYTES_READ != FILE_SIZE)
+    {
+        printf("ERROR: FILE READ INCOMPLETE\n");
+        free(BUFFER);
+        return -1;
+    }
+
+    for(size_t i = 0; i < FILE_SIZE; i++)
+    {
+        M68K_WRITE_MEMORY_8(LOAD_ADDR + i, BUFFER[i]);
+    }
+
+    free(BUFFER);
+    return FILE_SIZE;
 }
 
 #endif
