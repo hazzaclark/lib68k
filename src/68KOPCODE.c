@@ -2026,6 +2026,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {TST_16_D_0,                0xFF00,     0x4A40,     4},  // TST.W <ea>
     {TST_32_D_0,                0xFF00,     0x4A80,     4},  // TST.L <ea>
     {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
+    {NULL,                      0,          0,          0}
 };
 
 /* BUILD THE OVERARCHING OPCODE TABLE BASED ON ALL OF THE DIRECTIVES AND PRE-REQUISITIES */
@@ -2046,7 +2047,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
     printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
 
-    while (OSTRUCT->MASK != 0)
+    while (OSTRUCT->HANDLER != NULL)
     {
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
                OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
@@ -2061,17 +2062,6 @@ void M68K_BUILD_OPCODE_TABLE(void)
         }
 
         OSTRUCT++;
-    }
-
-    if (M68K_OPCODE_JUMP_TABLE[0x4E70] == OPCODE_ILLEGAL_MASK)
-    {
-        M68K_OPCODE_JUMP_TABLE[0x4E70] = RESET_0_0_0;
-        CYCLE_RANGE[0x4E70] = 132;
-    }
-    else
-    {
-        printf("SKIPPING RESET (0x4E70): HANDLER: (%p).\n",
-               (void*)&M68K_OPCODE_JUMP_TABLE[0x4E70]);
     }
 
     printf("OPCODE TABLE BUILDING COMPLETED SUCCESSFULLY.\n");
