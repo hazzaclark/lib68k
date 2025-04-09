@@ -1596,7 +1596,6 @@ M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
 M68K_MAKE_OPCODE(STOP, 0, 0, 0)
 {
     M68K_CPU_STOPPED = 0;
-    M68K_DATA_HIGH |= 0;
 }
 
 M68K_MAKE_OPCODE(SUB, 8, D, 0)
@@ -2005,7 +2004,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
     {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
     {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
-    {STOP_0_0_0,                0xFFFF,     0x4E70,     4},  // STOP #<data>
+    {STOP_0_0_0,                0xFFFF,     0x4E72,     4},  // STOP #<data>
     {SUB_8_D_0,                 0xF1C0,     0x9000,     4},  // SUB.B <ea>,Dn
     {SUB_16_D_0,                0xF1C0,     0x9040,     4},  // SUB.W <ea>,Dn
     {SUB_32_D_0,                0xF1C0,     0x9080,     6},  // SUB.L <ea>,Dn
