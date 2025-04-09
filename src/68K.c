@@ -216,10 +216,7 @@ int M68K_EXEC(int CYCLES)
 
         int CURRENT_CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
-        if (CPU.MASTER_CYCLES < CURRENT_CYCLES) 
-        {
-            CURRENT_CYCLES = CPU.MASTER_CYCLES;
-        }
+        if (CPU.MASTER_CYCLES < CURRENT_CYCLES) break;
 
         printf("%08X  %04X    ", M68K_REG_PC, M68K_REG_IR);
 
@@ -234,14 +231,15 @@ int M68K_EXEC(int CYCLES)
         CPU.MASTER_CYCLES -= CURRENT_CYCLES;
 
         printf("CYCLE: %d, REMAINING: %d\n", CURRENT_CYCLES, CPU.MASTER_CYCLES);
-
     }
 
     // SET PPC TO NEXT ENTRY IN THE EXEC
     M68K_REG_PPC = M68K_REG_PC;
 
     printf("------------------------------------------------------------\n");
-    printf("CYCLES LEFT %d\n", M68K_GET_CYCLES());
+    printf("EXECUTION STOPPED AT %08X\n", M68K_REG_PC);
+    printf("TOTAL CYCLES USED: %d\n", M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES);
+    printf("CYCLES REMAINING: %d\n", CPU.MASTER_CYCLES);
 
     return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
