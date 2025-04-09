@@ -47,6 +47,10 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ![Screenshot_20250404_133538-1](https://github.com/user-attachments/assets/b695e25c-307f-4621-aea2-a84a8c4c88c1)
 
+### Running the simulator with add.bin
+
+![image](https://github.com/user-attachments/assets/c1b02e32-991e-44d8-aa25-ea543a923905)
+
  # Sources:
 
 [Motorola 680x0 Programmer Manual](https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf)
