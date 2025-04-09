@@ -2026,7 +2026,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {TST_16_D_0,                0xFF00,     0x4A40,     4},  // TST.W <ea>
     {TST_32_D_0,                0xFF00,     0x4A80,     4},  // TST.L <ea>
     {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
-    {NULL,                      0,          0,          0}
+    {NULL,                      0,          0,          0}   // NULL TERM
 };
 
 /* BUILD THE OVERARCHING OPCODE TABLE BASED ON ALL OF THE DIRECTIVES AND PRE-REQUISITIES */
@@ -2054,10 +2054,13 @@ void M68K_BUILD_OPCODE_TABLE(void)
 
         for (INDEX = 0; INDEX < 0x10000; INDEX++)
         {
+            // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
+            // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
+
             if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
             {
                 M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;
+                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;               
             }
         }
 
