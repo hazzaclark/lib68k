@@ -49,7 +49,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Running the simulator with add.bin
 
-![image](https://github.com/user-attachments/assets/c1b02e32-991e-44d8-aa25-ea543a923905)
+![image](https://github.com/user-attachments/assets/55e2f7a6-73d9-4e5e-96fd-4e833be96e10)
 
  # Sources:
 
