@@ -12,9 +12,8 @@ SUM_LOOP:
 
     MOVE.L D0, $2000
 
-    STOP #$2700
-
 ARRAY:
     DC.L 1, 2, 3, 4
+    STOP #$2700
 
 END
