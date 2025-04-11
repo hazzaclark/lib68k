@@ -465,33 +465,6 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
     M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
 }
 
-M68K_MAKE_OPCODE(BNE, 8, 0, 0)
-{
-    if(!M68K_FLAG_Z)
-    {
-        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-        return;
-    }
-}
-
-M68K_MAKE_OPCODE(BNE, 16, 0, 0)
-{
-    if(!M68K_FLAG_Z)
-    {
-        M68K_BRANCH_16(M68K_MASK_OUT_ABOVE_16(M68K_REG_IR));
-        return;
-    }
-}
-
-M68K_MAKE_OPCODE(BNE, 32, 0, 0)
-{
-    if(!M68K_FLAG_Z)
-    {
-        M68K_BRANCH_32(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
-        return;
-    }
-}
-
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
 {
     unsigned MASK = 1 << M68K_READ_8(0) & 7;
@@ -1957,9 +1930,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (16-bit displacement)
     {BRA_32_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (32-bit displacement)
-    {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
-    {BNE_16_0_0,                0xFFFF,     0x6600,     10}, 
-    {BNE_32_0_0,                0xFFFF,     0x66FF,     10},
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xF1C0,     0x0100,     4},  // BTST Dn,<ea>
     {BTST_32_D_0,               0xF1C0,     0x0100,     4},  // BTST Dn,<ea> (32-bit)
