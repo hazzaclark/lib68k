@@ -412,6 +412,9 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_PREF_MODE          CPU.PREFETCH_MODE
 #define         M68K_PREF_DATA          CPU.PREFETCH_DATA
 
+#define         M68K_MASTER_CYC         CPU.MASTER_CYCLES
+#define         M68K_REFRESH_CYC        CPU.REFRESH_CYCLES
+
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
 /*===============================================================================*/
