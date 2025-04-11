@@ -118,4 +118,10 @@ void INITIALIZE_MEMORY();
 
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR);
 
+extern unsigned int M68K_DI_8(void);
+extern unsigned int M68K_DI_16(void);
+extern unsigned int M68K_DI_32(void); 
+
+
+
 #endif
