@@ -936,7 +936,7 @@ M68K_MAKE_OPCODE(LINK, 32, DA, 0)
 M68K_MAKE_OPCODE(LSL, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
     unsigned RESULT = SRC << SHIFT;
@@ -954,7 +954,7 @@ M68K_MAKE_OPCODE(LSL, 8, S, 0)
 M68K_MAKE_OPCODE(LSL, 16, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
     unsigned RESULT = SRC << SHIFT;
@@ -972,7 +972,7 @@ M68K_MAKE_OPCODE(LSL, 16, S, 0)
 M68K_MAKE_OPCODE(LSL, 32, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
     unsigned RESULT = SRC << SHIFT;
@@ -991,7 +991,7 @@ M68K_MAKE_OPCODE(LSL, 32, S, 0)
 M68K_MAKE_OPCODE(LSR, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
     unsigned RESULT = SRC >> SHIFT;
@@ -1009,7 +1009,7 @@ M68K_MAKE_OPCODE(LSR, 8, S, 0)
 M68K_MAKE_OPCODE(LSR, 16, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
     unsigned RESULT = SRC >> SHIFT;
@@ -1027,7 +1027,7 @@ M68K_MAKE_OPCODE(LSR, 16, S, 0)
 M68K_MAKE_OPCODE(LSR, 32, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
     unsigned RESULT = SRC >> SHIFT;
@@ -1529,7 +1529,7 @@ M68K_MAKE_OPCODE(RESET, 0, 0, 0)
     if(M68K_FLAG_S)
     {
         M68K_PULSE_RESET();
-        M68K_USE_CYCLES(M68K_RESET_CYCLES);
+        M68K_SET_CYCLES(M68K_RESET_CYCLES);
         return;
     }
 }
