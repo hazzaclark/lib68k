@@ -1115,6 +1115,19 @@ M68K_MAKE_OPCODE(MOVEA, 32, DA, 0)
     M68K_ADDRESS_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
 }
 
+M68K_MAKE_OPCODE(MOVEA, 16, IMM, 0)
+{
+    unsigned VALUE = READ_IMM_16();
+    M68K_ADDRESS_LOW = (S16)VALUE;
+}
+
+
+M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
+{
+    unsigned VALUE = READ_IMM_32();
+    M68K_ADDRESS_LOW = VALUE;
+}
+
 M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
 {
     int DESTINATION = M68K_LOW_BITMASK;
@@ -1194,6 +1207,12 @@ M68K_MAKE_OPCODE(MOVEM, 32, DA, 0)
 
     M68K_ADDRESS_HIGH = EA;
     M68K_USE_CYCLES(COUNT * (U16)M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, POST_INC, 0)
+{
+    U32 VALUE = M68K_DATA_HIGH;
+    M68K_WRITE_32(M68K_DATA_HIGH, VALUE);
 }
 
 M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
@@ -2066,6 +2085,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_32_IMM_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, #<data>
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
+    {MOVEA_16_IMM_0,            0xF1C0,     0x203C,     8},  // MOVEA.W #imm,An 
+    {MOVEA_32_IMM_0,            0xF1C0,     0x207C,     12},  // MOVEA.L #imm,An
+    {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L Dn,(SP)+
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
     {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
