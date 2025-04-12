@@ -2,309 +2,2276 @@
 
 /* MOTOROLA 68000 STANDALONE EMULATION LIBRARY */
 
-/* THIS FILE PERTAINS TOWARDSS THE MAIN FUNCTIONALITY SURROUNDING THE CONFIGURATION */
-/* OF EACH RESPECTIVE CPU'S TYPE AND RELATIVE HANDLERS */ 
+/* THIS FILE ACTS AS AN EXPANSION OF THE PRE-REQUISTIES DEFINED IN THE MAIN CPU HEADER */
+/* PROVIDING MOODULARISATION AND CROSS COMPILATION FOR OPCODE RELATED HANDLERS */
 
 /* NESTED INCLUDES */
 
 #include "68K.h"
-#include "68KOPCODE.h"
-#include "common.h"
-#include "util.h"
 
-#ifdef USE_CONFIG
-#ifdef USE_OPCODE
+#ifdef BUILD_OP_TABLE
 
-CPU_68K CPU;
-static unsigned int CPU_TYPE;
+OPCODE OPCODE_BASE;
+void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
 
-#define			M68K_CYCLE_RANGE_MIN		2
-#define			M68K_CYCLE_RANGE_MAX		16
+/* EXCEPTION HANDLER FOR A-LINE INSTRUCTION HANDLERS */
+/* DISCERN THE CURRENT EXCEPTION BEING FED INTO PC AND APPEND THAT THROUGH A JMP */ 
 
-#define			RAM			0x10000
-
-U8 M68K_VECTOR_TABLE[5][256] =
+void M68K_OP_1010(void)
 {
-	{ 
-		  0,                                                                  /*  0: RESET - INITIAL STACK POINTER                      */
-		  4,                                                                  /*  1: RESET - INITIAL PROGRAM COUNTER                    */
-		 50,                                                                  /*  2: BUS ERROR                                          */
-		 50,                                                                  /*  3: ADDRESS ERROR                                      */
-		 34,                                                                  /*  4: ILLEGAL INSTR                                      */
-		 38,                                                                  /*  5: ZERO DIV                                           */
-		 40,                                                                  /*  6: CHK                                                */
-		 34,                                                                  /*  7: TRAPV                                              */
-		 34,                                                                  /*  8: PRIV VIO                                           */
-		 34,                                                                  /*  9: TRACE                                              */
-		 34,                                                                  /* 10: 1010                                               */
-		 34,                                                                  /* 11: 1111                                               */
-		  4,                                                                  /* 12: RESERVED                                           */
-		  4,                                                                  /* 13: CPV                                                */
-		  4,                                                                  /* 14: FMT ERROR                                          */
-		 44,                                                                  /* 15: UINIT                                              */
-		  4,                                                                  /* 16: RESERVED                                           */
-		  4,                                                                  /* 17: RESERVED                                           */
-		  4,                                                                  /* 18: RESERVED                                           */
-		  4,                                                                  /* 19: RESERVED                                           */
-		  4,                                                                  /* 20: RESERVED                                           */
-		  4,                                                                  /* 21: RESERVED                                           */
-		  4,                                                                  /* 22: RESERVED                                           */
-		  4,                                                                  /* 23: RESERVED                                           */
-		 44,                                                                  /* 24: SPUR IRQ                                           */
-		 44,                                                                  /* 25: LVL 1 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 26: LVL 2 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 27: LVL 3 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 28: LVL 4 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 29: LVL 5 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 30: LVL 6 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 31: LVL 7 INTERRUPT VECTOR                             */
-		 34,                                                                  /* 32: TRAP #0                                            */
-		 34,                                                                  /* 33: TRAP #1                                            */
-		 34,                                                                  /* 34: TRAP #2                                            */
-		 34,                                                                  /* 35: TRAP #3                                            */
-		 34,                                                                  /* 36: TRAP #4                                            */
-		 34,                                                                  /* 37: TRAP #5                                            */
-		 34,                                                                  /* 38: TRAP #6                                            */
-		 34,                                                                  /* 39: TRAP #7                                            */
-		 34,                                                                  /* 40: TRAP #8                                            */
-		 34,                                                                  /* 41: TRAP #9                                            */
-		 34,                                                                  /* 42: TRAP #10                                           */
-		 34,                                                                  /* 43: TRAP #11                                           */
-		 34,                                                                  /* 44: TRAP #12                                           */
-		 34,                                                                  /* 45: TRAP #13                                           */
-		 34,                                                                  /* 46: TRAP #14                                           */
-		 34,                                                                  /* 47: TRAP #15                                           */
-		  4,                                                                  /* 48: FP BRAS                                            */
-		  4,                                                                  /* 49: FP INEXACT                                         */
-		  4,                                                                  /* 50: FP ZERO DIV                                        */
-		  4,                                                                  /* 51: FP UNDERFLOW                                       */
-		  4,                                                                  /* 52: FP OPERAND FLOW                                    */
-		  4,                                                                  /* 53: FP OVERFLOW                                        */
-		  4,                                                                  /* 54: FP NAN                                             */
-		  4,                                                                  /* 55: FP UNIMPLEMENTED DATA TYPE                         */
-		  4,                                                                  /* 56: MMU ERROR                                          */
-		  4,                                                                  /* 57: MMU ILLEGAL OP ERROR                               */
-		  4,                                                                  /* 58: MMU ACCESS VIO                                     */
-		  4,                                                                  /* 59: RESERVED                                           */
-		  4,                                                                  /* 60: RESERVED                                           */
-		  4,                                                                  /* 61: RESERVED                                           */
-		  4,                                                                  /* 62: RESERVED                                           */
-		  4,                                                                  /* 63: RESERVED                                           */
-		                                                                      /* 64-255: USER STACK SPACE                               */
-                                                                              
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
-	},
+    M68K_JUMP_VECTOR(M68K_EXCEPTION_1010);
+
+    /* USE THE INTEGREAL POINTER NOTATION TO ACCESS THE EXCEPTION FROM THE CURRENT A-LINE INSTRUCTION */
+    /* PROVIDE ACCESS TO THE INDEX REGISTER */
+
+    M68K_USE_CYCLES(M68K_CYC_EXCE[M68K_EXCEPTION_1010]);
+    M68K_GET_CYCLES() = M68K_CYC_EXCE[M68K_REG_IR];
+}
+
+/* SAME THING BUT FOR F-LINE INSTRUCTION HANDLERS */
+
+void M68K_OP_1111(void)
+{
+    M68K_JUMP_VECTOR(M68K_EXCEPTION_1111);
+
+    M68K_USE_CYCLES(M68K_CYCLE[M68K_EXCEPTION_1111]);
+    M68K_GET_CYCLES() = M68K_CYC_EXCE[M68K_REG_IR];
+}
+
+void M68K_OP_ILLEGAL_EX(void)
+{
+    M68K_JUMP_VECTOR(M68K_EXCEPTION_ILLEGAL_INSTRUCTION);
+}
+
+/* THE FOLLOWING WILL REFER TO THE BITWISE MEANS BY WHICH ALL OF THESE OPCODES OPERATE */
+/* ALL OF THE SUBSEQUENT INFORMATION CAN BE SOURED FROM: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf */
+
+/* FORTUNTATELY, THERE IS A LOT OF INFORMATION PERTAINING TOWARDS HOW EVERYTHING WORKS IN THE DESC */
+/* THERE IS A LOT OF NUANCE WITH THESE INSTRUCTIONS - SO THE ORDER OF OPERATIONS WILL VARY */
+
+/* THE GENERAL JYST IS WORKING WITH POINTERS BETWEEN A SOURCE AND A DESTINATION */
+
+/* SEE INTEGER INSTRUCTIONS: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#PAGE=105 */
+
+M68K_MAKE_OPCODE(ABCD, 8, RR, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_DATA_LOW;
+
+    /* THERE *MUST* BE AN EASIER WAY OF DEFINING THE POSITION AND LOCATION OF OPERANDS */
+    /* THIS IS VERY SCUFFED AT THE MOMENT, SO BARE WITH ME AS I IRON THIS OUT, THIS DOES NOT SEEM RIGHT */
+
+    /* WHAT THIS IS DOING IS READING THE LOW DATA SECTION WITH THE SRC OPERAND, DESTINATION BASED OF THE EXTEND FLAG */
+    /* THE EXTEND FLAG GOVERNS THE BASIS OF SETTING THE SAME BIT CURRENTLY IN THE OPERATION TO THE CARRY BIT (CARRY TO DEST) */
+
+    int RESULT = M68K_LOW_NIBBLE(SRC) + M68K_LOW_NIBBLE(DESTINATION) + M68K_FLAG_X >> DESTINATION;
+
+    /* IF THE DATA IS OUT OF THE LOW NIBBLE RANGE (0 - 8) */
+
+    if(RESULT > 9)
+    {
+        RESULT += M68K_HIGH_NIBBLE(SRC) + M68K_HIGH_NIBBLE(DESTINATION);
+    }
+
+    M68K_FLAG_V += M68K_HIGH_NIBBLE(SRC) + M68K_HIGH_NIBBLE(DESTINATION);
+    DESTINATION = M68K_MASK_OUT_ABOVE_8(DESTINATION) | RESULT;
+}   
+
+
+M68K_MAKE_OPCODE(ADD, 8, EA, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
+    int RESULT = SRC + DESTINATION;
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_V = ((U8)(SRC + DESTINATION + RESULT));
+    M68K_FLAG_X = M68K_FLAG_C = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADD, 16, EA, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
+
+    int RESULT = SRC + DESTINATION;
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_V = ((U16)(SRC + DESTINATION + RESULT));
+    M68K_FLAG_X = M68K_FLAG_C = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    RESULT = M68K_MASK_OUT_ABOVE_16(RESULT) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADD, 32, EA, 0)
+{
+    int DESTINATIOON = M68K_DATA_HIGH;
+    int SRC = M68K_ADDRESS_LOW;
+
+    int RESULT = SRC + DESTINATIOON;
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_V = ((U32)(SRC + DESTINATIOON + RESULT));
+
+    M68K_FLAG_X = M68K_FLAG_C = ((U32)(SRC + DESTINATIOON + RESULT));
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    RESULT = FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADD, 32, D, 0)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = CPU.DATA_REGISTER[SRC_REG];
+    U32 DEST_VALUE = CPU.DATA_REGISTER[DEST_REG];
+    U64 RESULT = (U64)(SRC_VALUE) + (U64)(DEST_VALUE);
+
+    CPU.DATA_REGISTER[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+    CPU.PC += 2;
+
+    M68K_FLAG_N = (RESULT >> 31) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 31 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 32) & 1;
+}
+
+M68K_MAKE_OPCODE(ADDA, 16, D, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = ((U16)DESTINATION);
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
+}
+
+M68K_MAKE_OPCODE(ADDA, 32, D, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = ((U32)DESTINATION);
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
+}
+
+M68K_MAKE_OPCODE(ADDI, 8, IMM, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (U8)DESTINATION;
+    int RESULT = SRC + DESTINATION;
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_V = ((U8)(SRC + DESTINATION + RESULT));
+
+    M68K_FLAG_X = M68K_FLAG_C = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_WRITE_8(0, M68K_FLAG_Z); 
+}
+
+M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (U16)DESTINATION;
+    int RESULT = SRC + DESTINATION;
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_V = ((U16)(SRC + DESTINATION + RESULT));
+
+    M68K_FLAG_X = M68K_FLAG_C = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_WRITE_16(0, M68K_FLAG_Z); 
+}
+
+M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (U32)DESTINATION;
+    int RESULT = SRC + DESTINATION;
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_V = ((U32)(SRC + DESTINATION + RESULT));
+
+    M68K_FLAG_X = M68K_FLAG_C = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_WRITE_32(0, M68K_FLAG_Z); 
+}
+
+M68K_MAKE_OPCODE(ADDQ, 8, D, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    int RESULT = M68K_MASK_OUT_ABOVE_8(DESTINATION) + SRC + DESTINATION;
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_V = (U8)(SRC + DESTINATION + RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    RESULT -= M68K_MASK_OUT_ABOVE_8(RESULT) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADDQ, 16, D, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    int RESULT = M68K_MASK_OUT_ABOVE_16(DESTINATION) + SRC + DESTINATION;
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_V = (U16)(SRC + DESTINATION + RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    RESULT -= M68K_MASK_OUT_ABOVE_16(RESULT) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADDQ, 32, D, 0)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    int RESULT = M68K_MASK_OUT_ABOVE_32(DESTINATION) + SRC + DESTINATION;
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_V = (U32)(SRC + DESTINATION + RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    RESULT -= M68K_MASK_OUT_ABOVE_32(RESULT) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(ADDX, 8, RR, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_X = M68K_FLAG_C = (U8)RESULT;
+    M68K_FLAG_N -= (U8)RESULT;
+    M68K_FLAG_V += (U8)RESULT;
+    M68K_FLAG_Z |= RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
+    DESTINATION -= M68K_MASK_OUT_ABOVE_8(DESTINATION) | RESULT; 
+}
+
+M68K_MAKE_OPCODE(ADDX, 16, RR, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_X = M68K_FLAG_C = (U16)RESULT;
+    M68K_FLAG_N -= (U16)RESULT;
+    M68K_FLAG_V += (U16)RESULT;
+    M68K_FLAG_Z |= RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
+    DESTINATION -= M68K_MASK_OUT_ABOVE_16(DESTINATION) | RESULT; 
+}
+
+M68K_MAKE_OPCODE(ADDX, 32, RR, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_X = M68K_FLAG_C = (U32)RESULT;
+    M68K_FLAG_N -= (U32)RESULT;
+    M68K_FLAG_V += (U32)RESULT;
+    M68K_FLAG_Z |= RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
+    DESTINATION -= M68K_MASK_OUT_ABOVE_32(DESTINATION) | RESULT; 
+}
+
+M68K_MAKE_OPCODE(AND, 8, D, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_Z |= RESULT;
+    M68K_FLAG_N += (U8)M68K_FLAG_Z; 
+}
+
+M68K_MAKE_OPCODE(AND, 16, D, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_Z |= RESULT;
+    M68K_FLAG_N += (U16)M68K_FLAG_Z; 
+}
+
+M68K_MAKE_OPCODE(AND, 32, D, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int SRC = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_Z |= RESULT;
+    M68K_FLAG_N += (U32)M68K_FLAG_Z; 
+}
+
+M68K_MAKE_OPCODE(ANDI, 8, EA, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int RESULT = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(ANDI, 16, EA, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int RESULT = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(ANDI, 32, EA, 0)
+{
+    int DESTINATION = M68K_DATA_HIGH;
+    int RESULT = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(ANDI_CCR, 8, CCR, 0)
+{
+    int DESTINATION = M68K_LOW_BITMASK;
+    int SRC = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_X = M68K_BIT_4(SRC) | 0;
+    M68K_FLAG_N = M68K_BIT_3(SRC) | 0;
+    M68K_FLAG_Z = M68K_BIT_2(SRC) | 0;
+    M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
+    M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
+}
+
+M68K_MAKE_OPCODE(ANDI_SR, 16, SR, 0)
+{
+    M68K_FLAG_X = (M68K_REG_SR & 0x0010) ? 1 : 0;
+    M68K_FLAG_N = (M68K_REG_SR & 0x0008) ? 1 : 0;
+    M68K_FLAG_Z = (M68K_REG_SR & 0x0004) ? 1 : 0;
+    M68K_FLAG_V = (M68K_REG_SR & 0x0002) ? 1 : 0;
+    M68K_FLAG_C = (M68K_REG_SR & 0x0001) ? 1 : 0;
+}
+
+M68K_MAKE_OPCODE(ASL, 8, ASR, 0)
+{
+    int SRC = M68K_MAX_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = M68K_MASK_OUT_ABOVE_8(OPERAND);
+
+    M68K_FLAG_N = (M68K_MAX_BITMASK)*RESULT;
+    M68K_FLAG_Z = M68K_MAX_BITMASK | 0;
+    M68K_FLAG_V = M68K_MAX_BITMASK | 0;
+    M68K_FLAG_C = OPERAND | 0;
+}
+
+M68K_MAKE_OPCODE(BCC, 16, 0, 0)
+{
+    unsigned OFFSET = 0; 
+    OFFSET = M68K_MASK_OUT_ABOVE_16(OFFSET);
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(BCC, 32, 0, 0)
+{
+    unsigned OFFSET = 0; 
+    OFFSET = M68K_MASK_OUT_ABOVE_32(OFFSET);
+    M68K_REG_PC += 4;
+}
+
+M68K_MAKE_OPCODE(BCHG, 8, D, EA)
+{
+    unsigned* DESTINATION = &M68K_DATA_LOW;
+    unsigned EA = 0;
+    unsigned SRC = M68K_READ_8(EA);
+
+    M68K_FLAG_Z = *DESTINATION & SRC;
+    M68K_WRITE_8(EA, SRC ^ *DESTINATION);
+}
+
+M68K_MAKE_OPCODE(BCHG, 32, D, EA)
+{
+    unsigned* DESTINATION = &M68K_DATA_LOW;
+    unsigned EA = 0;
+    unsigned SRC = M68K_READ_32(EA);
+
+    M68K_FLAG_Z = *DESTINATION & SRC;
+    M68K_WRITE_32(EA, SRC ^ *DESTINATION);
+}
+
+
+M68K_MAKE_OPCODE(BCLR, 8, D, EA)
+{
+    unsigned EA = (U8)M68K_EA_INCR_BYTE();
+    unsigned* DESTINATION = &M68K_DATA_LOW;
+
+    int SRC = M68K_READ_8(EA);
+
+    int MASK = (OPCODE_BIT_MASK && M68K_DATA_HIGH);
+
+    M68K_FLAG_Z = SRC & MASK & *DESTINATION;
+    M68K_WRITE_8(EA, SRC & MASK);
+}
+
+M68K_MAKE_OPCODE(BRA, 8, 0, 0)
+{
+    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+}
+
+M68K_MAKE_OPCODE(BRA, 16, 0, 0)
+{
+    U16 OFFSET = M68K_READ_16(0);
+    M68K_REG_PC -= 2;
+    M68K_BRANCH_16(OFFSET);
+}
+
+M68K_MAKE_OPCODE(BRA, 32, 0, 0)
+{
+    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+}
+
+M68K_MAKE_OPCODE(BNE, 8, 0, 0)
+{
+    if(!(M68K_REG_SR & M68K_FLAG_Z))
+    {
+        S8 DISP = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
+        M68K_BRANCH_8(DISP);
+        M68K_ADD_CYCLES(8);
+    }
+}
+
+M68K_MAKE_OPCODE(BSET, 8, S, AI)
+{
+    unsigned MASK = 1 << M68K_READ_8(0) & 7;
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    unsigned SRC = M68K_READ_8(EA);
+
+    M68K_FLAG_Z = SRC & MASK;
+    M68K_WRITE_8(EA, SRC | MASK);
+}
+
+M68K_MAKE_OPCODE(BSET, 32, R, D)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned MASK = 1 << (M68K_DATA_LOW & 0x1F);
+
+    M68K_FLAG_Z = *DEST & MASK;
+    *DEST |= MASK;
+}
+
+M68K_MAKE_OPCODE(BSR, 16, 0, 0)
+{    
+    // 13/04/25 - BRANCH OFFSETTING IS HANDLED MOSTLY IN THIS HELPER FUNCTION
+    // FROM HERE, THERE ISN'T REALLY A WHOLE NEED FOR READING THE OFFSET
+    // WHEN THAT HAS ALREADY BEEN DONE 
+
+    // THE OFFSET ITSELF IS JUST THE MASK OF THE ADDRESSABLE SPACE
+
+    S16 OFFSET = (S16)M68K_READ_16(M68K_REG_PC + 2);
+    U32 RET = M68K_REG_PC + 2;
+
+    M68K_PUSH_SP(RET);
+    M68K_REG_PC += OFFSET;
+}
+
+M68K_MAKE_OPCODE(BTST, 8, D, 0)
+{
+    unsigned BIT = READ_IMM_8() & 7;
+    M68K_FLAG_Z = M68K_DI_8() & ( 1 << BIT);
+}
+
+M68K_MAKE_OPCODE(BTST, 8, IMM, D)
+{
+    unsigned BIT = READ_IMM_8() & 7;
+
+    M68K_FLAG_Z = M68K_DI_8() & ( 1 << BIT);
+}
+
+M68K_MAKE_OPCODE(CHK, 16, EA, 0)
+{
+    signed SRC = (U16)M68K_DATA_LOW;
+
+    M68K_FLAG_Z = (U16)SRC;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_FLAG_N = 1 << 7;
+    M68K_USE_CYCLES(2 * 4);
+}
+
+M68K_MAKE_OPCODE(CLR, 8, D, 0)
+{
+    M68K_DATA_HIGH &= 0xFFFFFFFF00;
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CLR, 16, D, 0)
+{
+    M68K_DATA_HIGH &= 0xFFFFFFFF00;
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CLR, 32, D, 0)
+{
+    M68K_DATA_HIGH &= 0xFFFFFFFF00;
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CMP, 8, D, 0)
+{
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
+    M68K_FLAG_C = (U8)RESULT;
+}
+
+M68K_MAKE_OPCODE(CMP, 16, D, 0)
+{
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
+    M68K_FLAG_C = (U16)RESULT;
+}
+
+M68K_MAKE_OPCODE(CMP, 32, D, 0)
+{
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
+    M68K_FLAG_C = (U32)RESULT;
+}
+
+M68K_MAKE_OPCODE(CMPA, 16, DA, 0)
+{
+    unsigned SRC = (U16)M68K_DATA_HIGH;
+
+    #ifndef USE_ADDRESSING
+        SRC = (U16)M68K_ADDRESS_HIGH;
+    #endif
+
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+    
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31;    
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(CMPA, 32, DA, 0)
+{
+    unsigned SRC = (U32)M68K_DATA_HIGH;
+
+    #ifndef USE_ADDRESSING
+        SRC = (U32)M68K_ADDRESS_HIGH;
+    #endif
+
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+    
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31;    
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(CMPI, 8, DA, 0)
+{
+    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 7; 
+    M68K_FLAG_C = (SRC > DEST);  
+}
+
+M68K_MAKE_OPCODE(CMPI, 16, DA, 0)
+{
+    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 15; 
+}
+
+M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
+{
+    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31; 
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(CMPM, 8, A, 0)
+{
+    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned DEST = M68K_READ_8(M68K_DATA_LOW);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 7;
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(CMPM, 16, A, 0)
+{
+    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned DEST = M68K_READ_16(M68K_DATA_LOW);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 15;
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(CMPM, 32, A, 0)
+{
+    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned DEST = M68K_READ_32(M68K_DATA_LOW);
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31;
+    M68K_FLAG_C = (SRC > DEST);
+}
+
+M68K_MAKE_OPCODE(DBCC, 16, 0, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(*DEST - 1);
+
+    if(RESULT != 0xFFFF)
+    {
+        unsigned OFFSET = M68K_READ_16(M68K_DATA_HIGH);
+        M68K_REG_PC -= 2;
+        M68K_READ_16(OFFSET);
+        M68K_USE_CYCLES(0);
+
+        return;
+    }
+
+    M68K_REG_PC += 2;
+    return;
+}
+
+M68K_MAKE_OPCODE(DIVS, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    signed SRC = (U16)M68K_DATA_HIGH;
+    signed QUOTIENT;
+    signed REMAINDER;
+
+    if(SRC != 0)
+    {
+        if((U32)*DEST == 0x80000000 && SRC == -1)
+        {
+
+            M68K_FLAG_Z = 0;
+            M68K_FLAG_N = 0;
+            M68K_FLAG_C = 0;
+            M68K_FLAG_V = 0;
+
+            *DEST = 0;
+            return;
+
+        }
+    }
+
+    QUOTIENT = (((U32)*DEST) / SRC);
+    REMAINDER = (((U32)*DEST) % SRC);
+
+    // MODULO TYPE CAST TO HANDLE NEW SIGNED BIAS
+
+    if(QUOTIENT == (U16)QUOTIENT)
+    {
+        M68K_FLAG_Z = QUOTIENT;
+        M68K_FLAG_N = 0;
+        M68K_FLAG_C = 0;
+        M68K_FLAG_V = 0;
+        *DEST = M68K_MASK_OUT_ABOVE_32(M68K_MASK_OUT_ABOVE_16(QUOTIENT) | REMAINDER << 16);
+        return;
+    }
+}
+
+M68K_MAKE_OPCODE(DIVU, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    signed SRC = (U16)M68K_DATA_HIGH;
+    signed QUOTIENT = 0;
+    signed REMAINDER = 0;
+
+    if(SRC != 0)
+    {
+        // MODULO TYPE CAST TO HANDLE NEW SIGNED BIAS
+
+        if((QUOTIENT) < 0x10000)
+        {
+            M68K_FLAG_Z = QUOTIENT;
+            M68K_FLAG_N = 0;
+            M68K_FLAG_C = 0;
+            M68K_FLAG_V = 0;
+            *DEST = M68K_MASK_OUT_ABOVE_32(M68K_MASK_OUT_ABOVE_16(QUOTIENT) | REMAINDER << 16);
+            return;
+        }
+    }
+}
+
+M68K_MAKE_OPCODE(EOR, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH ^= M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW));
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EOR, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH ^= M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW));
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EOR, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH ^= M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW));
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EORI, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH ^= M68K_READ_8(M68K_DATA_HIGH));
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EORI, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH ^= M68K_READ_16(M68K_DATA_HIGH));
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EORI, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH ^= M68K_READ_32(M68K_DATA_HIGH));
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EORI_CCR, 8, 0, 0)
+{
+    M68K_READ_16(M68K_GET_CCR() ^ M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(EORI_SR, 16, 0, 0)
+{
+    M68K_READ_16(M68K_GET_SR() ^ M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(EXG, 32, DA, 0)
+{
+    unsigned* D_REG_A = &M68K_DATA_LOW;
+    unsigned* D_REG_B = &M68K_DATA_HIGH;
+
+    unsigned D_TEMP = *D_REG_A;
+    *D_REG_A = *D_REG_B;
+    *D_REG_B = D_TEMP;
+
+    #ifndef USE_ADDRESSING
+
+    unsigned* REG_A = &M68K_ADDRESS_LOW;
+    unsigned* REG_B = &M68K_ADDRESS_HIGH;
+
+    unsigned TEMP = *REG_A;
+    *REG_A = *REG_B;
+    *REG_B = TEMP;
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(EXT, 16, 0, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) 
+    | M68K_MASK_OUT_ABOVE_8(*DEST) 
+    | M68K_HIGH_NIBBLE(*DEST) ? 0xFF00 : 0;
+
+    M68K_FLAG_N = M68K_READ_16(*DEST);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(*DEST);
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(EXT, 32, 0, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) 
+    | M68K_MASK_OUT_ABOVE_8(*DEST) 
+    | M68K_HIGH_NIBBLE(*DEST) ? 0xFF00 : 0;
+
+    M68K_FLAG_N = M68K_READ_32(*DEST);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(*DEST);
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ILLEGAL, 0, 0, 0)
+{
+    printf("ILLEGAL INSTRUCTION\n");
+    M68K_CPU_STOPPED = 1;
+}
+
+M68K_MAKE_OPCODE(JMP, 32, 0, PC)
+{
+    M68K_JUMP(M68K_READ_32(M68K_REG_PC));
+}
+
+M68K_MAKE_OPCODE(JSR, 32, 0, PC)
+{
+    unsigned EA = M68K_READ_32(M68K_EA());
+    M68K_READ_32(M68K_REG_PC);
+    M68K_JUMP(EA);
+}
+
+M68K_MAKE_OPCODE(LEA, 32, DA, 0)
+{
+    M68K_DATA_LOW = M68K_READ_32(M68K_DATA_HIGH);
+    M68K_DATA_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
+}
+
+M68K_MAKE_OPCODE(LINK, 32, DA, 0)
+{
+    unsigned* DEST = &M68K_ADDRESS_HIGH;
+
+    M68K_READ_32(*DEST);
+    *DEST = M68K_REG_A[7];
+    M68K_REG_A[7] = M68K_MASK_OUT_ABOVE_32(M68K_REG_A[7] + (U16)M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(LSL, 8, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    // CITED FROM M68000PRM - ON BEHALF OF NXP
+
+    /* SHIFTS THE BITS OF THE OPERAND IN THE DIRECTION SPECIFIED (L OR R). 
+    THE CARRY BIT RECEIVES THE LAST BIT SHIFTED OUT OF THE OPERAND. 
+    
+    THE SHIFT COUNT FOR THE SHIFTING OF A REGISTER IS SPECIFIED IN TWO DIFFERENT WAYS:
+    1. IMMEDIATE - THE SHIFT COUNT (1 – 8) IS SPECIFIED IN THE INSTRUCTION.
+    2. REGISTER - THE SHIFT COUNT IS THE VALUE IN THE DATA REGISTER SPECIFIED IN THE INSTRUCTION MODULO 64. */    
+
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSL, 16, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSL, 32, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
+
+M68K_MAKE_OPCODE(LSR, 8, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = SRC >> SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = SRC << M68K_HIGH_NIBBLE(SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSR, 16, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = SRC >> SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = SRC << M68K_HIGH_NIBBLE(SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSR, 32, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = SRC >> SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = SRC << M68K_HIGH_NIBBLE(SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, D)
+{
+    unsigned RESULT = M68K_DATA_HIGH;
+
+    M68K_FLAG_N = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+
+M68K_MAKE_OPCODE(MOVEA, 16, DA, 0)
+{
+    M68K_DATA_LOW = M68K_READ_16(M68K_DATA_HIGH);
+    M68K_ADDRESS_LOW = M68K_READ_16(M68K_ADDRESS_HIGH);
+}
+
+M68K_MAKE_OPCODE(MOVEA, 32, DA, 0)
+{
+    M68K_DATA_LOW = M68K_READ_32(M68K_DATA_HIGH);
+    M68K_ADDRESS_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
+}
+
+M68K_MAKE_OPCODE(MOVEA, 16, IMM, 0)
+{
+    unsigned VALUE = READ_IMM_16();
+    M68K_ADDRESS_LOW = (S16)VALUE;
+}
+
+
+M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
+{
+    unsigned VALUE = READ_IMM_32();
+    M68K_ADDRESS_LOW = VALUE;
+}
+
+M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
+{
+    int DESTINATION = M68K_LOW_BITMASK;
+    int SRC = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_X = M68K_BIT_4(SRC) | 0;
+    M68K_FLAG_N = M68K_BIT_3(SRC) | 0;
+    M68K_FLAG_Z = M68K_BIT_2(SRC) | 0;
+    M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
+    M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
+}
+
+M68K_MAKE_OPCODE(MOVE_SR, 16, DA, 0)
+{
+    if(M68K_FLAG_S)
+    {
+        unsigned SR = M68K_READ_16(M68K_DATA_HIGH);
+        M68K_SET_SR_IRQ(SR);
+        return;
+    }
+
+    M68K_FLAG_X = (M68K_REG_SR & 0x0010) ? 1 : 0;
+    M68K_FLAG_N = (M68K_REG_SR & 0x0008) ? 1 : 0;
+    M68K_FLAG_Z = (M68K_REG_SR & 0x0004) ? 1 : 0;
+    M68K_FLAG_V = (M68K_REG_SR & 0x0002) ? 1 : 0;
+    M68K_FLAG_C = (M68K_REG_SR & 0x0001) ? 1 : 0;
+}
+
+M68K_MAKE_OPCODE(MOVE_USP, 32, DA, 0)
+{
+    if(M68K_FLAG_S)
+    {
+        M68K_ADDRESS_HIGH = M68K_REG_USP;
+        return;
+    }
+}
+
+M68K_MAKE_OPCODE(MOVEM, 16, DA, 0)
+{
+    unsigned INDEX = 0;
+    unsigned REGISTERS = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    unsigned COUNT = 0;
+
+    for(INDEX = 0; INDEX < 16; INDEX++)
+    {
+        if(REGISTERS & (1 << INDEX))
+        {
+            EA -= 2;
+            M68K_WRITE_16(EA, M68K_MASK_OUT_ABOVE_16(M68K_REG_DA[15 - INDEX]));
+            COUNT++;
+        }
+    }
+
+    M68K_ADDRESS_HIGH = EA;
+    M68K_USE_CYCLES(COUNT * (U16)M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(MOVEM, 32, DA, 0)
+{
+    unsigned INDEX = 0;
+    unsigned REGISTERS = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    unsigned COUNT = 0;
+
+    for(INDEX = 0; INDEX < 16; INDEX++)
+    {
+        if(REGISTERS & (1 << INDEX))
+        {
+            EA -= 2;
+            M68K_WRITE_32(EA, M68K_MASK_OUT_ABOVE_32(M68K_REG_DA[15 - INDEX]));
+            COUNT++;
+        }
+    }
+
+    M68K_ADDRESS_HIGH = EA;
+    M68K_USE_CYCLES(COUNT * (U16)M68K_READ_16(M68K_DATA_HIGH));
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, POST_INC, 0)
+{
+    U32 VALUE = M68K_DATA_HIGH;
+    M68K_WRITE_32(M68K_DATA_HIGH, VALUE);
+}
+
+M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
+{
+    unsigned EA = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | ((M68K_READ_8(EA) << 8) + M68K_READ_8(EA + 2));
+}
+
+M68K_MAKE_OPCODE(MOVEP, 32, ER, 0)
+{
+    unsigned EA = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | ((M68K_READ_16(EA) << 8) + M68K_READ_16(EA + 2));
+}
+
+M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
+{
+    unsigned RESULT = M68K_DATA_LOW = M68K_READ_8(M68K_REG_IR);
+    
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MULS, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(SRC * M68K_READ_16(M68K_MASK_OUT_ABOVE_16(*DEST)));
+
+    *DEST = SRC;
+
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MULU, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(*DEST);
+
+    *DEST = SRC;
+
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(NBCD, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = -*DEST - M68K_FLAG_X; 
+
+    if(RESULT | *DEST && 0x0F)
+    {
+        M68K_FLAG_V = RESULT;
+        RESULT = (RESULT & 0xF0) + 6;
+
+        RESULT = M68K_MASK_OUT_ABOVE_8(*DEST);
+
+        M68K_FLAG_C = 0;
+        M68K_FLAG_V = 0;
+        M68K_FLAG_N = 0; 
+        M68K_FLAG_X = 0;
+    }
+}
+
+M68K_MAKE_OPCODE(NEG, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = (U8)M68K_EA();
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned SRC = M68K_READ_8(EA);
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_8(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | M68K_FLAG_Z;
+
+    #ifndef USE_ADDRESSING
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_8(RESULT);
+    M68K_FLAG_V = SRC & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_WRITE_8(EA, M68K_FLAG_Z);
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(NEG, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = (U16)M68K_EA();
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned SRC = M68K_READ_16(EA);
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_16(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
+
+    #ifndef USE_ADDRESSING
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_16(RESULT);
+    M68K_FLAG_V = SRC & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_WRITE_16(EA, M68K_FLAG_Z);
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(NEG, 32, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = (U32)M68K_EA();
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned SRC = M68K_READ_32(EA);
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_32(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+
+    #ifndef USE_ADDRESSING
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_C = M68K_FLAG_X = M68K_READ_32(RESULT);
+    M68K_FLAG_V = SRC & RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_WRITE_32(EA, M68K_FLAG_Z);
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(NEGX, 8, DA, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_8(*DEST) - (U8)M68K_FLAG_X;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(NEGX, 16, DA, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_16(*DEST) - (U16)M68K_FLAG_X;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_16(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(NEGX, 32, DA, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_32(*DEST) - (U32)M68K_FLAG_X;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_V = *DEST & RESULT;
+
+    RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(NOT, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(*DEST);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST | RESULT);
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(NOT, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(*DEST);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST | RESULT);
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(NOT, 32, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(*DEST);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST | RESULT);
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(NOP, 0, 0, 0)
+{
+    #undef M68K_EMULATE_TRACE_MODE
+    M68K_TRACE_0();
+}
+
+M68K_MAKE_OPCODE(OR, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(OR, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(OR, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ORI, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ORI, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ORI, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ORI_CCR, 8, 0, 0)
+{
+    int DESTINATION = M68K_LOW_BITMASK;
+    int SRC = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_X = M68K_BIT_4(SRC) | 0;
+    M68K_FLAG_N = M68K_BIT_3(SRC) | 0;
+    M68K_FLAG_Z = M68K_BIT_2(SRC) | 0;
+    M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
+    M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
+}
+
+M68K_MAKE_OPCODE(ORI_SR, 16, 0, 0)
+{  
+    if(M68K_FLAG_S)
+    {
+        unsigned SR = M68K_READ_16(M68K_DATA_HIGH);
+        M68K_SET_SR_IRQ(SR);
+        return;
+    }
+
+    M68K_FLAG_X = (M68K_REG_SR & 0x0010) ? 1 : 0;
+    M68K_FLAG_N = (M68K_REG_SR & 0x0008) ? 1 : 0;
+    M68K_FLAG_Z = (M68K_REG_SR & 0x0004) ? 1 : 0;
+    M68K_FLAG_V = (M68K_REG_SR & 0x0002) ? 1 : 0;
+    M68K_FLAG_C = (M68K_REG_SR & 0x0001) ? 1 : 0;
+}
+
+
+M68K_MAKE_OPCODE(PEA, 32, D, 0)
+{
+    unsigned EA = M68K_READ_32(M68K_DATA_HIGH);
+    M68K_WRITE_32(EA, M68K_DATA_HIGH);
+}
+
+M68K_MAKE_OPCODE(RESET, 0, 0, 0)
+{
+    if(M68K_FLAG_S)
+    {
+        M68K_PULSE_RESET();
+        M68K_SET_CYCLES(M68K_RESET_CYCLES);
+        return;
+    }
+}
+
+M68K_MAKE_OPCODE(ROL, 8, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = M68K_READ_8(SRC);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = SRC << (9 - BASE_SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROL, 16, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = M68K_READ_16(SRC);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = SRC << (9 - BASE_SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROL, 32, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = M68K_READ_32(SRC);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = SRC << (9 - BASE_SHIFT);
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROXL, 8, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = M68K_READ_8(M68K_DATA_HIGH);
+
+    RESULT = ((U32)RESULT + SHIFT);
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    *DEST = RESULT;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROXL, 16, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = M68K_READ_16(M68K_DATA_HIGH);
+
+    RESULT = ((U32)RESULT + SHIFT);
+    RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    *DEST = RESULT;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROXL, 32, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = M68K_READ_32(M68K_DATA_HIGH);
+
+    RESULT = ((U32)RESULT + SHIFT);
+    RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    *DEST = RESULT;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(RTS, 32, 0, 0)
+{
+    M68K_JUMP(M68K_MASK_OUT_ABOVE_32(M68K_READ_32(M68K_DATA_HIGH)));
+}
+
+M68K_MAKE_OPCODE(RTE, 32, 0, 0)
+{
+    if(M68K_FLAG_S)
+    {
+        unsigned NEW_PC = 0;
+        M68K_JUMP(M68K_MASK_OUT_ABOVE_32(M68K_READ_32(M68K_DATA_HIGH)));
+        M68K_JUMP(NEW_PC);
+    }
+}
+
+M68K_MAKE_OPCODE(RTR, 32, 0, 0)
+{
+    int DESTINATION = M68K_LOW_BITMASK;
+    int SRC = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_X = M68K_BIT_4(SRC) | 0;
+    M68K_FLAG_N = M68K_BIT_3(SRC) | 0;
+    M68K_FLAG_Z = M68K_BIT_2(SRC) | 0;
+    M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
+    M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
+}
+
+M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = M68K_DATA_HIGH;
+
+    unsigned RESULT = M68K_LOW_NIBBLE(DEST) - M68K_LOW_NIBBLE(SRC) - M68K_READ_32(M68K_DATA_HIGH);
+
+    RESULT += M68K_READ_32(M68K_HIGH_NIBBLE(*DEST) | M68K_READ_32(M68K_HIGH_NIBBLE(SRC)));
+    M68K_FLAG_V &= RESULT;
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(STOP, 0, 0, 0)
+{
+    M68K_CPU_STOPPED = 1;
+}
+
+M68K_MAKE_OPCODE(SUB, 8, D, 0)
+{
+    unsigned SRC_REG = (M68K_REG_IR >> 9) & 7;
+    unsigned DEST_REG = M68K_REG_IR & 7;
+
+    unsigned SRC = M68K_GET_REGISTERS(&CPU, M68K_D0 + SRC_REG) & 0xFF;
+    unsigned DEST = M68K_GET_REGISTERS(&CPU, M68K_D0 + DEST_REG) & 0xFF;
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (RESULT >> 7) & 1;
+    M68K_FLAG_Z = (RESULT == 0);      
+    M68K_FLAG_V = ((DEST ^ SRC) & (DEST ^ RESULT)) >> 7; 
+    M68K_FLAG_C = (RESULT > 0xFF);  
+    M68K_FLAG_X = M68K_FLAG_C;        
+
+    M68K_SET_REGISTERS(M68K_D0 + DEST_REG, (M68K_GET_REGISTERS(&CPU, M68K_D0 + DEST_REG) & 0xFFFF0000) | (RESULT & 0xFF));
+}
+
+M68K_MAKE_OPCODE(SUB, 16, D, 0)
+{
+    unsigned SRC_REG = (M68K_REG_IR >> 9) & 7;
+    unsigned DEST_REG = M68K_REG_IR & 7;
+
+    unsigned SRC = M68K_GET_REGISTERS(&CPU, M68K_D0 + SRC_REG) & 0xFFFF;
+    unsigned DEST = M68K_GET_REGISTERS(&CPU, M68K_D0 + DEST_REG) & 0xFFFF;
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = (RESULT >> 15) & 1;
+    M68K_FLAG_Z = (RESULT == 0);      
+    M68K_FLAG_V = ((DEST ^ SRC) & (DEST ^ RESULT)) >> 15; 
+    M68K_FLAG_C = (RESULT > 0xFFFFFFFF);  
+    M68K_FLAG_X = M68K_FLAG_C;        
+
+    M68K_SET_REGISTERS(M68K_D0 + DEST_REG, RESULT);
+}
+
+M68K_MAKE_OPCODE(SUB, 32, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_V = (-(U32)SRC + *DEST + RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBA, 16, DA, 0)
+{
+    unsigned* DATA_DEST = &M68K_DATA_LOW;
+    *DATA_DEST = M68K_MASK_OUT_ABOVE_32(*DATA_DEST - M68K_READ_16(M68K_DATA_HIGH));
+
+    #ifndef USE_ADDRESSING
+
+    unsigned* ADDRESS_DEST = &M68K_ADDRESS_LOW;
+    *ADDRESS_DEST = M68K_MASK_OUT_ABOVE_32(*ADDRESS_DEST - M68K_READ_16(M68K_ADDRESS_HIGH));
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(SUBA, 32, DA, 0)
+{
+    unsigned* DATA_DEST = &M68K_DATA_LOW;
+    *DATA_DEST = M68K_MASK_OUT_ABOVE_32(*DATA_DEST - M68K_READ_32(M68K_DATA_HIGH));
+
+    #ifndef USE_ADDRESSING
+
+    unsigned* ADDRESS_DEST = &M68K_ADDRESS_LOW;
+    *ADDRESS_DEST = M68K_MASK_OUT_ABOVE_32(*ADDRESS_DEST - M68K_READ_32(M68K_ADDRESS_HIGH));
+
+    #endif
+}
+
+M68K_MAKE_OPCODE(SUBI, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
+    M68K_FLAG_V = 0;
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBI, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_16(RESULT);
+    M68K_FLAG_V = 0;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBI, 32, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_V = 0;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBQ, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
+    M68K_FLAG_V = (-(U8)SRC + *DEST + RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBQ, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_16(RESULT);
+    M68K_FLAG_V = (-(U16)SRC + *DEST + RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBQ, 32, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_V = (-(U32)SRC + *DEST + RESULT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+}
+
+M68K_MAKE_OPCODE(SUBX, 8, RR, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
+    M68K_FLAG_V = (-(U8)SRC + *DEST + RESULT);
+
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(SUBX, 16, RR, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_16(RESULT);
+    M68K_FLAG_V = (-(U16)SRC + *DEST + RESULT);
+
+    RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(SUBX, 32, RR, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
+    unsigned RESULT = *DEST - SRC;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_V = (-(U32)SRC + *DEST + RESULT);
+
+    RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_Z |= RESULT;
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+}
+
+M68K_MAKE_OPCODE(SWAP, 16, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(*DEST << 16);
+    *DEST = (*DEST >> 16) | M68K_FLAG_Z;
+
+    M68K_FLAG_Z = *DEST;
+    M68K_FLAG_N = (U32)*DEST;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
+{
+    if(!M68K_GET_CCR())
+    {
+        M68K_REG_SR = M68K_EXCEPTION_TRAP_BASE;
+    }
+}
+
+M68K_MAKE_OPCODE(TAS, 8, D, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(*DEST);
+    M68K_FLAG_N = (U8)*DEST;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    *DEST |= 0x80;
+}
+
+
+M68K_MAKE_OPCODE(TST, 8, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
+    
+    M68K_FLAG_N = (U8)RESULT;
+    M68K_FLAG_Z  = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(TST, 16, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    
+    M68K_FLAG_N = (U16)RESULT;
+    M68K_FLAG_Z  = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(TST, 32, D, 0)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z  = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
+{
+    unsigned* DEST = &M68K_ADDRESS_HIGH;
+
+    M68K_REG_A[7] = *DEST;
+    *DEST = M68K_READ_32(M68K_ADDRESS_HIGH);
+}
+
+/* =============================================== */
+/*              OPCODE MISC. FUNCTIONS             */
+/* =============================================== */
+
+/* THE MAIN ENCOMPASSING OPCODE HANDLER TABLE */
+/* THIS IS WHAT THE EMULATION WILL USE IN ORDER TO EVOKE THE MASK TYPE, LENGTH */
+/* MATCH AND CYCLE COUNTS PER INSTRUCTION */
+
+#ifndef USE_OPCODE_HANDLER_TABLE
+
+OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
+{
+    // OPCODE                   MASK        MATCH       CYCLES
+    {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
+    {ADD_8_EA_0,                0xF1C0,     0xD000,     4},  // ADD.B <ea>,Dn
+    {ADD_16_EA_0,               0xF1C0,     0xD040,     4},  // ADD.W <ea>,Dn
+    {ADD_32_EA_0,               0xF1C0,     0xD080,     8},  // ADD.L <ea>,Dn
+    {ADD_32_D_0,                0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
+    {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
+    {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
+    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
+    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
+    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
+    {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
+    {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
+    {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
+    {ADDX_8_RR_0,               0xF1F8,     0xD100,     4},  // ADDX.B Dy,Dx
+    {ADDX_16_RR_0,              0xF1F8,     0xD140,     4},  // ADDX.W Dy,Dx
+    {ADDX_32_RR_0,              0xF1F8,     0xD180,     8},  // ADDX.L Dy,Dx
+    {AND_8_D_0,                 0xF1C0,     0xC000,     4},  // AND.B <ea>,Dn
+    {AND_16_D_0,                0xF1C0,     0xC040,     4},  // AND.W <ea>,Dn
+    {AND_32_D_0,                0xF1C0,     0xC080,     8},  // AND.L <ea>,Dn
+    {ANDI_8_EA_0,               0xFF00,     0x0200,     8},  // ANDI.B #<data>,<ea>
+    {ANDI_16_EA_0,              0xFF00,     0x0240,     8},  // ANDI.W #<data>,<ea>
+    {ANDI_32_EA_0,              0xFF00,     0x0280,     16}, // ANDI.L #<data>,<ea>
+    {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
+    {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
+    {ASL_8_ASR_0,               0xF1F8,     0xE100,     6},  // ASL.B Dn,Dy
+    {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
+    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displacement)
+    {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
+    {BRA_16_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (16-bit displacement)
+    {BRA_32_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (32-bit displacement)
+    {BNE_8_0_0,                 0xF000,     0x6600,     10},  // BNE <ea>
+    {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
+    {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
+    {BTST_8_IMM_D,              0xFFF8,     0x0808,     12},  // BTST #<imm>, Dn
+    {CHK_16_EA_0,               0xF1C0,     0x4180,     10}, // CHK <ea>,Dn
+    {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B <ea>
+    {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W <ea>
+    {CLR_32_D_0,                0xF1C0,     0x4280,     6},  // CLR.L <ea>
+    {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
+    {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
+    {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
+    {CMPA_16_DA_0,              0xF1C0,     0xB0C0,     6},  // CMPA.W <ea>,An
+    {CMPA_32_DA_0,              0xF1C0,     0xB1C0,     6},  // CMPA.L <ea>,An
+    {CMPI_8_DA_0,               0xFF00,     0x0C00,     8},  // CMPI.B #<data>,<ea>
+    {CMPI_16_DA_0,              0xFF00,     0x0C40,     8},  // CMPI.W #<data>,<ea>
+    {CMPI_32_DA_0,              0xFF00,     0x0C80,     14}, // CMPI.L #<data>,<ea>
+    {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
+    {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
+    {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
+    {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
+    {DIVS_16_D_0,               0xF1C0,     0x81C0,     158},// DIVS.W <ea>,Dn
+    {DIVU_16_D_0,               0xF1C0,     0x80C0,     140},// DIVU.W <ea>,Dn
+    {EOR_8_D_0,                 0xF1C0,     0xB000,     4},  // EOR.B Dn,<ea>
+    {EOR_16_D_0,                0xF1C0,     0xB040,     4},  // EOR.W Dn,<ea>
+    {EOR_32_D_0,                0xF1C0,     0xB080,     8},  // EOR.L Dn,<ea>
+    {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
+    {EORI_16_D_0,               0xFF00,     0x0A40,     8},  // EORI.W #<data>,<ea>
+    {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
+    {EORI_CCR_8_0_0,            0xFF00,     0x0A3C,     20}, // EORI #<data>,CCR
+    {EORI_SR_16_0_0,            0xFF00,     0x0A7C,     20}, // EORI #<data>,SR
+    {EXG_32_DA_0,               0xF1F8,     0xC140,     6},  // EXG Dx,Dy
+    {EXT_16_0_0,                0xFFF8,     0x4880,     4},  // EXT.W Dn
+    {EXT_32_0_0,                0xFFF8,     0x48C0,     4},  // EXT.L Dn
+    {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
+    {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
+    {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
+    {LEA_32_DA_0,               0xF1C0,     0x41C0,     4},  // LEA <ea>,An
+    {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
+    {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
+    {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
+    {LSL_32_S_0,                0xF1F8,     0xE188,     6},  // LSL.L, Dn, Dy
+    {LSR_8_S_0,                 0xF1F8,     0xE008,     6},  // LSR.B Dn,Dy
+    {LSR_16_S_0,                0xF1F8,     0xE048,     6},  // LSR.W Dn,Dy
+    {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
+    {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
+    {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
+    {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
+    {MOVE_32_IMM_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, #<data>
+    {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
+    {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
+    {MOVEA_16_IMM_0,            0xF1C0,     0x203C,     8},  // MOVEA.W #imm,An 
+    {MOVEA_32_IMM_0,            0xFFFF,     0x207C,     12},  // MOVEA.L #imm,An
+    {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L Dn,(SP)+
+    {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
+    {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
+    {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
+    {MOVEM_16_DA_0,             0xFB80,     0x4880,     8},  // MOVEM.W <ea>,Regs
+    {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
+    {MOVEP_16_ER_0,             0xF1F8,     0x0108,     16}, // MOVEP.W Dn,(d16,An)
+    {MOVEP_32_ER_0,             0xF1F8,     0x0148,     24}, // MOVEP.L Dn,(d16,An)
+    {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
+    {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
+    {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
+    {NBCD_8_D_0,                0xF1F8,     0x4800,     6},  // NBCD <ea>
+    {NEG_8_D_0,                 0xF1F8,     0x4400,     4},  // NEG.B <ea>
+    {NEG_16_D_0,                0xF1F8,     0x4440,     4},  // NEG.W <ea>
+    {NEG_32_D_0,                0xF1F8,     0x4480,     6},  // NEG.L <ea>
+    {NEGX_8_DA_0,               0xF1F8,     0x4000,     4},  // NEGX.B <ea>
+    {NEGX_16_DA_0,              0xF1F8,     0x4040,     4},  // NEGX.W <ea>
+    {NEGX_32_DA_0,              0xF1F8,     0x4080,     6},  // NEGX.L <ea>
+    {NOT_8_D_0,                 0xF1F8,     0x4600,     4},  // NOT.B <ea>
+    {NOT_16_D_0,                0xF1F8,     0x4640,     4},  // NOT.W <ea>
+    {NOT_32_D_0,                0xF1F8,     0x4680,     6},  // NOT.L <ea>
+    {NOP_0_0_0,                 0xFFFF,     0x4E71,     4},  // NOP
+    {OR_8_D_0,                  0xF1C0,     0x8000,     4},  // OR.B <ea>,Dn
+    {OR_16_D_0,                 0xF1C0,     0x8040,     4},  // OR.W <ea>,Dn
+    {OR_32_D_0,                 0xF1C0,     0x8080,     6},  // OR.L <ea>,Dn
+    {ORI_8_D_0,                 0xFF00,     0x0000,     8},  // ORI.B #<data>,<ea>
+    {ORI_16_D_0,                0xFF00,     0x0040,     8},  // ORI.W #<data>,<ea>
+    {ORI_32_D_0,                0xFF00,     0x0080,     16}, // ORI.L #<data>,<ea>
+    {ORI_CCR_8_0_0,             0xFF00,     0x003C,     20}, // ORI #<data>,CCR
+    {ORI_SR_16_0_0,             0xFF00,     0x007C,     20}, // ORI #<data>,SR
+    {PEA_32_D_0,                0xFFC0,     0x4840,     12}, // PEA <ea>
+    {RESET_0_0_0,               0xFFFF,     0x4E70,     132},// RESET
+    {ROL_8_S_0,                 0xF1F8,     0xE118,     6},  // ROL.B Dn,Dy
+    {ROL_16_S_0,                0xF1F8,     0xE158,     6},  // ROL.W Dn,Dy
+    {ROL_32_S_0,                0xF1F8,     0xE198,     8},  // ROL.L Dn,Dy
+    {ROXL_8_S_0,                0xF1F8,     0xE110,     6},  // ROXL.B Dn,Dy
+    {ROXL_16_S_0,               0xF1F8,     0xE150,     6},  // ROXL.W Dn,Dy
+    {ROXL_32_S_0,               0xF1F8,     0xE190,     8},  // ROXL.L Dn,Dy
+    {RTS_32_0_0,                0xFFFF,     0x4E75,     16}, // RTS
+    {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
+    {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
+    {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
+    {STOP_0_0_0,                0xFFFF,     0x4E72,     4},  // STOP #<data>
+    {SUB_8_D_0,                 0xF1C0,     0x9000,     4},  // SUB.B <ea>,Dn
+    {SUB_16_D_0,                0xF1C0,     0x9040,     4},  // SUB.W <ea>,Dn
+    {SUB_32_D_0,                0xF1C0,     0x9080,     6},  // SUB.L <ea>,Dn
+    {SUBA_16_DA_0,              0xF1C0,     0x90C0,     8},  // SUBA.W <ea>,An
+    {SUBA_32_DA_0,              0xF1C0,     0x91C0,     8},  // SUBA.L <ea>,An
+    {SUBI_8_D_0,                0xFF00,     0x0400,     8},  // SUBI.B #<data>,<ea>
+    {SUBI_16_D_0,               0xFF00,     0x0440,     8},  // SUBI.W #<data>,<ea>
+    {SUBI_32_D_0,               0xFF00,     0x0480,     16}, // SUBI.L #<data>,<ea>
+    {SUBQ_8_D_0,                0xF1C0,     0x5100,     4},  // SUBQ.B #<data>,<ea>
+    {SUBQ_16_D_0,               0xF1C0,     0x5140,     4},  // SUBQ.W #<data>,<ea>
+    {SUBQ_32_D_0,               0xF1C0,     0x5180,     8},  // SUBQ.L #<data>,<ea>
+    {SUBX_8_RR_0,               0xF1F8,     0x9100,     4},  // SUBX.B Dy,Dx
+    {SUBX_16_RR_0,              0xF1F8,     0x9140,     4},  // SUBX.W Dy,Dx
+    {SUBX_32_RR_0,              0xF1F8,     0x9180,     8},  // SUBX.L Dy,Dx
+    {SWAP_16_D_0,               0xFFF8,     0x4840,     4},  // SWAP Dn
+    {TRAP_0_0_0,                0xFFFF,     0x4E4F,     4},  // TRAP #<ea>
+    {TAS_8_D_0,                 0xFFC0,     0x4AC0,     4},  // TAS <ea>
+    {TST_8_D_0,                 0xFF00,     0x4A00,     4},  // TST.B <ea>
+    {TST_16_D_0,                0xFF00,     0x4A40,     4},  // TST.W <ea>
+    {TST_32_D_0,                0xFF00,     0x4A80,     4},  // TST.L <ea>
+    {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
+    {NULL,                      0,          0,          0}   // NULL TERM
 };
 
-/* SET THE CPU TYPE BASED ON HTE PRE-REQUISTIES DETERMINED BY THEIR RESPECTIVE CHARACTERISTICS */
-/* EACH OF THESE CHARACTERISTICS REFER TO THE INITIALISATION OF THE CPU'S EXECUTION */
+/* BUILD THE OVERARCHING OPCODE TABLE BASED ON ALL OF THE DIRECTIVES AND PRE-REQUISITIES */
+/* THIS WILL WORK ON THE BASIS BY WHICH IT WILL BE ASSUME THE CURRENT OPERAND BASED ON THE MASK */
+/* AND IT'S DESIGNATED VALUE */ 
 
-/* MOREOVER, THIS IS SPECIFC TO THE RESPECTIVE CHARACTERISTICS OF THE STATUS REGISTER */
-/* OF EACH CPU TYPE, WHICH HANDLES EXCEPTIONS AND HANDLES DIFFERENTLY BASED ON DIFFERENT ADDRESSABLE MODES */
-
-/* SEE: https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=17 */
-
-void M68K_SET_CPU_TYPE(unsigned TYPE)
+void M68K_BUILD_OPCODE_TABLE(void)
 {
-    switch (TYPE)
+    int INDEX;
+    const OPCODE_HANDLER* OSTRUCT;
+
+    for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
-        case M68K_CPU_000:
-            CPU_TYPE = M68K_CPU_000;
-            M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK += 0x00FFFFFF;
-            M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
-            M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 256;
-            return;
-
-        case M68K_CPU_010:
-            CPU_TYPE = M68K_CPU_010;
-            M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK += 0x00FFFFFF;
-            M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
-            M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 256;
-            return;
-
-        case M68K_CPU_020:
-            CPU_TYPE = M68K_CPU_020;
-            M68K_SR_MASK += 0xF71F;
-            M68K_ADDRESS_MASK += 0xFFFFFFFF;
-            M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
-            M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 512;
-            return;
-
-        default:
-            break;
-    }
-}
-
-int M68K_CYCLES_RUN(void)
-{
-    return M68K_GET_CYCLES() - M68K_GET_CYCLES();
-}
-
-int M68K_CYCLES_REMAINING(void)
-{
-    return M68K_GET_CYCLES();
-}
-
-/* THIS FUNCTION DISCERNS THE FUNCTIONALITY BASED ON PROVIDING PULSE TO THE RESET LINE */
-/* ON THE CPU BASED ON EACH RESPECTIVE REGISTER */
-
-/* SEE: RESET OPERATION - https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=75 */
-
-void M68K_PULSE_RESET(void)
-{
-	M68K_CPU_STOPPED = 0;
-	M68K_SET_CYCLES(0);
-
-	/* SOMEHOW THIS WORKS */
-	/* BASED ON DOCUMENTATION, EMULATE CPU TYPE SPECIFC CHARACTERISTICS */
-
-	if(CPU_TYPE == M68K_CPU_010)
-	{
-		M68K_REG_VBR = (S16)0x0000;
-	}
-
-	M68K_FLAG_T1 = M68K_FLAG_T0 = 0;
-	M68K_FLAG_INT_LVL = 0;
-	M68K_REG_VBR = 0;
-	M68K_JUMP(0);
-
-	M68K_REG_SP += (int)M68K_READ_32(0);
-	M68K_REG_PC += (int)M68K_READ_32(0);
-
-	M68K_RESET_CYCLES += M68K_CYC_EXCE[0];
-}
-
-/* SIMILAR TO PULSE RESET EXCEPT FOR THE HALT LINE */
-
-void M68K_PULSE_HALT(void)
-{
-	M68K_CPU_STOPPED |= 2;
-}
-
-/*===============================================================================*/
-/*							68000 HELPER FUNCTIONS							     */
-/*===============================================================================*/
-/*      THE FOLLOWING FUNCTIONS PERTAIN TOWARDS THE BITWISE WAYS BY WHICH        */
-/* INSTRUCTIONS WILL BE HANDLED - USING THE MEMORY MAP WHICH WILL DYNAMICALLY    */
-/*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
-/*===============================================================================*/
-
-unsigned int READ_IMM_8(void)
-{
-	return M68K_READ_8(M68K_REG_PC);
-}
-
-unsigned int READ_IMM_16(void) 
-{
-    return M68K_READ_16(M68K_REG_PC); 
-}
-
-unsigned int READ_IMM_32(void) 
-{
-    return M68K_READ_32(M68K_REG_PC); 
-}
-
-void M68K_BRANCH_8(unsigned OFFSET)
-{
-	M68K_REG_PC += (S8)OFFSET;
-}
-
-void M68K_BRANCH_16(unsigned OFFSET)
-{
-	M68K_REG_PC += (S16)OFFSET;
-	printf("OFFSET VALUE FOR BRANCH: %d\n", OFFSET);
-}
-
-void M68K_BRANCH_32(unsigned OFFSET)
-{
-	M68K_REG_PC += OFFSET;
-}
-
-void M68K_PUSH_SP(LIB_UNUSED unsigned VALUE)
-{
-	unsigned ADDRESS_MASK = M68K_REG_PC;
-
-	M68K_REG_SP -= 4;
-	M68K_REG_SP &= ADDRESS_MASK;
-
-	M68K_WRITE_32(ADDRESS_MASK, M68K_REG_SP);
-}
-
-// HELPER FUNCTIONS TO BE ABLE TO READ THE IMMEDIATE ADDRESSING VARIABLE
-// OF A DATA REGISTER
-
-// THIS IS ACHIEVED BY PARSING THE HIGHEST ADDRESS OFFSET
-// READING THE IMMEDIATE VALUE THEN PASSING THROUGH TO THE EFFECTIVE ADDRESS
-// ALLOWING FOR THE IMM TO BE READ PROPERLY
-
-// THIS ESPECIALLY HELPS IN OPCODES SUCH AS BIT TEST (BTST)
-
-unsigned int M68K_DI_8(void)
-{
-	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
-	return M68K_READ_8(EA);
-}
-
-unsigned int M68K_DI_16(void)
-{
-	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
-	return M68K_READ_16(EA);
-}
-
-unsigned int M68K_DI_32(void)
-{
-	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
-	return M68K_READ_32(EA);
-} 
-
-int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
-{
-    FILE* FILE_PTR = fopen(FILE_PATH, "rb");
-    if(!FILE_PTR)
-    {
-        printf("ERROR: COULD NOT OPEN FILE %s\n", FILE_PATH);
-        return -1;
+        M68K_OPCODE_JUMP_TABLE[INDEX] = ILLEGAL_0_0_0;
+        CYCLE_RANGE[INDEX] = 0;
     }
 
-    fseek(FILE_PTR, 0, SEEK_END);
-    size_t FILE_SIZE = ftell(FILE_PTR);
-    fseek(FILE_PTR, 0, SEEK_SET);
+    OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
+    printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
 
-    U8* BUFFER = (U8*)malloc(FILE_SIZE);
-    if(!BUFFER)
+    while (OSTRUCT->HANDLER != NULL)
     {
-        printf("ERROR: MEMORY ALLOCATION FAILED\n");
-        fclose(FILE_PTR);
-        return -1;
+        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
+               OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
+
+        for (INDEX = 0; INDEX < 0x10000; INDEX++)
+        {
+            // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
+            // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
+
+            if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
+            {
+                M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
+                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;               
+            }
+        }
+
+        OSTRUCT++;
     }
 
-    size_t BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
-    fclose(FILE_PTR);
+    printf("OPCODE TABLE BUILDING COMPLETED SUCCESSFULLY.\n");
+}
 
-    if(BYTES_READ != FILE_SIZE)
+#endif
+
+//=============================================================================
+//                  68000 STD LIB EXTENDED FUNCTIONALITY
+//      ALL OF THIS ISN'T REALLY USED WITHIN THE ACTUAL EMULATOR ITSELF
+//   MOREOVER, THIS WAS HERE ORIGINALLY TO ALLOW FOR TESTING THE PROCESSING OF
+//  OPCODES AND DIRECTIVES FROM A FILE - PAVING THE WAY FOR EVERYTHING ELSE
+//=============================================================================
+
+/* FIND AN OPCODE IN THE HANDLER LIST */
+/* THIS IS DONE BY ASSUMING A STRING COMPARATOR BETWEEN AN ARBITRARY NAME */
+/* PROVIDED THROUGH LOCAL ARGS AS WELL AS ONE THAT EXISTS IN THE OPCODE TABLE */
+/* EVALUATE A SIZE AND RETURN THE CORRESPONDENCE */
+
+#if USE_STD_LIB
+
+OPCODE* FIND_OPCODE(char* NAME, int SIZE)
+{
+    unsigned INDEX = 0;
+
+    for (INDEX = 0; INDEX < 1000; INDEX++)
     {
-        printf("ERROR: FILE READ INCOMPLETE\n");
-        free(BUFFER);
-        return -1;
+        return strcmp(NAME, &OPCODE_NAME) == 0 && (OPCODE_SIZE += (int)SIZE) ? &OPCODE_BASE : 0;
     }
 
-    for(size_t i = 0; i < FILE_SIZE; i++)
+   return NULL; 
+}
+
+/* NOW BASED OFF OF THE ABOVE, PARSE A RELEVANT OPCODE HANDLER NAME */
+/* BASED ON THE SRC OPERAND, LOCATION, SIZE, ETC */
+
+/* THIS WILL EXCLUDE WHITESPACE AS WELL, BEING ABLE TO READ CONTENTS EFFECTIVELY */
+/* IMPLEMENTS A FIFO CHECKER TO STORE THE LOCATION AS A POINTER */
+
+int EXTRACT_OPCODE(char* SRC, char* NAME, int* SIZE)
+{
+    /* DEFINE THE BUFFER THAT CURRENTLY HOUSES THE POINTER OF THE OPERAND */
+    /* EVALUATE THE LENGTH */
+
+    char* OPCODE_BUFFER = strstr(SRC, "");
+    char* TYPE = NULL;
+    SIZE += 32;
+
+    OPCODE_BUFFER += strlen("") + 1;
+
+    switch(*TYPE)
     {
-        M68K_WRITE_MEMORY_8(LOAD_ADDR + i, BUFFER[i]);
+        case ',':
+            OPCODE_BUFFER += CHECK_OPCODE_LENGTH(NAME, OPCODE_BUFFER, *SIZE);
+        return 0;
+
+        case ')':
+            OPCODE_BUFFER += CHECK_OPCODE_LENGTH(&OPCODE_EA, OPCODE_BUFFER, ')') | *SIZE;
+        return 0;
     }
 
-    free(BUFFER);
-    return FILE_SIZE;
+    return 0;
+}
+
+int CHECK_OPCODE_LENGTH(char* SRC, char* DEST, int MAX)
+{
+    int* LENGTH = 0;
+
+    for(*LENGTH = 0; *SRC != 0; SRC++)
+    {
+        *DEST = *SRC;
+    }
+
+    *DEST = '\0';
+    return DEST - (DEST - MAX);
 }
 
 #endif
