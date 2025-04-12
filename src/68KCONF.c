@@ -199,6 +199,11 @@ void M68K_PULSE_HALT(void)
 /*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
 /*===============================================================================*/
 
+unsigned int READ_IMM_8(void)
+{
+	return M68K_READ_8(M68K_REG_PC);
+}
+
 unsigned int READ_IMM_16(void) 
 {
     return M68K_READ_16(M68K_REG_PC); 
@@ -216,12 +221,20 @@ void M68K_BRANCH_8(unsigned OFFSET)
 
 void M68K_BRANCH_16(unsigned OFFSET)
 {
-	M68K_REG_PC += (U16)OFFSET;
+	M68K_REG_PC += (S16)OFFSET;
 }
 
 void M68K_BRANCH_32(unsigned OFFSET)
 {
 	M68K_REG_PC += OFFSET;
+}
+
+void M68K_PUSH_SP(unsigned VALUE)
+{
+	M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(M68K_REG_SP - 4);
+	M68K_WRITE_32(M68K_REG_SP, VALUE);
+
+	printf("VALUE PUSHED TO STACK POINTER: %d\n", VALUE);
 }
 
 // HELPER FUNCTIOSN TO BE ABLE TO READ THE IMMEDIATE ADDRESSING VARIABLE
