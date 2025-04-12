@@ -465,6 +465,15 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
     M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
 }
 
+M68K_MAKE_OPCODE(BNE, 8, 0, 0)
+{
+    if(!M68K_FLAG_Z)
+    {
+        S8 DISP = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
+        M68K_BRANCH_8(DISP);
+    }
+}
+
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
 {
     unsigned MASK = 1 << M68K_READ_8(0) & 7;
@@ -495,12 +504,15 @@ M68K_MAKE_OPCODE(BSR, 16, 0, 0)
 
 M68K_MAKE_OPCODE(BTST, 8, D, 0)
 {
-    M68K_FLAG_Z = (U8)M68K_DATA_HIGH & (1 << (M68K_DATA_LOW & 0x1F));
+    unsigned BIT = READ_IMM_8() & 7;
+    M68K_FLAG_Z = M68K_DI_8() & ( 1 << BIT);
 }
 
-M68K_MAKE_OPCODE(BTST, 32, D, 0)
+M68K_MAKE_OPCODE(BTST, 8, IMM, D)
 {
-    M68K_FLAG_Z = (U32)M68K_DATA_HIGH & (1 << (M68K_DATA_LOW & 0x1F));
+    unsigned BIT = READ_IMM_8() & 7;
+
+    M68K_FLAG_Z = M68K_DI_8() & ( 1 << BIT);
 }
 
 M68K_MAKE_OPCODE(CHK, 16, EA, 0)
@@ -920,6 +932,61 @@ M68K_MAKE_OPCODE(LINK, 32, DA, 0)
     *DEST = M68K_REG_A[7];
     M68K_REG_A[7] = M68K_MASK_OUT_ABOVE_32(M68K_REG_A[7] + (U16)M68K_READ_16(M68K_DATA_HIGH));
 }
+
+M68K_MAKE_OPCODE(LSL, 8, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSL, 16, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(LSL, 32, S, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned SHIFT = M68K_HIGH_NIBBLE(M68K_REG_IR);
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = SRC << SHIFT;
+
+    M68K_USE_CYCLES(SHIFT);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = M68K_FLAG_X = (SRC << M68K_HIGH_NIBBLE(SHIFT));
+    M68K_FLAG_V = 0;
+}
+
 
 M68K_MAKE_OPCODE(LSR, 8, S, 0)
 {
@@ -1930,9 +1997,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (16-bit displacement)
     {BRA_32_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (32-bit displacement)
+    {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
-    {BTST_8_D_0,                0xF1C0,     0x0100,     4},  // BTST Dn,<ea>
-    {BTST_32_D_0,               0xF1C0,     0x0100,     4},  // BTST Dn,<ea> (32-bit)
+    {BTST_8_D_0,                0xFFC0,     0x0100,     16},  // BTST Dn,<ea>
+    {BTST_8_IMM_D,              0xF1F8,     0x0800,     12},  // BTST #<imm>, Dn
     {CHK_16_EA_0,               0xF1C0,     0x4180,     10}, // CHK <ea>,Dn
     {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B <ea>
     {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W <ea>
@@ -1967,6 +2035,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
     {LEA_32_DA_0,               0xF1C0,     0x41C0,     4},  // LEA <ea>,An
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
+    {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
+    {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
+    {LSL_32_S_0,                0xF1F8,     0xE188,     6},  // LSL.L, Dn, Dy
     {LSR_8_S_0,                 0xF1F8,     0xE008,     6},  // LSR.B Dn,Dy
     {LSR_16_S_0,                0xF1F8,     0xE048,     6},  // LSR.W Dn,Dy
     {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
