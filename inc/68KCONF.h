@@ -60,11 +60,11 @@
 #define USE_CYCLES
 #else
 
-#define 	M68K_ADD_CYCLES(VALUE)				M68K_CYC_REMAIN += (VALUE)
-#define		M68K_USE_CYCLES(VALUE)				M68K_CYC_REMAIN -= (VALUE)
-#define		M68K_SET_CYCLES(VALUE)				M68K_CYC_REMAIN = VALUE
-#define		M68K_GET_CYCLES()					M68K_CYC_REMAIN
-#define		M68K_ALL_CYCLES()					M68K_CYC_REMAIN %= M68K_CYCLE[M68K_REG_IR]
+#define 	M68K_ADD_CYCLES(VALUE)				M68K_MASTER_CYC += (VALUE)
+#define		M68K_USE_CYCLES(VALUE)				M68K_MASTER_CYC -= (VALUE)
+#define		M68K_SET_CYCLES(VALUE)				M68K_MASTER_CYC = VALUE
+#define		M68K_GET_CYCLES()					M68K_MASTER_CYC
+#define		M68K_ALL_CYCLES()					M68K_MASTER_CYC %= M68K_CYCLE[M68K_REG_IR]
 
 #define		M68K_USE_MASTER_CYCLES(VALUE)		CPU.MASTER_CYCLES += (VALUE)
 
@@ -88,9 +88,9 @@
 #define		M68K_SET_FC(A)					MEM_SET_FC(A)
 #define		M68K_ADDRESS_LINE(A)			((A)&M68K_ADDRESS_MASK)
 
-/*===============================================================================*/
-/*							68000 CALLBACKS						     			 */
-/*===============================================================================*/
+/*==============================================================================*/
+/*							68000 CALLBACKS										*/
+/*==============================================================================*/
 
 extern U8 M68K_VECTOR_TABLE[5][256];
 int M68K_SET_INT_CALLBACK(int LEVEL);
@@ -103,6 +103,7 @@ U32 M68K_FETCH_LONG();
 /*							68000 READ AND WRITE							     */
 /*===============================================================================*/
 
+extern unsigned int READ_IMM_8(void);
 extern unsigned int READ_IMM_16(void);
 extern unsigned int READ_IMM_32(void);
 
@@ -121,7 +122,6 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR);
 extern unsigned int M68K_DI_8(void);
 extern unsigned int M68K_DI_16(void);
 extern unsigned int M68K_DI_32(void); 
-
 
 
 #endif
