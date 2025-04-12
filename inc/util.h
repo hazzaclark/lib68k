@@ -20,6 +20,13 @@
 #include <stdint.h>
 #include <string.h>
 
+#if defined(LIB_UNUSED)
+#define LIB_UNUSED
+    #else
+    #define     LIB_UNUSED(VALUE)           VALUE __attribute__((__unused__))
+    #define     LIB_UNUSED                  __attribute__((__unused__))
+#endif
+
 #if defined(USE_UTIL)
     #define USE_UTIL
         #else
@@ -69,19 +76,6 @@
         EA_MODE_I
 
     } M68K_EA_TYPES;
-
-    typedef struct LIB_BASE
-    {
-        char INPUT_FILE[MAX_PATH_BUFFER];
-        char OUTPUT_PATH[MAX_DIR_BUFFER];
-        char* FILENMAE[MAX_PATH_BUFFER * 2];
-        char* SECTION_ID[MAX_LINE_BUFFER + 1];
-        char* FILE_PATH;
-
-        int OPCODE_HANDLER_READ;
-
-    } LIB_BASE;
-
 
 /*====================================================*/
 /*              FUNCTION DECLARATIVES                 */
