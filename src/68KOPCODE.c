@@ -1915,6 +1915,14 @@ M68K_MAKE_OPCODE(SWAP, 16, D, 0)
     M68K_FLAG_V = 0;
 }
 
+M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
+{
+    if(!M68K_GET_CCR())
+    {
+        M68K_REG_SR = M68K_EXCEPTION_TRAP_BASE;
+    }
+}
+
 M68K_MAKE_OPCODE(TAS, 8, D, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
@@ -2115,6 +2123,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {SUBX_16_RR_0,              0xF1F8,     0x9140,     4},  // SUBX.W Dy,Dx
     {SUBX_32_RR_0,              0xF1F8,     0x9180,     8},  // SUBX.L Dy,Dx
     {SWAP_16_D_0,               0xFFF8,     0x4840,     4},  // SWAP Dn
+    {TRAP_0_0_0,                0xFFFF,     0x4E4F,     4},  // TRAP #<ea>
     {TAS_8_D_0,                 0xFFC0,     0x4AC0,     4},  // TAS <ea>
     {TST_8_D_0,                 0xFF00,     0x4A00,     4},  // TST.B <ea>
     {TST_16_D_0,                0xFF00,     0x4A40,     4},  // TST.W <ea>
