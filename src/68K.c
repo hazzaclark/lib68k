@@ -203,6 +203,7 @@ int M68K_EXEC(int CYCLES)
     CPU.MASTER_CYCLES = CYCLES;
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
+    printf("------------------------------------------------------------\n");
 
     while(!M68K_CPU_STOPPED && CPU.MASTER_CYCLES > 0)
     {
