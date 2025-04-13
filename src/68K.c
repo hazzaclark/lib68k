@@ -170,8 +170,8 @@ void M68K_INIT(void)
 
     CPU.PC = 0x00001000;
     CPU.PREVIOUS_PC = 0x00000000;
-    CPU.INDEX_REGISTER = 0x0000;
-    CPU.STACK_POINTER = 0x1000;
+    CPU.INDEX_REGISTER = 0x00000000;
+    CPU.STACK_POINTER = 0x10000000;
 
     printf("INITIALISING OPCODE TABLE...\n");
     M68K_BUILD_OPCODE_TABLE();
@@ -204,7 +204,7 @@ int M68K_EXEC(int CYCLES)
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
 
-    while(CPU.MASTER_CYCLES > 0 && !M68K_CPU_STOPPED)
+    while(!M68K_CPU_STOPPED && CPU.MASTER_CYCLES > 0)
     {
         M68K_REG_PPC = M68K_REG_PC;
 
@@ -216,7 +216,11 @@ int M68K_EXEC(int CYCLES)
 
         int CURRENT_CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
-        if (CPU.MASTER_CYCLES < CURRENT_CYCLES) break;
+        if (CPU.MASTER_CYCLES < CURRENT_CYCLES) 
+        {
+            CPU.MASTER_CYCLES = 0;
+            break;
+        }
 
         printf("%08X  %04X    ", M68K_REG_PC, M68K_REG_IR);
 
