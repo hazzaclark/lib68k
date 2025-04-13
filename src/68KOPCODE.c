@@ -455,14 +455,12 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    U16 OFFSET = M68K_READ_16(0);
-    M68K_REG_PC -= 2;
-    M68K_BRANCH_16(OFFSET);
+    M68K_BRANCH_16(M68K_MASK_OUT_ABOVE_16(M68K_REG_IR));
 }
 
 M68K_MAKE_OPCODE(BRA, 32, 0, 0)
 {
-    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    M68K_BRANCH_32(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
 }
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
@@ -2053,8 +2051,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displacement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (16-bit displacement)
-    {BRA_32_0_0,                0xFF00,     0x6000,     10}, // BRA <label> (32-bit displacement)
+    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)
+    {BRA_32_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (32-bit displacement)
     {BNE_8_0_0,                 0xF000,     0x6600,     10},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
