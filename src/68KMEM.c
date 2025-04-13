@@ -105,7 +105,7 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
     }
 
 MALFORMED_READ:
-    fprintf(stderr, "BAD READ AT ADDRESS: 0x%08x\n", ADDRESS);
+    fprintf(stderr, "BAD READ AT ADDRESS: 0x%08X\n", ADDRESS);
     MEM_TRACE(MEM_INVALID_READ, ADDRESS, SIZE, ~(uint32_t)0);
     return 0;
 }
@@ -156,7 +156,7 @@ static void MEMORY_WRITE(uint32_t ADDRESS, uint32_t SIZE, uint32_t VALUE)
     }
 
 MALFORMED:
-    fprintf(stderr, "BAD WRITE AT ADDRESS: 0x%08x (SIZE: %d, VALUE: 0x%08X)\n", 
+    fprintf(stderr, "BAD WRITE AT ADDRESS: 0x%08X (SIZE: 0x%02X, VALUE: 0x%08X)\n", 
             ADDRESS, SIZE, VALUE);
     MEM_TRACE(MEM_INVALID_WRITE, ADDRESS, SIZE, VALUE);
 }
