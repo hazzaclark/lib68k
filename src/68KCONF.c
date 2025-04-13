@@ -269,6 +269,12 @@ unsigned int M68K_DI_32(void)
 	return M68K_READ_32(EA);
 } 
 
+unsigned int M68K_POST_DEC_32(void)
+{
+	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
+	return M68K_READ_32(EA);
+}
+
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
 {
     FILE* FILE_PTR = fopen(FILE_PATH, "rb");
