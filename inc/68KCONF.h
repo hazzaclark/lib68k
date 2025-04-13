@@ -126,6 +126,7 @@ extern unsigned int M68K_DI_32(void);
 extern unsigned int M68K_POST_DEC_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
+extern unsigned int M68K_PULL_SP(void);
 
 
 #endif
