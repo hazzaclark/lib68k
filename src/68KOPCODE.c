@@ -450,17 +450,19 @@ M68K_MAKE_OPCODE(BCLR, 8, D, EA)
 
 M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 {
-    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    U8 OFFSET = M68K_MASK_OUT_ABOVE_8(M68K_REG_IR & 0xFF);
+    M68K_BRANCH_8(OFFSET);
 }
 
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    M68K_BRANCH_16(M68K_MASK_OUT_ABOVE_16(M68K_REG_IR));
+    U16 OFFSET = READ_IMM_16();
+    M68K_BRANCH_16(OFFSET);
 }
 
 M68K_MAKE_OPCODE(BRA, 32, 0, 0)
 {
-    M68K_BRANCH_32(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
+    M68K_BRANCH_32(M68K_REG_IR);
 }
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
@@ -469,8 +471,10 @@ M68K_MAKE_OPCODE(BNE, 8, 0, 0)
     {
         S8 DISP = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
         M68K_BRANCH_8(DISP);
-        M68K_ADD_CYCLES(8);
+        return;
     }
+
+    M68K_USE_CYCLES(8);
 }
 
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
@@ -1677,9 +1681,9 @@ M68K_MAKE_OPCODE(ROXL, 32, S, 0)
     M68K_FLAG_V = 0;
 }
 
-M68K_MAKE_OPCODE(RTS, 32, 0, 0)
+M68K_MAKE_OPCODE(RTS, 0, 0, 0)
 {
-    M68K_JUMP(M68K_MASK_OUT_ABOVE_32(M68K_READ_32(M68K_DATA_HIGH)));
+    M68K_JUMP(M68K_PULL_SP());
 }
 
 M68K_MAKE_OPCODE(RTE, 32, 0, 0)
@@ -2144,7 +2148,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ROXL_8_S_0,                0xF1F8,     0xE110,     6},  // ROXL.B Dn,Dy
     {ROXL_16_S_0,               0xF1F8,     0xE150,     6},  // ROXL.W Dn,Dy
     {ROXL_32_S_0,               0xF1F8,     0xE190,     8},  // ROXL.L Dn,Dy
-    {RTS_32_0_0,                0xFFFF,     0x4E75,     16}, // RTS
+    {RTS_0_0_0,                 0xFFFF,     0x4E75,     16}, // RTS
     {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
     {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
     {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
