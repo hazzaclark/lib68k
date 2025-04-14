@@ -154,6 +154,9 @@
 #define         M68K_LOW_NIBBLE(VALUE)
 #define         M68K_HIGH_NIBBLE(VALUE)                             ((VALUE >> 9) << 16)
 
+#define         M68K_IMM_NIBBLE()                   \
+            ((U32)READ_IMM_16() << 16) | READ_IMM_16()
+
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
 #define         M68K_CPU_020                2
@@ -361,7 +364,6 @@ typedef enum CPU_68K_FLAGS
 #define			M68K_REG_USP			CPU.USER_STACK
 #define			M68K_REG_ISP			CPU.INTERRUPT_SP
 #define			M68K_REG_MSP			CPU.MASTER_SP
-#define			M68K_REG_BASE		    CPU.REGISTER_BASE
 #define			M68K_REG_VBR			CPU.VBR
 #define			M68K_REG_SFC			CPU.SOURCE_FUNCTION_COUNTER
 #define			M68K_REG_DFC			CPU.DEST_FUNCTION_COUNTER
