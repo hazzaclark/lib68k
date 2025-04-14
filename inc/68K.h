@@ -155,7 +155,7 @@
 #define         M68K_HIGH_NIBBLE(VALUE)                             ((VALUE >> 9) << 16)
 
 #define         M68K_IMM_NIBBLE()                   \
-            ((U32)READ_IMM_16() << 16) | READ_IMM_16()
+            ((U32)READ_IMM_32() << 31) | READ_IMM_32()
 
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
