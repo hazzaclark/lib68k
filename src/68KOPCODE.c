@@ -1101,15 +1101,32 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
     M68K_FLAG_C = 0;
 }
 
-M68K_MAKE_OPCODE(MOVE, 32, IMM, D)
+M68K_MAKE_OPCODE(MOVE, 16, IMM, D)
 {
-    unsigned RESULT = M68K_DATA_HIGH;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
+    unsigned EA = READ_IMM_16();
 
-    M68K_FLAG_N = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
 }
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, D)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
+    unsigned EA = READ_IMM_32();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
 
 M68K_MAKE_OPCODE(MOVE, 32, D, POST_DEC)
 {
@@ -2100,10 +2117,11 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {LSR_8_S_0,                 0xF1F8,     0xE008,     6},  // LSR.B Dn,Dy
     {LSR_16_S_0,                0xF1F8,     0xE048,     6},  // LSR.W Dn,Dy
     {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
-    {MOVE_8_D_0,                0xF1C0,     0x1000,     4},  // MOVE.B <ea>,Dn
-    {MOVE_16_D_0,               0xF1C0,     0x3000,     4},  // MOVE.W <ea>,Dn
-    {MOVE_32_D_0,               0xF1C0,     0x2000,     4},  // MOVE.L <ea>,Dn
-    {MOVE_32_IMM_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, #<data>
+    {MOVE_8_D_0,                0xF1C0,     0x1000,     4},   // MOVE.B <ea>,Dn 
+    {MOVE_16_D_0,               0xF1C0,     0x3000,     12},   // MOVE.W <ea>,Dn 
+    {MOVE_16_IMM_D,             0xF1F8,     0x303C,     8},   // MOVE.W #<data>,Dn 
+    {MOVE_32_IMM_D,             0xFFF8,     0x203C,     16},  // MOVE.L #<data>,Dn 
+    {MOVE_32_D_0,               0xF1C0,     0x2000,     12},   // MOVE.L <ea>,Dn
     {MOVE_32_D_POST_DEC,        0xFFFF,     0x2F00,     14},  // MOVE.L, Dn, -(SP)
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
