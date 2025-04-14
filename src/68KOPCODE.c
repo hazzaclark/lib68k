@@ -1142,7 +1142,6 @@ M68K_MAKE_OPCODE(MOVEA, 16, IMM, 0)
     M68K_ADDRESS_LOW = (S16)VALUE;
 }
 
-
 M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
 {
     unsigned VALUE = READ_IMM_32();
@@ -2108,8 +2107,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_32_D_POST_DEC,        0xFFFF,     0x2F00,     14},  // MOVE.L, Dn, -(SP)
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
-    {MOVEA_16_IMM_0,            0xF1C0,     0x203C,     8},  // MOVEA.W #imm,An 
-    {MOVEA_32_IMM_0,            0xFFFF,     0x207C,     12},  // MOVEA.L #imm,An
+    {MOVEA_16_IMM_0,            0xF1C0,     0x3040,     8},  // MOVEA.W #imm,An 
+    {MOVEA_32_IMM_0,            0xF1C0,     0x2040,     12}, // MOVEA.L #imm,An
     {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L Dn,(SP)+
     {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
