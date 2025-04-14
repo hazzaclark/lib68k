@@ -72,7 +72,7 @@
 
 #define 	M68K_MASK_OUT_ABOVE_8(A)            ((A) & 0xFF)
 #define 	M68K_MASK_OUT_ABOVE_16(A)           ((A) & 0xFFFF)
-#define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFF)
+#define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFFF)
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
 #define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15)
