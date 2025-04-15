@@ -10,8 +10,6 @@
 #include "68KSTD.h"
 #include "68KMEM.h"
 
-#define     AMONG_US        "Among Us"
-
 int main(int argc, char** argv) 
 {
     printf("====================================================\n");
@@ -53,7 +51,7 @@ int main(int argc, char** argv)
     M68K_REG_PC = LOAD_ADDR;
 
     printf("BEGINNING EXECUTION AT 0x%08X\n", LOAD_ADDR);
-    M68K_EXEC((int)AMONG_US);
+    M68K_EXEC(500);
 
     return 0;
 }
