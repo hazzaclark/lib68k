@@ -75,8 +75,9 @@
 #define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFFF)
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
-#define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15)
-#define		M68K_BIT_SHIFT_32(VALUE)			((VALUE) >> 31)
+#define		M68K_BIT_SHIFT_8(VALUE)			((VALUE) >> 7) & 1
+#define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15) & 1
+#define		M68K_BIT_SHIFT_32(VALUE)			((VALUE) >> 31) & 1
 
 
 #define		M68K_MAX_RAM						0xFFFF
