@@ -23,7 +23,6 @@
 #if defined(LIB_UNUSED)
 #define LIB_UNUSED
     #else
-    #define     LIB_UNUSED(VALUE)           VALUE __attribute__((__unused__))
     #define     LIB_UNUSED                  __attribute__((__unused__))
 #endif
 
