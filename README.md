@@ -59,4 +59,6 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 [68000 Memory Map](https://www.mwftr.com/ucF08/LEC05-68K-1.pdf)
 
+[68K General-purpose manual](https://www.cpcwiki.eu/imgs/7/7a/MC68000_User%27s_Manual.pdf)
+
 [68000 ISA](http://wpage.unina.it/rcanonic/didattica/ce1/docs/68000.pdf)
