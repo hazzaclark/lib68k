@@ -63,6 +63,14 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
 {
     VERBOSE_TRACE("READING ADDRESS FROM 0x%08x (SIZE = %d)\n", ADDRESS, SIZE);
 
+    // BOUND CHECKS FOR INVALID ADDRESSING
+
+    if(ADDRESS == M68K_MAX_ADDR_START && ADDRESS <= M68K_MAX_ADDR_END)
+    {
+        VERBOSE_TRACE("ATTEMPT TO READ FROM RESERVED ADDRESS RANGE: 0x%08X\n", ADDRESS);
+        goto MALFORMED_READ;
+    }
+
     // FIND THE ADDRESS AND IT'S RELEVANT SIZE IN ACCORDANCE WITH WHICH VALUE IS BEING PROC.
     M68K_MEM_BUFFER* MEM_BASE = MEM_FIND(ADDRESS);
 
@@ -70,9 +78,10 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
     {
         uint32_t OFFSET = (ADDRESS - MEM_BASE->BASE);
 
-        if(OFFSET > (MEM_BASE->SIZE - (SIZE / 8)))
+        if((OFFSET + (SIZE / 8)) > MEM_BASE->SIZE)
         {
-            VERBOSE_TRACE("READ OUT OF BOUNDS: OFFSET = %d, SIZE = %d\n", OFFSET, SIZE);
+            VERBOSE_TRACE("READ OUT OF BOUNDS: OFFSET = %d, SIZE = %d, REGION SIZE = %d\n", 
+                         OFFSET, SIZE/8, MEM_BASE->SIZE);
             goto MALFORMED_READ;
         }
         
@@ -176,7 +185,7 @@ void MEMORY_MAP(uint32_t BASE, uint32_t SIZE, bool WRITABLE)
     BUF->BUFFER = calloc(SIZE, 1);
     memset(BUF->BUFFER, 0, SIZE);
     
-    printf("MAPPED MEMORY: 0x%08x-0x%08X (%d BYTES)\n", 
+    printf("MAPPED MEMORY: 0x%08X-0x%08X (%d BYTES)\n", 
            BASE, BASE + SIZE - 1, SIZE);
     MEM_TRACE(MEM_MAP, BASE, SIZE, 0);
 }
