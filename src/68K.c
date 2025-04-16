@@ -196,6 +196,8 @@ void M68K_INIT(void)
     // ROM AND IO COME ABOUT WHEN EMULATING ON-BOARD/EXT. HARDWARE
     // SUCH AS OTHER CHIPS AND SEPERATING PROGRAM CODE FROM ADDRESSABLE RAM
 
+    // https://www.cpcwiki.eu/imgs/7/7a/MC68000_User%27s_Manual.pdf
+
     // 512KB (RAM)
     MEMORY_MAP(0x000000, 0x80000, true);   
     
