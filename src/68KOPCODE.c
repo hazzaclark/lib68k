@@ -539,25 +539,49 @@ M68K_MAKE_OPCODE(CHK, 16, EA, 0)
 
 M68K_MAKE_OPCODE(CLR, 8, D, 0)
 {
-    M68K_DATA_HIGH &= 0xFFFFFFFF00;
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
-    M68K_FLAG_Z = 0;
+    M68K_FLAG_Z = 1;
 }
 
 M68K_MAKE_OPCODE(CLR, 16, D, 0)
 {
-    M68K_DATA_HIGH &= 0xFFFFFFFF00;
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 1;
+}
+
+M68K_MAKE_OPCODE(CLR, 32, D, 0)
+{
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 1;
+}
+
+M68K_MAKE_OPCODE(CLR, 8, EA, 0)
+{
+    M68K_WRITE_8(M68K_DATA_HIGH, 0);
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
 }
 
-M68K_MAKE_OPCODE(CLR, 32, D, 0)
+M68K_MAKE_OPCODE(CLR, 16, EA, 0)
 {
-    M68K_DATA_HIGH &= 0xFFFFFFFF00;
+    M68K_WRITE_8(M68K_DATA_HIGH, 0);
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CLR, 32, EA, 0)
+{
+    M68K_WRITE_8(M68K_DATA_HIGH, 0);
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -2085,7 +2109,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
     {ASL_8_ASR_0,               0xF1F8,     0xE100,     6},  // ASL.B Dn,Dy
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
-    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displacement)
+    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)
     {BRA_32_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (32-bit displacement)
@@ -2094,9 +2118,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0808,     12},  // BTST #<imm>, Dn
     {CHK_16_EA_0,               0xF1C0,     0x4180,     10}, // CHK <ea>,Dn
-    {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B <ea>
-    {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W <ea>
-    {CLR_32_D_0,                0xF1C0,     0x4280,     6},  // CLR.L <ea>
+    {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B Dn
+    {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W Dn
+    {CLR_32_D_0,                0xF1C0,     0x4280,     6},  // CLR.L Dn
+    {CLR_8_EA_0,                0xFFF8,     0x4210,     12},  // CLR.B <ea>
+    {CLR_16_EA_0,               0xFFF8,     0x4250,     12},  // CLR.B <ea>
+    {CLR_32_EA_0,               0xFFF8,     0x4290,     12},  // CLR.B <ea>
     {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
     {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
     {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
