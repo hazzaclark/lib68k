@@ -20,6 +20,9 @@
 
 #define     M68K_OPT_FLAGS              (M68K_OPT_BASIC | M68K_OPT_VERB)
 
+#define     M68K_MAX_ADDR_START             0xFFFFFFF0
+#define     M68K_MAX_ADDR_END               0xFFFFFFFF
+
 typedef enum
 {
     MEM_READ = 'R',
