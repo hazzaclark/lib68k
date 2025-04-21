@@ -274,6 +274,12 @@ unsigned int M68K_DI_32(void)
 	return M68K_READ_32(EA);
 } 
 
+unsigned int M68K_POST_DEC_16(void)
+{
+	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
+	return M68K_READ_16(EA);
+}
+
 unsigned int M68K_POST_DEC_32(void)
 {
 	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
