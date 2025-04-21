@@ -2255,9 +2255,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
     {MOVEA_16_IMM_0,            0xF1C0,     0x3040,     8},  // MOVEA.W #imm,An 
     {MOVEA_32_IMM_0,            0xF1C0,     0x2040,     12}, // MOVEA.L #imm,An
-    {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W Dn,(SP)+
+    {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     8},   // MOVE.W (An)+,Dn
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3F00,     8},   // MOVE.W Dn, (-SP)
-    {MOVE_32_POST_INC_0,        0xF1F8,     0x20C0,     12},  // MOVE.L Dn,(SP)+
+    {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     12},  // MOVE.L (An)+,Dn
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
     {MOVE_16_D_PRE_INC,         0xF1F8,     0x3028,     8},   // MOVE.W +(An), Dn
