@@ -75,10 +75,11 @@
 #define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFFF)
 #define     M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
-#define		M68K_BIT_SHIFT_8(VALUE)			((VALUE) >> 7) & 1
+#define		M68K_BIT_SHIFT_8(VALUE)				((VALUE) >> 7) & 1
 #define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15) & 1
 #define		M68K_BIT_SHIFT_32(VALUE)			((VALUE) >> 31) & 1
 
+#define		M68K_BIT_SHIFT_N_32(VALUE)			((VALUE) >> 24)
 
 #define		M68K_MAX_RAM						0xFFFF
 #define		M68K_MAX_ROM						0xFFFFFFFF
@@ -128,6 +129,7 @@ extern unsigned int M68K_DI_8(void);
 extern unsigned int M68K_DI_16(void);
 extern unsigned int M68K_DI_32(void); 
 
+extern unsigned int M68K_POST_DEC_16(void);
 extern unsigned int M68K_POST_DEC_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
