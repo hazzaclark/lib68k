@@ -1376,6 +1376,46 @@ M68K_MAKE_OPCODE(MOVE, 32, ABS, D)
     M68K_WRITE_32(RESULT, EA);
 }
 
+M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, 0)
+{
+    unsigned INDEX = 0;
+    unsigned LIST = READ_IMM_16();
+    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned COUNT = 0;
+
+    for(; INDEX < 16; INDEX++)
+    {
+        if(LIST & (1 << INDEX))
+        {
+            EA -= 2;
+            M68K_WRITE_16(EA, M68K_MASK_OUT_ABOVE_16(M68K_REG_DA[15 - INDEX]));
+            COUNT++;
+        }
+
+        M68K_ADDRESS_HIGH = EA;
+    }
+}
+
+M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, 0)
+{
+    unsigned INDEX = 0;
+    unsigned LIST = READ_IMM_32();
+    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned COUNT = 0;
+
+    for(; INDEX < 16; INDEX++)
+    {
+        if(LIST & (1 << INDEX))
+        {
+            EA -= 2;
+            M68K_WRITE_32(EA, M68K_MASK_OUT_ABOVE_32(M68K_REG_DA[15 - INDEX]));
+            COUNT++;
+        }
+
+        M68K_ADDRESS_HIGH = EA;
+    }
+}
+
 M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
 {
     unsigned EA = M68K_READ_16(M68K_DATA_HIGH);
@@ -2268,6 +2308,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
     {MOVEM_16_DA_0,             0xFB80,     0x4880,     8},  // MOVEM.W <ea>,Regs
     {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
+    {MOVEM_16_POST_INC_0,       0xFFF8,     0x48A0,     8},  // MOVEM.W <reglist>, (An)+
+    {MOVEM_32_POST_INC_0,       0xFFF8,     0x48E0,     8},  // MOVEM.L <reglist>, (An)+
     {MOVEP_16_ER_0,             0xF1F8,     0x0108,     16}, // MOVEP.W Dn,(d16,An)
     {MOVEP_32_ER_0,             0xF1F8,     0x0148,     24}, // MOVEP.L Dn,(d16,An)
     {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
