@@ -28,7 +28,8 @@
 
 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
 
-#if M68K_JUMP_HOOK == M68K_OPT_ON
+	// SET THIS TO ON TO USE
+#if M68K_JUMP_HOOK == M68K_OPT_OFF
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
         do { \
             printf("[JUMP TRACE] TO: 0x%08x FROM: 0x%08x\n", (ADDR), (FROM_ADDR)); \
