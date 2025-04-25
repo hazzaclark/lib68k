@@ -238,6 +238,7 @@ typedef struct CPU_68K
     U32 DATA_REGISTER[8];
     U32 ADDRESS_REGISTER[8];
     U32 PREVIOUS_PC;
+    U32 JUMP_TARGET;
     U32 STACK_POINTER;
     U32 INTERRUPT_SP;
     U32 MASTER_SP;
@@ -358,6 +359,7 @@ typedef enum CPU_68K_FLAGS
 #define			M68K_REG_A              CPU.ADDRESS_REGISTER
 #define			M68K_REG_SR             CPU.STATUS_REGISTER
 #define			M68K_REG_PPC            CPU.PREVIOUS_PC
+#define         M68K_REG_JMP_TARG       CPU.JUMP_TARGET
 #define			M68K_REG_PC             CPU.PC
 #define			M68K_REG_SP             CPU.STACK_POINTER
 #define			M68K_REG_USP            CPU.USER_STACK
@@ -374,7 +376,7 @@ typedef enum CPU_68K_FLAGS
 #define			M68K_REG_FPSR           CPU.FPSR
 #define			M68K_REG_FPIAR          CPU.FPIA
 
-#define  		M68K_FLAG_T0            CPU.T0_FLAG
+#define  		M68K_FLAG_T0            CPU.
 #define			M68K_FLAG_T1            CPU.T1_FLAG
 #define			M68K_FLAG_S             CPU.S_FLAG
 #define			M68K_FLAG_M             CPU.M_FLAG
