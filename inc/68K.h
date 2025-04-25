@@ -376,7 +376,7 @@ typedef enum CPU_68K_FLAGS
 #define			M68K_REG_FPSR           CPU.FPSR
 #define			M68K_REG_FPIAR          CPU.FPIA
 
-#define  		M68K_FLAG_T0            CPU.
+#define  		M68K_FLAG_T0            CPU.T0_FLAG
 #define			M68K_FLAG_T1            CPU.T1_FLAG
 #define			M68K_FLAG_S             CPU.S_FLAG
 #define			M68K_FLAG_M             CPU.M_FLAG
