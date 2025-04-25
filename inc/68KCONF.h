@@ -23,6 +23,20 @@
 	#define M68K_OPT_OFF				0
 	#define M68K_OPT_ON					1
 
+// DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
+// CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION	
+
+#if M68K_JUMP_HOOK == M68K_OPT_ON
+    #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
+        do { \
+            printf("-----------------------------------------------------------\n");\
+            printf("[JUMP TRACE] TO: 0x%08x FROM: 0x%08x\n", (ADDR), (FROM_ADDR));\
+            printf("-----------------------------------------------------------\n");\
+        } while(0)
+#else
+    #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) ((void)0)
+#endif
+
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
 // THE IDEA IS TO ALLOW FOR A BETTER MEANS OF BEING ABLE TO DETERMINE HOW AND WHEN
 // INSTRUCTIONS JUMP AND BRANCH
