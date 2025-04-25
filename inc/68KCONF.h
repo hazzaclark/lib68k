@@ -26,12 +26,12 @@
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION	
 
+	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
+
 #if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
         do { \
-            printf("-----------------------------------------------------------\n");\
-            printf("[JUMP TRACE] TO: 0x%08x FROM: 0x%08x\n", (ADDR), (FROM_ADDR));\
-            printf("-----------------------------------------------------------\n");\
+            printf("[JUMP TRACE] TO: 0x%08x FROM: 0x%08x\n", (ADDR), (FROM_ADDR)); \
         } while(0)
 #else
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) ((void)0)
