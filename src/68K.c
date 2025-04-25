@@ -21,7 +21,6 @@
 #ifndef USE_68K
 
 int M68K_INITIAL_CYCLES;
-int M68K_REMAINING_CYCLES = 0;
 unsigned int M68K_ADDRESSING_SPACE; 
 unsigned char CYCLE_RANGE[0x10000];
 
@@ -197,6 +196,7 @@ void M68K_INIT(void)
     // SUCH AS OTHER CHIPS AND SEPERATING PROGRAM CODE FROM ADDRESSABLE RAM
 
     // https://www.cpcwiki.eu/imgs/7/7a/MC68000_User%27s_Manual.pdf
+    // https://www.cpcwiki.eu/index.php/Motorola_68000
 
     // 512KB (RAM)
     MEMORY_MAP(0x000000, 0x80000, true);   
