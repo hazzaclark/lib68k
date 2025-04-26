@@ -232,7 +232,7 @@ int M68K_EXEC(int CYCLES)
     CPU.MASTER_CYCLES = CYCLES;
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
-    printf("-------------------------------------------------------------\n");
+    printf("------------------------------------------------------------\n");
 
     while(!M68K_CPU_STOPPED && CPU.MASTER_CYCLES > 0)
     {
@@ -252,7 +252,7 @@ int M68K_EXEC(int CYCLES)
             break;
         }
 
-        printf("%08X  %04X    ", M68K_REG_PC, M68K_REG_IR);
+        printf("[PC] %08X  [IR] %04X    ", M68K_REG_PC, M68K_REG_IR);
 
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
