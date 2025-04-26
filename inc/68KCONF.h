@@ -27,6 +27,7 @@
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION	
 
 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
+	#define		M68K_RTS_HOOK		M68K_OPT_ON
 
 	// SET THIS TO ON TO USE
 #if M68K_JUMP_HOOK == M68K_OPT_ON
@@ -34,9 +35,19 @@
         do { \
             printf("[JUMP TRACE] TO: 0x%08x FROM: 0x%08x\n", (ADDR), (FROM_ADDR)); \
         } while(0)
-#else
-    #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) ((void)0)
-#endif
+	#else
+    	#define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) ((void)0)
+	#endif
+
+	// SET THIS TO ON TO USE
+	#if M68K_RTS_HOOK == M68K_OPT_ON
+    #define M68K_BASE_RTS_HOOK(FROM_ADDR) \
+        do { \
+            printf("[RTS] 0x%08x\n", (FROM_ADDR)); \
+        } while(0)
+	#else
+    	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
+	#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
 // THE IDEA IS TO ALLOW FOR A BETTER MEANS OF BEING ABLE TO DETERMINE HOW AND WHEN
