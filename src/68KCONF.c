@@ -216,7 +216,6 @@ unsigned int READ_IMM_32(void)
 
 void M68K_BRANCH_8(unsigned OFFSET)
 {
-	OFFSET = M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
 	M68K_REG_PC += (S8)OFFSET;
 }
 
