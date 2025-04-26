@@ -49,7 +49,8 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Running the simulator with add.bin
 
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/49218a67-8ded-4036-84bd-1c0194ed4d89)
+
 
  # Sources:
 
