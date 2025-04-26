@@ -45,7 +45,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Motorola 68K-specific Big Endian Reads, handled with LE in mind
 
-![Screenshot_20250404_133538-1](https://github.com/user-attachments/assets/b695e25c-307f-4621-aea2-a84a8c4c88c1)
+![image](https://github.com/user-attachments/assets/50442b03-8646-4e3f-bffa-e2c092fc0a20)
 
 ### Running the simulator with add.bin
 
