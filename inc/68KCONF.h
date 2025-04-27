@@ -13,15 +13,15 @@
 #include "common.h"
 #include "68KMEM.h"
 
-/*===============================================================================*/
-/*							68000 DEBUG											 */
-/*===============================================================================*/
+/*==============================================================================*/
+/*							68000 DEBUG											*/
+/*==============================================================================*/
 
 	/* OPTIONS FOR IMMEDIATE ADDRESSING DIRECTIVES WHEN LOOKING */
 	/* FOR CPU CALLBACKS */	
 
-	#define M68K_OPT_OFF				0
-	#define M68K_OPT_ON					1
+	#define M68K_OPT_OFF		0
+	#define M68K_OPT_ON			1
 
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION	
