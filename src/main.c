@@ -10,6 +10,8 @@
 #include "68KSTD.h"
 #include "68KMEM.h"
 
+static U32 LOAD_ADDR = 0x00100000;
+
 int main(int argc, char** argv) 
 {
     printf("====================================================\n");
@@ -22,7 +24,9 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    U32 LOAD_ADDR = 0x00100000;
+    // CONVERT THE LOAD ADDRESS INTO THE PROPER UNSIGNED MASK
+    // WHICH IS REQUIRED TO BE ABLE TO BE READ BY THE MEMORY MAPPER
+
     if(argc > 2)
     {
         LOAD_ADDR = strtoul(argv[2], NULL, 16);
