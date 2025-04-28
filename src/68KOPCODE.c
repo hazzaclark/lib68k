@@ -1024,9 +1024,13 @@ M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 {
-    unsigned EA = M68K_READ_32(M68K_EA());
-    M68K_READ_32(M68K_REG_PC);
-    M68K_JUMP(EA);
+    unsigned EA = M68K_REG_PC;
+    M68K_REG_PC += 4;
+
+    M68K_REG_JMP_TARG = EA;
+
+    M68K_PUSH_SP(EA);
+    M68K_JUMP();
 }
 
 M68K_MAKE_OPCODE(LEA, 32, DA, 0)
@@ -2356,7 +2360,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {EORI_SR_16_0_0,            0xFFFF,     0x0A7C,     20}, // EORI #<data>,SR
     {EXG_32_DA_0,               0xF1F8,     0xC140,     6},  // EXG Dx,Dy
     {EXT_16_0_0,                0xFFF8,     0x4880,     4},  // EXT.W Dn
-    {EXT_32_0_0,                0xFFF8,     0x48C0,     4},  // EXT.L Dn
+    {EXT_32_0_0,                0xFFFF,     0x48C0,     4},  // EXT.L Dn
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
