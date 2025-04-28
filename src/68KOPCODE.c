@@ -905,7 +905,7 @@ M68K_MAKE_OPCODE(EOR, 32, D, 0)
 {
     unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH ^= M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW));
 
-    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_N = RESULT >> 7 & 1;
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_C = 0;
     M68K_FLAG_V = 0;
@@ -2344,7 +2344,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {EOR_16_D_0,                0xF1C0,     0xB040,     4},  // EOR.W Dn,<ea>
     {EOR_32_D_0,                0xF1C0,     0xB080,     8},  // EOR.L Dn,<ea>
     {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
-    {EORI_16_D_0,               0xFF00,     0x0A40,     8},  // EORI.W #<data>,<ea>
+    {EORI_16_D_0,               0xFFF0,     0x0A40,     8},  // EORI.W #<data>,<ea>
     {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
     {EORI_CCR_8_0_0,            0xFF00,     0x0A3C,     20}, // EORI #<data>,CCR
     {EORI_SR_16_0_0,            0xFF00,     0x0A7C,     20}, // EORI #<data>,SR
