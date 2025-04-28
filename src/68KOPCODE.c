@@ -814,15 +814,9 @@ M68K_MAKE_OPCODE(DBCC, 16, 0, 0)
     if(RESULT != 0xFFFF)
     {
         unsigned OFFSET = M68K_READ_16(M68K_DATA_HIGH);
-        M68K_REG_PC -= 2;
         M68K_READ_16(OFFSET);
-        M68K_USE_CYCLES(0);
-
         return;
     }
-
-    M68K_REG_PC += 2;
-    return;
 }
 
 M68K_MAKE_OPCODE(DIVS, 16, D, 0)
