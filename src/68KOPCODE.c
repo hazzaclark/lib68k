@@ -2325,7 +2325,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
-    {CHK_16_EA_0,               0xF1C0,     0x4180,     10}, // CHK <ea>,Dn
+    {CHK_16_EA_0,               0xFFFF,     0x41B9,     10}, // CHK <ea>,Dn
     {CLR_8_D_0,                 0xF1C0,     0x4200,     4},  // CLR.B Dn
     {CLR_16_D_0,                0xF1C0,     0x4240,     4},  // CLR.W Dn
     {CLR_32_D_0,                0xF1C0,     0x4280,     6},  // CLR.L Dn
