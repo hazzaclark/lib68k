@@ -2352,8 +2352,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
     {EORI_16_D_0,               0xFFF0,     0x0A40,     8},  // EORI.W #<data>,<ea>
     {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
-    {EORI_CCR_8_0_0,            0xFF00,     0x0A3C,     20}, // EORI #<data>,CCR
-    {EORI_SR_16_0_0,            0xFF00,     0x0A7C,     20}, // EORI #<data>,SR
+    {EORI_CCR_8_0_0,            0xFFFF,     0x0A3C,     20}, // EORI #<data>,CCR
+    {EORI_SR_16_0_0,            0xFFFF,     0x0A7C,     20}, // EORI #<data>,SR
     {EXG_32_DA_0,               0xF1F8,     0xC140,     6},  // EXG Dx,Dy
     {EXT_16_0_0,                0xFFF8,     0x4880,     4},  // EXT.W Dn
     {EXT_32_0_0,                0xFFF8,     0x48C0,     4},  // EXT.L Dn
