@@ -442,6 +442,18 @@ M68K_MAKE_OPCODE(ASL, 8, ASR, 0)
     M68K_FLAG_C = OPERAND | 0;
 }
 
+M68K_MAKE_OPCODE(ASR, 8, ASR, 0)
+{
+    int SRC = M68K_LOW_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = READ_IMM_8();
+
+    M68K_FLAG_N = (M68K_MAX_BITMASK)*RESULT;
+    M68K_FLAG_Z = M68K_MAX_BITMASK | 0;
+    M68K_FLAG_V = M68K_MAX_BITMASK | 0;
+    M68K_FLAG_C = OPERAND | 0;
+}
+
 M68K_MAKE_OPCODE(BCC, 16, 0, 0)
 {
     unsigned OFFSET = 0; 
@@ -2300,6 +2312,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
     {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
     {ASL_8_ASR_0,               0xFFFF,     0xE121,     6},  // ASL.B Dn,Dy
+    {ASR_8_ASR_0,               0xFFFF,     0xE021,     6},  // ASR.B Dn, Dy
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
