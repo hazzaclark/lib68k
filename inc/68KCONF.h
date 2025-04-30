@@ -50,13 +50,14 @@
 
 	// SET THIS TO ON TO USE
 	#if M68K_RESET_HOOK == M68K_OPT_ON
-    #define M68K_BASE_RES_HOOK(TRACE, PC, SP) \
+    #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL %d -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", M68K_OPT_FLAGS, PC, SP); \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", \
+                  (T0), (T1), (PC), (SP)); \
         } while(0)
-	#else
-    	#define M68K_BASE_RES_HOOK(TRACE, PC, SP) ((void)0)
-	#endif
+#else
+    #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) ((void)0)
+#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
 // THE IDEA IS TO ALLOW FOR A BETTER MEANS OF BEING ABLE TO DETERMINE HOW AND WHEN
