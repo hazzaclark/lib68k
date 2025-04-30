@@ -21,8 +21,6 @@ static unsigned int CPU_TYPE;
 #define			M68K_CYCLE_RANGE_MIN		2
 #define			M68K_CYCLE_RANGE_MAX		16
 
-#define			RAM			0x10000
-
 U8 M68K_VECTOR_TABLE[5][256] =
 {
 	{ 
