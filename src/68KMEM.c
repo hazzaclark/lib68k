@@ -28,7 +28,7 @@ void DISABLE_TRACE_FLAG(U8 FLAG)
 
 bool IS_TRACE_ENABLED(U8 FLAG)
 {
-    return (ENABLED_FLAGS & FLAG) != 0;
+    return (ENABLED_FLAGS & FLAG) == FLAG;
 }
 
 void SHOW_TRACE_STATUS(void)
