@@ -32,8 +32,9 @@ int main(int argc, char** argv)
         LOAD_ADDR = strtoul(argv[2], NULL, 16);
     }
 
+    ENABLED_FLAGS = M68K_OPT_FLAGS;
+    SET_TRACE_FLAGS(0, 1);
     SHOW_TRACE_STATUS();
-    ENABLE_TRACE_FLAG(M68K_OPT_BASIC);
     
     M68K_INIT();
     M68K_SET_CPU_TYPE(M68K_CPU_000);
