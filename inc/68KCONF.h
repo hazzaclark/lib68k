@@ -36,7 +36,7 @@
         do { \
             printf("[JUMP TRACE] TO: 0x%08X FROM: 0x%08X\n", (ADDR), (FROM_ADDR)); \
         } while(0)
-#endif
+	#endif
 
 	// SET THIS TO ON TO USE
 	#if M68K_RTS_HOOK == M68K_OPT_ON
@@ -52,7 +52,7 @@
 	#if M68K_RESET_HOOK == M68K_OPT_ON
     #define M68K_BASE_RES_HOOK(TRACE, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL %d -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", TRACE, PC, SP); \
+            printf("RETURNED WITH TRACE LEVEL %d -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", M68K_OPT_FLAGS, PC, SP); \
         } while(0)
 	#else
     	#define M68K_BASE_RES_HOOK(TRACE, PC, SP) ((void)0)
