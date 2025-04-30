@@ -117,9 +117,8 @@
 #define         M68K_GET_CCR()                              (((M68K_FLAG_X & 0x100) >> 4) << 8)
 #define         M68K_GET_SR()                              (((M68K_FLAG_X & 0x100) >> 1) << 13)
 
-
-#define         M68K_BIT_1(VALUE)                                   ((VALUE) & 0x00000002)
 #define         M68K_BIT_0(VALUE)                                   ((VALUE) & 0x00000001)
+#define         M68K_BIT_1(VALUE)                                   ((VALUE) & 0x00000002)
 #define         M68K_BIT_2(VALUE)                                   ((VALUE) & 0x00000004)
 #define         M68K_BIT_3(VALUE)                                   ((VALUE) & 0x00000008)
 #define         M68K_BIT_4(VALUE)                                   ((VALUE) & 0x00000010)
