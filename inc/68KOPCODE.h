@@ -65,13 +65,12 @@
 
     #ifndef USE_OPCODE_HANDLER_TABLE
 
-    typedef struct 
+    typedef struct OPCODE_HANDLER
     {
         void(*HANDLER)(void);
         unsigned MASK;
         unsigned MATCH;
         unsigned CYCLES;
-        const char* TYPE;
 
     } OPCODE_HANDLER;
 
@@ -99,6 +98,7 @@ OPCODE* FIND_OPCODE(char* NAME, int SIZE);
 
 extern OPCODE OPCODE_BASE;
 extern OPCODE_HANDLER OP_HANDLE;
+
 extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[OPCODE_MAX];
 extern void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
 
