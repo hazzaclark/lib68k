@@ -103,3 +103,5 @@ Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should 
 [68K General-purpose manual](https://www.cpcwiki.eu/imgs/7/7a/MC68000_User%27s_Manual.pdf)
 
 [68000 ISA](http://wpage.unina.it/rcanonic/didattica/ce1/docs/68000.pdf)
+
+[lib68k_mem](https://github.com/hazzaclark/lib68k_mem)
