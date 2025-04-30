@@ -71,6 +71,7 @@
         unsigned MASK;
         unsigned MATCH;
         unsigned CYCLES;
+        const char* TYPE;
 
     } OPCODE_HANDLER;
 
