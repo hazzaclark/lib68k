@@ -184,9 +184,10 @@ void MEMORY_MAP(uint32_t BASE, uint32_t SIZE, bool WRITABLE)
     BUF->WRITE = WRITABLE;
     BUF->BUFFER = calloc(SIZE, 1);
     memset(BUF->BUFFER, 0, SIZE);
-    
+
     printf("MAPPED MEMORY: 0x%08X-0x%08X (%d BYTES)\n", 
            BASE, BASE + SIZE - 1, SIZE);
+
     MEM_TRACE(MEM_MAP, BASE, SIZE, 0);
 }
 
