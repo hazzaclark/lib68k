@@ -45,12 +45,52 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Motorola 68K-specific Big Endian Reads, handled with LE in mind
 
-![image](https://github.com/user-attachments/assets/50442b03-8646-4e3f-bffa-e2c092fc0a20)
+![image](https://github.com/user-attachments/assets/2bb2ef5e-c1c6-46c1-9c2c-928b9809aa50)
 
 ### Running the simulator with add.bin
 
 ![image](https://github.com/user-attachments/assets/49218a67-8ded-4036-84bd-1c0194ed4d89)
 
+
+## Auto-disable functionality:
+
+For the sake of simplicity when it comes to the debugging utilities, I have implemented the functionality to turn HOOKS on and off
+
+Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should you ever need more or less debugging information
+
+```C
+ #define 	M68K_JUMP_HOOK 		M68K_OPT_ON
+	#define		M68K_RTS_HOOK		M68K_OPT_ON
+	#define		M68K_RESET_HOOK		M68K_OPT_ON
+
+ // TURN THE EQUALISER TO ON AND OFF
+
+	#if M68K_JUMP_HOOK == M68K_OPT_ON
+    #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
+        do { \
+            printf("[JUMP TRACE] TO: 0x%08X FROM: 0x%08X\n", (ADDR), (FROM_ADDR)); \
+        } while(0)
+	#endif
+
+	#if M68K_RTS_HOOK == M68K_OPT_ON
+    #define M68K_BASE_RTS_HOOK(FROM_ADDR) \
+        do { \
+            printf("[RTS] 0x%04X\n", (FROM_ADDR)); \
+        } while(0)
+	#else
+    	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
+	#endif
+
+	#if M68K_RESET_HOOK == M68K_OPT_ON
+    #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
+        do { \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", \
+                  (T0), (T1), (PC), (SP)); \
+        } while(0)
+#else
+    #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) ((void)0)
+#endif
+```
 
  # Sources:
 
