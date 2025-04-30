@@ -1779,12 +1779,7 @@ M68K_MAKE_OPCODE(PEA, 32, D, 0)
 
 M68K_MAKE_OPCODE(RESET, 0, 0, 0)
 {
-    if(M68K_FLAG_S)
-    {
-        M68K_PULSE_RESET();
-        M68K_SET_CYCLES(M68K_RESET_CYCLES);
-        return;
-    }
+    M68K_PULSE_RESET();
 }
 
 M68K_MAKE_OPCODE(ROL, 8, S, 0)
