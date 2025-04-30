@@ -71,7 +71,7 @@ void SHOW_TRACE_STATUS(void);
 #define         MEM_TRACE_HOOK                  M68K_OPT_ON
 #define         JUMP_HOOK                       M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK == M68K_OPT_OFF
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
