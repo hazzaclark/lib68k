@@ -2370,8 +2370,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
     {MOVEM_16_POST_INC_0,       0xFFF8,     0x48A0,     8},  // MOVEM.W <reglist>, (An)+
     {MOVEM_32_POST_INC_0,       0xFFF8,     0x48E0,     8},  // MOVEM.L <reglist>, (An)+
-    {MOVEP_16_ER_0,             0xFFFF,     0x0188,     16}, // MOVEP.W Dn,(d16,An)
-    {MOVEP_32_ER_0,             0xFFFF,     0x01C8,     24}, // MOVEP.L Dn,(d16,An)
+    {MOVEP_16_ER_0,             0xFFFF,     0x0188,     16}, // MOVEP.W Dn, disp(An)
+    {MOVEP_32_ER_0,             0xFFFF,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
     {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
     {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
