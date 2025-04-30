@@ -32,8 +32,11 @@ int main(int argc, char** argv)
         LOAD_ADDR = strtoul(argv[2], NULL, 16);
     }
 
+    // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
+    // THIS CAN BE TURNED USING M68K_OPT_OFF IN 68KCONF.h AND 68KMEM.h
+
     ENABLED_FLAGS = M68K_OPT_FLAGS;
-    SET_TRACE_FLAGS(0, 1);
+    SET_TRACE_FLAGS(1, 0);
     SHOW_TRACE_STATUS();
     
     M68K_INIT();
