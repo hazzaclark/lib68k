@@ -249,7 +249,7 @@ int M68K_EXEC(int CYCLES)
             break;
         }
 
-        printf("[PC -> %08X]  [IR -> %04X]    ", M68K_REG_PC, M68K_REG_IR);
+        printf("[PC -> %08X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
 
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
