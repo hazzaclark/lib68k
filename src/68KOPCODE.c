@@ -2358,7 +2358,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {OR_32_D_0,                 0xF1C0,     0x8080,     6},  // OR.L <ea>,Dn
     {ORI_8_D_0,                 0xFFF0,     0x0000,     8},  // ORI.B #<data>,<ea>
     {ORI_16_D_0,                0xFFFF,     0x0040,     8},  // ORI.W #<data>,<ea>
-    {ORI_32_D_0,                0xFFFF,     0x0000,     16}, // ORI.L #<data>,<ea>
+    {ORI_32_D_0,                0xFFFF,     0x0080,     16}, // ORI.L #<data>,<ea>
     {ORI_CCR_8_0_0,             0xFF00,     0x003C,     20}, // ORI #<data>,CCR
     {ORI_SR_16_0_0,             0xFF00,     0x007C,     20}, // ORI #<data>,SR
     {PEA_32_D_0,                0xFFC0,     0x4840,     12}, // PEA <ea>
