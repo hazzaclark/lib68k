@@ -280,8 +280,8 @@ typedef struct CPU_68K
     unsigned C_FLAG;
     unsigned M_FLAG;
 
-    unsigned* T0_FLAG;
-    unsigned* T1_FLAG;
+    unsigned T0_FLAG;
+    unsigned T1_FLAG;
 
     int(*INT_ACK_CALLBACK)(int VALUE);
     void(*RESET_CALLBACK)(void);
