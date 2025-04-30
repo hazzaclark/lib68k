@@ -2349,7 +2349,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEGX_8_DA_0,               0xFFFF,     0x4039,     4},  // NEGX.B <ea>
     {NEGX_16_DA_0,              0xFFFF,     0x4079,     4},  // NEGX.W <ea>
     {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
-    {NOT_8_D_0,                 0xF1F8,     0x4600,     4},  // NOT.B <ea>
+    {NOT_8_D_0,                 0xFFFF,     0x4639,     4},  // NOT.B <ea>
     {NOT_16_D_0,                0xF1F8,     0x4640,     4},  // NOT.W <ea>
     {NOT_32_D_0,                0xF1F8,     0x4680,     6},  // NOT.L <ea>
     {NOP_0_0_0,                 0xFFFF,     0x4E71,     4},  // NOP
