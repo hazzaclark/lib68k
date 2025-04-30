@@ -63,7 +63,7 @@ Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should 
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
 	#define		M68K_RESET_HOOK		M68K_OPT_ON
 
- // TURN THE EQUALISER TO ON AND OFF
+	 // TURN THE EQUALISER TO ON AND OFF
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
