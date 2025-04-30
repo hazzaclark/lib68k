@@ -13,15 +13,18 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-#define     M68K_MAX_BUFFERS            16
-#define     M68K_OPT_BASIC              (1 << 0)
-#define     M68K_OPT_VERB               (1 << 1)
-#define     M68K_OPT_DEVICE             (1 << 2)
+#define         M68K_MAX_BUFFERS            16
+#define         M68K_OPT_BASIC              (1 << 0)
+#define         M68K_OPT_VERB               (1 << 1)
+#define         M68K_OPT_DEVICE             (1 << 2)
 
-#define     M68K_OPT_FLAGS              (M68K_OPT_BASIC | M68K_OPT_VERB)
+#define         M68K_OPT_FLAGS              (M68K_OPT_BASIC | M68K_OPT_VERB)
 
-#define     M68K_MAX_ADDR_START             0xFFFFFFF0
-#define     M68K_MAX_ADDR_END               0xFFFFFFFF
+#define         M68K_MAX_ADDR_START             0xFFFFFFF0
+#define         M68K_MAX_ADDR_END               0xFFFFFFFF
+
+#define         M68K_T0_SHIFT                   (1 << 3)
+#define         M68K_T1_SHIFT                   (1 << 4)
 
 typedef enum
 {
@@ -59,15 +62,20 @@ bool IS_TRACE_ENABLED(U8 FLAG);
 void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE);
 void SHOW_TRACE_STATUS(void);
 
+#define         CHECK_TRACE_CONDITION()         (IS_TRACE_ENABLED(M68K_T0_SHIFT) || IS_TRACE_ENABLED(M68K_T1_SHIFT))
+
 /////////////////////////////////////////////////////
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
 
-#if DEFAULT_TRACE_FLAGS & TRACE_BASIC
+#define         MEM_TRACE_HOOK                  M68K_OPT_ON
+#define         JUMP_HOOK                       M68K_OPT_ON
+
+#if MEM_TRACE_HOOK == M68K_OPT_ON
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
-            if (IS_TRACE_ENABLED(TRACE_BASIC)) \
-                printf("[TRACE] %c ADDR:0x%08x SIZE:%d VALUE:0x%08x\n", \
+            if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
+                printf("[TRACE] %c ADDR:0x%08X SIZE:%d VALUE:0x%08X\n", \
                       (char)(OP), (ADDR), (SIZE), (VAL)); \
         } while(0)
 #else
@@ -83,6 +91,14 @@ void SHOW_TRACE_STATUS(void);
 #else
     #define VERBOSE_TRACE(MSG, ...) ((void)0)
 #endif
+
+#define SET_TRACE_FLAGS(T0, T1) \
+        do {    \
+            M68K_FLAG_T0 = (T0); \
+            M68K_FLAG_T1 = (T1); \
+            (T0) ? ENABLE_TRACE_FLAG(M68K_T0_SHIFT) : DISABLE_TRACE_FLAG(M68K_T0_SHIFT); \
+            (T1) ? ENABLE_TRACE_FLAG(M68K_T1_SHIFT) : DISABLE_TRACE_FLAG(M68K_T1_SHIFT); \
+    } while(0)
 
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS);
 unsigned int M68K_READ_MEMORY_16(unsigned int ADDRESS);
