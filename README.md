@@ -59,7 +59,7 @@ For the sake of simplicity when it comes to the debugging utilities, I have impl
 Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should you ever need more or less debugging information
 
 ```C
- #define 	M68K_JUMP_HOOK 		M68K_OPT_ON
+ 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
 	#define		M68K_RESET_HOOK		M68K_OPT_ON
 
