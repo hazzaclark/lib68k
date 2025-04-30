@@ -1594,8 +1594,8 @@ M68K_MAKE_OPCODE(NEGX, 8, DA, 0)
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_8(*DEST) - (U8)M68K_FLAG_X;
 
-    M68K_FLAG_N = M68K_READ_8(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
+    M68K_FLAG_N = READ_IMM_8();
+    M68K_FLAG_X = M68K_FLAG_C = READ_IMM_8();
     M68K_FLAG_V = *DEST & RESULT;
 
     RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
@@ -1609,8 +1609,8 @@ M68K_MAKE_OPCODE(NEGX, 16, DA, 0)
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_16(*DEST) - (U16)M68K_FLAG_X;
 
-    M68K_FLAG_N = M68K_READ_16(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_16(RESULT);
+    M68K_FLAG_N = READ_IMM_16();
+    M68K_FLAG_X = M68K_FLAG_C = READ_IMM_16();
     M68K_FLAG_V = *DEST & RESULT;
 
     RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
@@ -1622,10 +1622,10 @@ M68K_MAKE_OPCODE(NEGX, 16, DA, 0)
 M68K_MAKE_OPCODE(NEGX, 32, DA, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned RESULT = 0 - M68K_MASK_OUT_ABOVE_32(*DEST) - (U32)M68K_FLAG_X;
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(*DEST) - (U32)M68K_FLAG_X;
 
-    M68K_FLAG_N = M68K_READ_32(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
+    M68K_FLAG_N = READ_IMM_32();
+    M68K_FLAG_X = M68K_FLAG_C = READ_IMM_32();
     M68K_FLAG_V = *DEST & RESULT;
 
     RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
@@ -2346,9 +2346,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEG_8_D_0,                 0xFFFF,     0x4439,     4},  // NEG.B <ea>
     {NEG_16_D_0,                0xFFFF,     0x4479,     8},  // NEG.W <ea>
     {NEG_32_D_0,                0xFFFF,     0x44B9,     12},  // NEG.L <ea>
-    {NEGX_8_DA_0,               0xF1F8,     0x4000,     4},  // NEGX.B <ea>
-    {NEGX_16_DA_0,              0xF1F8,     0x4040,     4},  // NEGX.W <ea>
-    {NEGX_32_DA_0,              0xF1F8,     0x4080,     6},  // NEGX.L <ea>
+    {NEGX_8_DA_0,               0xFFFF,     0x4039,     4},  // NEGX.B <ea>
+    {NEGX_16_DA_0,              0xFFFF,     0x4079,     4},  // NEGX.W <ea>
+    {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
     {NOT_8_D_0,                 0xF1F8,     0x4600,     4},  // NOT.B <ea>
     {NOT_16_D_0,                0xF1F8,     0x4640,     4},  // NOT.W <ea>
     {NOT_32_D_0,                0xF1F8,     0x4680,     6},  // NOT.L <ea>
