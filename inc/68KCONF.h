@@ -30,7 +30,6 @@
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
 	#define		M68K_RESET_HOOK		M68K_OPT_ON
 
-	// SET THIS TO ON TO USE
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
         do { \
@@ -38,7 +37,6 @@
         } while(0)
 	#endif
 
-	// SET THIS TO ON TO USE
 	#if M68K_RTS_HOOK == M68K_OPT_ON
     #define M68K_BASE_RTS_HOOK(FROM_ADDR) \
         do { \
@@ -48,11 +46,10 @@
     	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
 	#endif
 
-	// SET THIS TO ON TO USE
 	#if M68K_RESET_HOOK == M68K_OPT_ON
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: %d -> CURRENT SP: 0x%04X\n", \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04x -> CURRENT SP: 0x%04X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 #else
