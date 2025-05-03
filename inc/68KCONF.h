@@ -58,13 +58,13 @@
 	#endif
 
 	#if M68K_ILLEGAL_HOOK == M68K_OPT_ON
-    #define M68K_BASE_ILL_HOOK(PC) \
+    #define M68K_BASE_ILL_HOOK(PC, IR) \
         do { \
-            printf("ILLEGAL INSTRUCTION FOUND AT PC -> (0x%04X)\n", \
-                  (PC)); \
+            printf("ILLEGAL INSTRUCTION FOUND AT PC -> (0x%04X) -> CURRENT OPCODE: (0x%04X)\n", \
+                  (PC), (IR)); \
         } while(0)
 	#else
-    	#define M68K_BASE_ILL_HOOK(PC) ((void)0)
+    	#define M68K_BASE_ILL_HOOK(PC, IR) ((void)0)
 	#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
