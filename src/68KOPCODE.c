@@ -1014,7 +1014,7 @@ M68K_MAKE_OPCODE(ILLEGAL, 0, 0, 0)
 
 M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 {
-    M68K_REG_PC += 4;               // MANUALLY ADVANCE THE PC       
+    M68K_REG_PC += 4;                   // MANUALLY ADVANCE THE PC       
     M68K_REG_JMP_TARG = M68K_REG_PC;
 
     M68K_JUMP();
@@ -1023,7 +1023,7 @@ M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 {
     unsigned EA = M68K_REG_PC;
-    M68K_REG_PC += 4;
+    EA += 4;
 
     M68K_REG_JMP_TARG = EA;
 
