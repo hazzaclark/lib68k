@@ -53,9 +53,19 @@
             printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04x -> CURRENT SP: 0x%04X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
-#else
-    #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) ((void)0)
-#endif
+	#else
+    	#define M68K_BASE_RES_HOOK(T0, T1, PC, SP) ((void)0)
+	#endif
+
+	#if M68K_ILLEGAL_HOOK == M68K_OPT_ON
+    #define M68K_BASE_ILL_HOOK(PC) \
+        do { \
+            printf("ILLEGAL INSTRUCTION FOUND AT PC -> (0x%04X)\n", \
+                  (PC)); \
+        } while(0)
+	#else
+    	#define M68K_BASE_ILL_HOOK(PC) ((void)0)
+	#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
 // THE IDEA IS TO ALLOW FOR A BETTER MEANS OF BEING ABLE TO DETERMINE HOW AND WHEN
@@ -82,7 +92,6 @@
 #define		M68K_SET_CYCLES(VALUE)				M68K_MASTER_CYC = VALUE
 #define		M68K_GET_CYCLES()					M68K_MASTER_CYC
 #define		M68K_ALL_CYCLES()					M68K_MASTER_CYC %= M68K_CYCLE[M68K_REG_IR]
-
 #define		M68K_USE_MASTER_CYCLES(VALUE)		CPU.MASTER_CYCLES += (VALUE)
 
 #endif
