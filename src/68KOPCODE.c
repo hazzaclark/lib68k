@@ -1014,10 +1014,8 @@ M68K_MAKE_OPCODE(ILLEGAL, 0, 0, 0)
 
 M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 {
-    U32 TARGET_ADDR = M68K_REG_PC;  // READ THE CURRENT STATE OF THE PC AND EVALUATE
     M68K_REG_PC += 4;               // MANUALLY ADVANCE THE PC       
-
-    M68K_REG_JMP_TARG = TARGET_ADDR;
+    M68K_REG_JMP_TARG = M68K_REG_PC;
 
     M68K_JUMP();
 }
@@ -2286,9 +2284,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
     {DIVS_16_D_0,               0xF1C0,     0x81C0,     158},// DIVS.W <ea>,Dn
     {DIVU_16_D_0,               0xF1C0,     0x80C0,     140},// DIVU.W <ea>,Dn
-    {EOR_8_D_0,                 0xF1C0,     0xB000,     4},  // EOR.B Dn,<ea>
-    {EOR_16_D_0,                0xF1C0,     0xB040,     4},  // EOR.W Dn,<ea>
-    {EOR_32_D_0,                0xF1C0,     0xB080,     8},  // EOR.L Dn,<ea>
+    {EOR_8_D_0,                 0xFFFF,     0xB101,     4},  // EOR.B Dn,<ea>
+    {EOR_16_D_0,                0xFFFF,     0xB141,     4},  // EOR.W Dn,<ea>
+    {EOR_32_D_0,                0xFFFF,     0xB181,     8},  // EOR.L Dn,<ea>
     {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
     {EORI_16_D_0,               0xFFF0,     0x0A40,     8},  // EORI.W #<data>,<ea>
     {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
@@ -2300,7 +2298,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
-    {LEA_32_DA_0,               0xF1C0,     0x41C0,     10},  // LEA <ea>,An
+    {LEA_32_DA_0,               0xFFFF,     0x43F9,     10},  // LEA <ea>,An
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
     {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
     {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
