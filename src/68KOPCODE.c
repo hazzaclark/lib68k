@@ -1031,10 +1031,14 @@ M68K_MAKE_OPCODE(JSR, 32, 0, PC)
     M68K_JUMP();
 }
 
-M68K_MAKE_OPCODE(LEA, 32, DA, 0)
+M68K_MAKE_OPCODE(LEA, 32, DI, 0)
 {
-    M68K_DATA_LOW = M68K_READ_32(M68K_DATA_HIGH);
-    M68K_DATA_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
+    M68K_ADDRESS_HIGH = M68K_ADDRESS_LOW;
+}
+
+M68K_MAKE_OPCODE(LEA, 32, AI, 0)
+{
+    M68K_ADDRESS_HIGH = M68K_ADDRESS_LOW;
 }
 
 M68K_MAKE_OPCODE(LINK, 32, DA, 0)
@@ -2298,7 +2302,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
-    {LEA_32_DA_0,               0xFFFF,     0x43F9,     10},  // LEA <ea>,An
+    {LEA_32_DI_0,               0xFFFF,     0x41E8,     10},  // LEA <ea>,Dn
+    {LEA_32_AI_0,               0xFFFF,     0x41F9,     10},  // LEA <ea>, An
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
     {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
     {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
@@ -2311,7 +2316,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_IMM_D,              0xF1F8,     0x103C,     8},   // MOVE.W #<data>,Dn 
     {MOVE_16_IMM_D,             0xF1F8,     0x303C,     8},   // MOVE.W #<data>,Dn 
     {MOVE_32_IMM_D,             0xFFFF,     0x203C,     16},  // MOVE.L #<data>,Dn 
-    {MOVE_32_D_0,               0xFFFF,     0x283C,     12},   // MOVE.L <ea>,Dn
+    {MOVE_32_D_0,               0xFFFF,     0x223C,     12},   // MOVE.L <ea>,Dn
     {MOVE_32_D_POST_DEC,        0xFFFF,     0x2F00,     14},  // MOVE.L, Dn, -(SP)
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
@@ -2330,7 +2335,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
     {MOVEM_16_POST_INC_0,       0xFFF8,     0x48A0,     8},  // MOVEM.W <reglist>, (An)+
     {MOVEM_32_POST_INC_0,       0xFFF8,     0x48E0,     8},  // MOVEM.L <reglist>, (An)+
-    {MOVEP_16_ER_0,             0xFFFF,     0x0188,     16}, // MOVEP.W Dn, disp(An)
+    {MOVEP_16_ER_0,             0xFFFF,     0x07D0,     16}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xFFFF,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
     {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
