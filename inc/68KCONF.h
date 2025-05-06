@@ -23,17 +23,60 @@
 	#define M68K_OPT_OFF		0
 	#define M68K_OPT_ON			1
 
+	#ifndef 	USE_M68K_HOOKS
+	#define 	USE_M68K_HOOKS
+
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
-// CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION	
+// CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
+
+	#define 	M68K_CCR_LOGGING 	M68K_OPT_ON
+
+	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
+	#define		M68K_X_FLAG_HOOK	M68K_OPT_ON
+	#define		M68K_Z_FLAG_HOOK	M68K_OPT_ON
+	#define		M68K_V_FLAG_HOOK	M68K_OPT_ON
+	#define		M68K_C_FLAG_HOOK	M68K_OPT_ON
+	#define		M68K_N_FLAG_HOOK	M68K_OPT_ON
+
+#if M68K_CCR_LOGGING == M68K_OPT_OFF
+	#if (M68K_S_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_X_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_Z_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_V_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_C_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_N_FLAG_HOOK == M68K_OPT_ON)
+	
+		#define M68K_PRINT_FLAG(COND, FLAG_VAR, NAME) \
+			do { \
+				if (COND == M68K_OPT_ON) \
+					printf(NAME ":%d ", (FLAG_VAR)); \
+			} while(0)
+	
+		#define M68K_CCR_HOOK() \
+			do { \
+				printf("CCR: "); \
+				M68K_PRINT_FLAG(M68K_S_FLAG_HOOK, M68K_FLAG_S, "S"); \
+				M68K_PRINT_FLAG(M68K_X_FLAG_HOOK, M68K_FLAG_X, "X"); \
+				M68K_PRINT_FLAG(M68K_N_FLAG_HOOK, M68K_FLAG_N, "N"); \
+				M68K_PRINT_FLAG(M68K_Z_FLAG_HOOK, M68K_FLAG_Z, "Z"); \
+				M68K_PRINT_FLAG(M68K_V_FLAG_HOOK, M68K_FLAG_V, "V"); \
+				M68K_PRINT_FLAG(M68K_C_FLAG_HOOK, M68K_FLAG_C, "C"); \
+				printf("\n"); \
+			} while(0)
+	
+	#else
+		#define M68K_CCR_HOOK() ((void)0)
+		#endif
+	#else
+    	#define M68K_CCR_HOOK() ((void)0)
+#endif
 
 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
 	#define		M68K_RESET_HOOK		M68K_OPT_ON
 	#define		M68K_ILLEGAL_HOOK	M68K_OPT_ON
 	#define		M68K_LEA_HOOK		M68K_OPT_ON
-
-
-
+	#define		M68K_ADDR_HOOK		M68K_OPT_ON
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -80,6 +123,19 @@
 		} while(0)
 	#else
 		#define M68K_BASE_LEA_HOOK(REG_ARRAY) ((void)0)
+	#endif
+
+	#if M68K_ADDR_HOOK == M68K_OPT_ON
+	#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) \
+		do { \
+			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
+			printf("ADDRESS FOUND WITH REGISTER D%d\n", \
+				REG_NUM); \
+		} while(0)
+	#else
+		#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) ((void)0)
+	#endif
+
 	#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
