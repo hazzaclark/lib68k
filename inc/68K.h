@@ -104,8 +104,6 @@
 #define     M68K_WRITE_32(ADDRESS, VALUE)                   M68K_WRITE_MEMORY_32(ADDRESS, VALUE)
                                                      
 
-/* AS AND WHEN I NEED TO ACCESS A PARTICULAR SIZE, I CAN JUST TYPECAST THESE */
-
 #define         M68K_EA()                                   M68K_ADDRESS_HIGH
 #define         M68K_EA_INCR_BYTE()                         (M68K_ADDRESS_HIGH++)
 #define         M68K_EA_INCR_WORD()                         ((M68K_ADDRESS_HIGH += 2) - 2)
@@ -155,6 +153,12 @@
 
 #define         M68K_IMM_NIBBLE()                   \
             ((U32)READ_IMM_32() << 31) | READ_IMM_32()
+
+
+#define         M68K_LEA_AW()               READ_IMM_16()
+#define         M68K_LEA_AL()               READ_IMM_32()
+#define         M68K_LEA_AW_16()            M68K_LEA_AW()
+#define         M68K_LWA_AW_32()            M68K_LEA_AW()
 
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
