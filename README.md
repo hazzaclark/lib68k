@@ -107,3 +107,5 @@ Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should 
 [lib68k_mem](https://github.com/hazzaclark/lib68k_mem)
 
 [68K Instruction Timings](https://wiki.neogeodev.org/index.php?title=68k_instructions_timings)
+
+[More 68K Instruction Timings](https://oldwww.nvg.ntnu.no/amiga/MC680x0_Sections/mc68000timing.HTML)
