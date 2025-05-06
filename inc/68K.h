@@ -440,6 +440,12 @@ void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
 void M68K_PULSE_RESET(void);
 void M68K_PULSE_HALT(void);
+void M68K_CLEAR_HALT(void);
+
+void M68K_SET_S_FLAG(unsigned VALUE);
+void M68K_SET_CCR(unsigned VALUE);
+void M68K_SET_SR(unsigned VALUE);
+
 void M68K_BUILD_OPCODE_TABLE(void);
 
 void M68K_BRANCH_8(unsigned OFFSET);
