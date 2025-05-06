@@ -170,8 +170,6 @@ M68K_MAKE_OPCODE(ADDI, 8, IMM, 0)
 
     M68K_FLAG_X = M68K_FLAG_C = (U8)RESULT;
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
-
-    M68K_WRITE_8(0, M68K_FLAG_Z); 
 }
 
 M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
@@ -187,8 +185,6 @@ M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
 
     M68K_FLAG_X = M68K_FLAG_C = (U16)RESULT;
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
-
-    M68K_WRITE_16(0, M68K_FLAG_Z); 
 }
 
 M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
@@ -205,7 +201,6 @@ M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
     M68K_FLAG_X = M68K_FLAG_C = (U32)RESULT;
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
 
-    M68K_WRITE_32(0, M68K_FLAG_Z); 
 }
 
 M68K_MAKE_OPCODE(ADDQ, 8, D, 0)
@@ -1167,7 +1162,7 @@ M68K_MAKE_OPCODE(LSR, 32, S, 0)
 
 M68K_MAKE_OPCODE(MOVE, 8, D, 0)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
+    unsigned RESULT = M68K_DATA_LOW;
     unsigned* DEST = &M68K_DATA_HIGH;
 
     *DEST = RESULT;
@@ -1180,7 +1175,7 @@ M68K_MAKE_OPCODE(MOVE, 8, D, 0)
 
 M68K_MAKE_OPCODE(MOVE, 16, D, 0)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
+    unsigned RESULT = M68K_DATA_LOW;
     unsigned* DEST = &M68K_DATA_HIGH;
 
     *DEST = RESULT;
@@ -1202,6 +1197,47 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
+}
+
+ // WHAT MAKES THESE DIFFERENT IS THAT THIS ACTUALLY TAKES INTO 
+ // ACCOUNT A DN BEING USED AS AN EA AS WELL AS A DESTINATION
+
+M68K_MAKE_OPCODE(MOVE, 8, D_D, 0)
+{
+    unsigned RESULT = READ_IMM_8();
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = ~M68K_MASK_OUT_ABOVE_8(*DEST | RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, D_D, 0)
+{
+    unsigned RESULT = READ_IMM_16();
+    unsigned* DEST = &M68K_DATA_LOW;
+
+    *DEST = ~M68K_MASK_OUT_ABOVE_16(*DEST | RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, D_D, 0)
+{
+    unsigned RESULT = M68K_LEA_AL_32();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
 }
 
 M68K_MAKE_OPCODE(MOVE, 8, IMM, D)
@@ -1974,6 +2010,8 @@ M68K_MAKE_OPCODE(SUB, 32, D, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
 
     *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(SUBA, 16, DA, 0)
@@ -2308,10 +2346,13 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},   // MOVE.B <ea>,Dn 
     {MOVE_16_D_0,               0xF1C0,     0x3000,     8},   // MOVE.W <ea>,Dn 
+    {MOVE_8_D_D_0,              0xFFFF,     0x1200,     20},  // MOVE.B Dn,Dn
+    {MOVE_16_D_D_0,             0xFFFF,     0x3200,     20},  // MOVE.W Dn,Dn
+    {MOVE_32_D_D_0,             0xFFFF,     0x2200,     24},   // MOVE.L Dn,Dn
     {MOVE_8_IMM_D,              0xF1F8,     0x103C,     8},   // MOVE.W #<data>,Dn 
     {MOVE_16_IMM_D,             0xF1F8,     0x303C,     8},   // MOVE.W #<data>,Dn 
     {MOVE_32_IMM_D,             0xFFFF,     0x203C,     16},  // MOVE.L #<data>,Dn 
-    {MOVE_32_D_0,               0xFFFF,     0x223C,     12},   // MOVE.L <ea>,Dn
+    {MOVE_32_D_0,               0xF1F8,     0x2000,     12},   // MOVE.L <ea>,Dn
     {MOVE_32_D_POST_DEC,        0xFFFF,     0x2F00,     14},  // MOVE.L, Dn, -(SP)
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
@@ -2407,7 +2448,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     }
 
     OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
-    printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
+    printf("OPCODE TABLE INIT 0x%p\n", (void*)OSTRUCT);
 
     while (OSTRUCT->HANDLER != NULL)
     {
