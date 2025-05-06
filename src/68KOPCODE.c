@@ -1031,14 +1031,9 @@ M68K_MAKE_OPCODE(JSR, 32, 0, PC)
     M68K_JUMP();
 }
 
-M68K_MAKE_OPCODE(LEA, 32, DI, 0)
-{
-    M68K_ADDRESS_HIGH = M68K_ADDRESS_LOW;
-}
-
 M68K_MAKE_OPCODE(LEA, 32, AI, 0)
 {
-    M68K_ADDRESS_HIGH = M68K_ADDRESS_LOW;
+    M68K_ADDRESS_LOW = M68K_LEA_AL_32();
 }
 
 M68K_MAKE_OPCODE(LINK, 32, DA, 0)
@@ -2302,8 +2297,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
-    {LEA_32_DI_0,               0xFFFF,     0x41E8,     10},  // LEA <ea>,Dn
-    {LEA_32_AI_0,               0xFFFF,     0x41F9,     10},  // LEA <ea>, An
+    {LEA_32_AI_0,               0xF1FF,     0x41F9,     10},  // LEA <ea>, An
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
     {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
     {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
