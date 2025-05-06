@@ -249,7 +249,7 @@ int M68K_EXEC(int CYCLES)
             break;
         }
 
-        printf("[PC -> %08X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
+        printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
 
 
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
@@ -272,7 +272,6 @@ int M68K_EXEC(int CYCLES)
     printf("EXECUTION STOPPED AT %08X\n", M68K_REG_PC);
     printf("TOTAL CYCLES USED: %d\n", M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES);
     printf("CYCLES REMAINING: %d\n", CPU.MASTER_CYCLES);
-
     return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
 
