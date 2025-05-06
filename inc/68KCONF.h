@@ -30,6 +30,10 @@
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
 	#define		M68K_RESET_HOOK		M68K_OPT_ON
 	#define		M68K_ILLEGAL_HOOK	M68K_OPT_ON
+	#define		M68K_LEA_HOOK		M68K_OPT_ON
+
+
+
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -65,6 +69,17 @@
         } while(0)
 	#else
     	#define M68K_BASE_ILL_HOOK(PC, IR) ((void)0)
+	#endif
+
+	#if M68K_LEA_HOOK == M68K_OPT_ON
+	#define M68K_BASE_LEA_HOOK(REG_ARRAY) \
+		do { \
+			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
+			printf("LEA FOUND WITH DESTINATION REGISTER A%d\n", \
+				REG_NUM); \
+		} while(0)
+	#else
+		#define M68K_BASE_LEA_HOOK(REG_ARRAY) ((void)0)
 	#endif
 
 // ADDED THIS CONFIG HERE TO ALLOW FOR PROPER HOOK EMULATION
