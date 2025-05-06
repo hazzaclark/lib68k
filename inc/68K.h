@@ -160,6 +160,9 @@
 #define         M68K_LEA_AW_16()            M68K_LEA_AW()
 #define         M68K_LWA_AW_32()            M68K_LEA_AW()
 
+#define         M68K_LEA_AL_16()            M68K_LEA_AL()
+#define         M68K_LEA_AL_32()            M68K_LEA_AL()
+
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
 #define         M68K_CPU_020                2
