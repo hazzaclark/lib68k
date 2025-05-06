@@ -105,3 +105,5 @@ Simply use the oscillating macros of ``M68K_OPT_ON`` or ``M68K_OPT_OFF`` should 
 [68000 ISA](http://wpage.unina.it/rcanonic/didattica/ce1/docs/68000.pdf)
 
 [lib68k_mem](https://github.com/hazzaclark/lib68k_mem)
+
+[68K Instruction Timings](https://wiki.neogeodev.org/index.php?title=68k_instructions_timings)
