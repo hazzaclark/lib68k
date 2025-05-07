@@ -1335,13 +1335,13 @@ M68K_MAKE_OPCODE(MOVE, 32, D, PRE_DEC)
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_INC)
 {
     U16 VALUE = M68K_DATA_HIGH;
-    M68K_WRITE_16(M68K_DATA_HIGH, VALUE);
+    M68K_WRITE_16(M68K_DATA_LOW, VALUE);
 }
 
 M68K_MAKE_OPCODE(MOVE, 32, POST_INC, 0)
 {
     U32 VALUE = M68K_DATA_HIGH;
-    M68K_WRITE_32(M68K_DATA_HIGH, VALUE);
+    M68K_WRITE_32(M68K_DATA_LOW, VALUE);
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
@@ -2470,7 +2470,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_IMM_0,            0xF1C0,     0x2040,     12}, // MOVEA.L #imm,An
     {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     8},   // MOVE.W (An)+,Dn
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3F00,     8},   // MOVE.W Dn, (-SP)
-    {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     12},  // MOVE.L (An)+,Dn
+    {MOVE_32_POST_INC_0,        0xFFF0,     0x20C0,     12},  // MOVE.L (An)+,Dn
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
     {MOVE_32_ABS_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, <ea>
