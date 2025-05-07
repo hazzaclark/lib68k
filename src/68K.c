@@ -148,7 +148,7 @@ void M68K_JUMP()
 
 void M68K_JUMP_VECTOR(unsigned VECTOR)
 {
-	M68K_REG_PC += M68K_READ_16(VECTOR << 2);
+    M68K_REG_PC += M68K_READ_16(VECTOR << 2);
 }
 
 /* PERFORM A LOGICAL BITWIS AND FROM THE SOURCE DESTINATION */
@@ -161,6 +161,24 @@ void M68K_SET_SR_IRQ(unsigned VALUE)
 {
 	VALUE &= M68K_SR_MASK;
 	M68K_FLAG_T1 += ((S8)VALUE);
+}
+
+// GET AND SET THE NEW SP TO THE CURRENT S FLAG
+
+void M68K_SET_S_FLAG(unsigned VALUE)
+{
+    M68K_FLAG_S = VALUE;
+    M68K_REG_SP = M68K_FLAG_S;
+}
+
+void M68K_SET_CCR(unsigned VALUE)
+{
+    // SOURCE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=14
+    M68K_FLAG_X = M68K_BIT_4(VALUE) << 4;
+    M68K_FLAG_N = M68K_BIT_3(VALUE) << 4;
+    M68K_FLAG_Z = M68K_BIT_2(VALUE);
+    M68K_FLAG_V = M68K_BIT_1(VALUE) << 6;
+    M68K_FLAG_C = M68K_BIT_0(VALUE) << 8;
 }
 
 void M68K_INIT(void)
