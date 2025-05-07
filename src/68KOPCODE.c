@@ -2471,7 +2471,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     }
 
     OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
-    printf("OPCODE TABLE INIT 0x%p\n", (void*)OSTRUCT);
+    printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
 
     while (OSTRUCT->HANDLER != NULL)
     {
