@@ -1895,6 +1895,81 @@ M68K_MAKE_OPCODE(ROL, 32, S, 0)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
 }
 
+M68K_MAKE_OPCODE(ROL, 8, R, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
+    unsigned NEW_SHIFT = BASE_SHIFT & 7;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = M68K_READ_8(SRC);
+
+    if(BASE_SHIFT != 0 && NEW_SHIFT != 0)
+    {
+        *DEST = ~M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+        M68K_FLAG_C = SRC << NEW_SHIFT;
+        M68K_FLAG_N = (RESULT == 0);
+        M68K_FLAG_Z = SRC;
+        M68K_FLAG_V = 0;
+        return;
+    }
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROL, 16, R, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
+    unsigned NEW_SHIFT = BASE_SHIFT & 15;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = M68K_READ_16(SRC);
+
+    if(BASE_SHIFT != 0 && NEW_SHIFT != 0)
+    {
+        *DEST = ~M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+        M68K_FLAG_C = SRC << NEW_SHIFT >> 8;
+        M68K_FLAG_N = (RESULT == 0);
+        M68K_FLAG_Z = SRC;
+        M68K_FLAG_V = 0;
+        return;
+    }
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(ROL, 32, R, 0)
+{
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
+    unsigned NEW_SHIFT = BASE_SHIFT & 31;
+
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = M68K_READ_32(SRC);
+
+    if(BASE_SHIFT != 0 && NEW_SHIFT != 0)
+    {
+        *DEST = ~M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
+        M68K_FLAG_C = (SRC >> ((NEW_SHIFT - 32) & 0x1F)) >> 8;
+        M68K_FLAG_N = (RESULT == 0);
+        M68K_FLAG_Z = SRC;
+        M68K_FLAG_V = 0;
+        return;
+    }
+
+    M68K_FLAG_C = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+}
+
 M68K_MAKE_OPCODE(ROXL, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
@@ -2431,6 +2506,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ROL_8_S_0,                 0xF1F8,     0xE118,     6},  // ROL.B #ea,Dn
     {ROL_16_S_0,                0xF1F8,     0xE158,     6},  // ROL.W #ea,Dn
     {ROL_32_S_0,                0xF1F8,     0xE198,     8},  // ROL.L #ea,Dn
+    {ROL_8_R_0,                 0xFFF8,     0xE138,     6},  // ROL.B Dn, Dy
+    {ROL_16_R_0,                0xFFF8,     0xE178,     6},  // ROL.W Dn, Dy
+    {ROL_32_R_0,                0xFFF8,     0xE1B8,     6},  // ROL.L Dn, Dy
     {ROXL_8_S_0,                0xFFFF,     0xE131,     6},  // ROXL.B Dn,Dy
     {ROXL_16_S_0,               0xFFFF,     0xE171,     6},  // ROXL.W Dn,Dy
     {ROXL_32_S_0,               0xFFFF,     0xE1B1,     8},  // ROXL.L Dn,Dy
