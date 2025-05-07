@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
     M68K_REG_PC = LOAD_ADDR;
 
-    printf("BEGINNING EXECUTION AT 0x%08X\n", LOAD_ADDR);
+    printf("BEGINNING EXECUTION AT PC: 0x%04X\n", LOAD_ADDR);
     M68K_EXEC(500);
 
     return 0;
