@@ -2422,9 +2422,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ORI_SR_16_0_0,             0xFF00,     0x007C,     20}, // ORI #<data>,SR
     {PEA_32_D_0,                0xFFFF,     0x4879,     12}, // PEA <ea>
     {RESET_0_0_0,               0xFFFF,     0x4E70,     132},// RESET
-    {ROL_8_S_0,                 0xFFFF,     0xE139,     6},  // ROL.B Dn,Dy
-    {ROL_16_S_0,                0xFFFF,     0xE179,     6},  // ROL.W Dn,Dy
-    {ROL_32_S_0,                0xFFFF,     0xE1B9,     8},  // ROL.L Dn,Dy
+    {ROL_8_S_0,                 0xFFF8,     0xE518,     6},  // ROL.B Dn,Dy
+    {ROL_16_S_0,                0xFFF8,     0xE558,     6},  // ROL.W Dn,Dy
+    {ROL_32_S_0,                0xFFF8,     0xE598,     8},  // ROL.L Dn,Dy
     {ROXL_8_S_0,                0xFFFF,     0xE131,     6},  // ROXL.B Dn,Dy
     {ROXL_16_S_0,               0xFFFF,     0xE171,     6},  // ROXL.W Dn,Dy
     {ROXL_32_S_0,               0xFFFF,     0xE1B1,     8},  // ROXL.L Dn,Dy
