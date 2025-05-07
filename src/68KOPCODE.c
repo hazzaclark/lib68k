@@ -1968,6 +1968,8 @@ M68K_MAKE_OPCODE(ROL, 32, R, 0)
     M68K_FLAG_N = (RESULT == 0);
     M68K_FLAG_Z = SRC;
     M68K_FLAG_V = 0;
+
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(ROXL, 8, S, 0)
@@ -2508,7 +2510,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ROL_32_S_0,                0xF1F8,     0xE198,     8},  // ROL.L #ea,Dn
     {ROL_8_R_0,                 0xFFF8,     0xE138,     6},  // ROL.B Dn, Dy
     {ROL_16_R_0,                0xFFF8,     0xE178,     6},  // ROL.W Dn, Dy
-    {ROL_32_R_0,                0xFFF8,     0xE1B8,     6},  // ROL.L Dn, Dy
+    {ROL_32_R_0,                0xFFF8,     0xE1B8,     8},  // ROL.L Dn, Dy
     {ROXL_8_S_0,                0xFFFF,     0xE131,     6},  // ROXL.B Dn,Dy
     {ROXL_16_S_0,               0xFFFF,     0xE171,     6},  // ROXL.W Dn,Dy
     {ROXL_32_S_0,               0xFFFF,     0xE1B1,     8},  // ROXL.L Dn,Dy
