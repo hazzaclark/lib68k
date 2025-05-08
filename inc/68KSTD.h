@@ -12,7 +12,7 @@
 #include "68K.h"
 #include "common.h"
 
-#if defined(USE_STD_LIB)
+#if USE_STD_LIB == M68K_OPT_OFF
     #define USE_STD_LIB
 #else
     #define USE_STD_LIB
