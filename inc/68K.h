@@ -459,5 +459,6 @@ void M68K_BRANCH_32(unsigned OFFSET);
 extern int M68K_REMAINING_CYCLES;
 extern unsigned int M68K_ADDRESSING_SPACE; 
 extern unsigned char CYCLE_RANGE[0x10000];
+extern unsigned CPU_TYPE;
 
 #endif
