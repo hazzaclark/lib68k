@@ -40,9 +40,6 @@ int main(int argc, char** argv)
     SHOW_TRACE_STATUS();
     
     M68K_INIT();
-    M68K_SET_CPU_TYPE(M68K_CPU_000);
-
-    printf("CPU SET TO TYPE: %d\n", M68K_CPU_000);
     printf("LOADING BINARY FILE: %s AT 0x%08X\n", argv[1], LOAD_ADDR);
 
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], LOAD_ADDR);
