@@ -2458,7 +2458,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {LSR_32_S_0,                0xF1F8,     0xE088,     8},  // LSR.L Dn,Dy
     {MOVE_8_D_0,                0xF1C0,     0x1000,     4},   // MOVE.B <ea>,Dn 
     {MOVE_16_D_0,               0xF1C0,     0x3000,     8},   // MOVE.W <ea>,Dn 
-    {MOVE_32_D_0,               0xFFFF,     0x2000,     12},   // MOVE.L <ea>,Dn
+    {MOVE_32_D_0,               0xF1C0,     0x2000,     12},   // MOVE.L <ea>,Dn
     {MOVE_8_D_D_0,              0xFFFF,     0x1200,     20},  // MOVE.B Dn,Dn
     {MOVE_16_D_D_0,             0xFFFF,     0x3200,     20},  // MOVE.W Dn,Dn
     {MOVE_32_D_D_0,             0xFFFF,     0x2200,     24},   // MOVE.L Dn,Dn
