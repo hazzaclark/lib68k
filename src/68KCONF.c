@@ -16,7 +16,7 @@
 #ifdef USE_OPCODE
 
 CPU_68K CPU;
-static unsigned int CPU_TYPE;
+unsigned CPU_TYPE = M68K_CPU_TYPE;
 
 U8 M68K_VECTOR_TABLE[5][256] =
 {
@@ -111,33 +111,43 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
         case M68K_CPU_000:
             CPU_TYPE = M68K_CPU_000;
             M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK += 0x00FFFFFF;
+            M68K_ADDRESS_MASK = 0x00FFFFFF;
             M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
             M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 256;
-            return;
+            M68K_RESET_LVL = 256;
+            break;
 
         case M68K_CPU_010:
             CPU_TYPE = M68K_CPU_010;
             M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK += 0x00FFFFFF;
+            M68K_ADDRESS_MASK = 0x00FFFFFF;
             M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
             M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 256;
-            return;
+            M68K_RESET_LVL = 256;
+            break;
 
         case M68K_CPU_020:
             CPU_TYPE = M68K_CPU_020;
-            M68K_SR_MASK += 0xF71F;
-            M68K_ADDRESS_MASK += 0xFFFFFFFF;
+            M68K_SR_MASK = 0xF71F;
+            M68K_ADDRESS_MASK = 0xFFFFFFFF;
             M68K_CYCLE = CPU.INSTRUCTION_CYCLES;
             M68K_CYC_EXCE = CPU.CYCLE_EXCEPTION;
-            M68K_RESET_LVL += 512;
-            return;
+            M68K_RESET_LVL = 512;
+            break;
+
+		case M68K_CPU_030:
+			CPU_TYPE = M68K_CPU_030;
+			break;
+
+		case M68K_CPU_040:
+			CPU_TYPE = M68K_CPU_040;
+			break;
 
         default:
             break;
     }
+
+	printf("CPU SET TO TYPE: %u\n", CPU_TYPE);
 }
 
 int M68K_CYCLES_RUN(void)
