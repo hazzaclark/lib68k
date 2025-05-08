@@ -127,7 +127,8 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
             break;
 
         default:
-            break;
+			fprintf(stderr, "UNRECOGNISED TYPE %d\n", CPU_TYPE);
+            exit(1);
     }
 
 	printf("CPU SET TO TYPE: %u\n", CPU_TYPE);
