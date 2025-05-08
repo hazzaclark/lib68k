@@ -10,8 +10,6 @@
 #include "68KSTD.h"
 #include "68KMEM.h"
 
-static U32 LOAD_ADDR = 0x00100000;
-
 int main(int argc, char** argv) 
 {
     printf("====================================================\n");
@@ -29,7 +27,7 @@ int main(int argc, char** argv)
 
     if(argc > 2)
     {
-        LOAD_ADDR = strtoul(argv[2], NULL, 16);
+        M68K_REG_PC = strtoul(argv[2], NULL, 16);
     }
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
@@ -40,9 +38,9 @@ int main(int argc, char** argv)
     SHOW_TRACE_STATUS();
     
     M68K_INIT();
-    printf("LOADING BINARY FILE: %s AT 0x%08X\n", argv[1], LOAD_ADDR);
+    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
 
-    int FILE_SIZE = LOAD_BINARY_FILE(argv[1], LOAD_ADDR);
+    int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
     if(FILE_SIZE < 0)
     {
         printf("FAILED TO LOAD BINARY FILE\n");
@@ -53,9 +51,8 @@ int main(int argc, char** argv)
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
-    M68K_REG_PC = LOAD_ADDR;
 
-    printf("BEGINNING EXECUTION AT PC: 0x%04X\n", LOAD_ADDR);
+    printf("BEGINNING EXECUTION AT PC: 0x%04X\n", M68K_REG_PC);
     M68K_EXEC(500);
 
     return 0;
