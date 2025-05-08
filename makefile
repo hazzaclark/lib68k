@@ -7,9 +7,16 @@
 
 CC 			=		$(PREFIX)gcc
 AR			=		$(PREFIX)ar
-WARNINGS	=		-std=c99 -Wall -Wextra -Wparentheses -Werror -pedantic
+WARNINGS	=		-std=c99 -Wall -Wextra -Wparentheses -Werror -pedantic -O0
 SRC			= 		src
 INC			=		inc
+
+CPU				?= 		M68K_CPU_000
+SUPPORTED_CPUS	= 		M68K_CPU_000 M68K_CPU_010 M68K_CPU_020 M68K_CPU_030 M68K_CPU_040
+
+ifeq ($(filter $(CPU),$(SUPPORTED_CPUS)),)
+$(error Unsupported CPU $(CPU). Supported: $(SUPPORTED_CPUS))
+endif
 
 #########################################################################
 ##				FILE ACCESS			       ##
@@ -22,8 +29,8 @@ INC			=		inc
 ##			    TARGET LINKING			       ##
 #########################################################################
 
-TARGET 		= 		lib68k
-LIBRARY		= 		lib68k.so     
+TARGET 		= 		lib68k.exe  
+LIBRARY		= 		lib68k.so lib68k.a     
 
 all: $(TARGET)
 
@@ -34,7 +41,7 @@ $(TARGET): $(LIBRARY)
 	$(CC) -o $@ -L. -l68k $(WARNINGS)  
 
 $(SRC)/%.o: $(SRC)/%.c
-	$(CC) $(WARNINGS) -I$(INC) -c $< -o $@
+	$(CC) $(WARNINGS) -I$(INC) -DM68K_CPU_TYPE=$(CPU) -c $< -o $@
 
 clean:
 	rm -f $(SRC)/*.o $(TARGET) $(LIBRARY)
