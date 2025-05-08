@@ -118,8 +118,9 @@
 	#define M68K_BASE_LEA_HOOK(REG_ARRAY) \
 		do { \
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
-			printf("LEA FOUND WITH DESTINATION REGISTER A%d\n", \
-				REG_NUM); \
+			int EA = M68K_READ_32(M68K_REG_PC + 2); \
+			printf("LEA FOUND: $%X -> REGISTER A%d\n", \
+				EA, REG_NUM); \
 		} while(0)
 	#else
 		#define M68K_BASE_LEA_HOOK(REG_ARRAY) ((void)0)
