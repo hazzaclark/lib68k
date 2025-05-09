@@ -157,6 +157,16 @@
 
 #define         M68K_LEA_AW()               READ_IMM_16()
 #define         M68K_LEA_AL()               READ_IMM_32()
+
+#define         M68K_LEA_AI()                   M68K_ADDRESS_LOW
+#define         M68K_LEA_PI_8()                 (M68K_ADDRESS_LOW++)
+#define         M68K_LEA_PI_16()    	        ((M68K_ADDRESS_LOW += 2) - 2)
+#define         M68K_LEA_PI_32()    	        ((M68K_ADDRESS_LOW += 4) - 4)
+
+#define         M68K_LEA_PD_8()                 (--M68K_ADDRESS_LOW)
+#define         M68K_LEA_PD_16()                ((M68K_ADDRESS_LOW -= 2))
+#define         M68K_LEA_PD_32()                ((M68K_ADDRESS_LOW -= 4))
+
 #define         M68K_LEA_AW_16()            M68K_LEA_AW()
 #define         M68K_LWA_AW_32()            M68K_LEA_AW()
 
