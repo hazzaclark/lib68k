@@ -31,11 +31,13 @@ int main(int argc, char** argv)
     }
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
-    // THIS CAN BE TURNED USING M68K_OPT_OFF IN 68KCONF.h AND 68KMEM.h
+    #if M68K_USE_TRACE_CONFIG == M68K_OPT_OFF
 
     ENABLED_FLAGS = M68K_OPT_FLAGS;
     SET_TRACE_FLAGS(1, 0);
     SHOW_TRACE_STATUS();
+
+    #endif
     
     M68K_INIT();
     printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
