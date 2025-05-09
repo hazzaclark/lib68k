@@ -154,14 +154,18 @@
 #define         M68K_IMM_NIBBLE()                   \
             ((U32)READ_IMM_32() << 31) | READ_IMM_32()
 
-
 #define         M68K_LEA_AW()               READ_IMM_16()
 #define         M68K_LEA_AL()               READ_IMM_32()
 
 #define         M68K_LEA_AI()                   M68K_ADDRESS_LOW
+
+                // POST INCREMENT
+
 #define         M68K_LEA_PI_8()                 (M68K_ADDRESS_LOW++)
 #define         M68K_LEA_PI_16()    	        ((M68K_ADDRESS_LOW += 2) - 2)
 #define         M68K_LEA_PI_32()    	        ((M68K_ADDRESS_LOW += 4) - 4)
+
+                // PRE DECREMENT
 
 #define         M68K_LEA_PD_8()                 (--M68K_ADDRESS_LOW)
 #define         M68K_LEA_PD_16()                ((M68K_ADDRESS_LOW -= 2))
