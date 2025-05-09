@@ -2563,8 +2563,6 @@ void M68K_BUILD_OPCODE_TABLE(void)
     }
 
     OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
-    printf("OPCODE TABLE INIT %p\n", (void*)OSTRUCT);
-
     while (OSTRUCT->HANDLER != NULL)
     {
         #if USE_OPCODE_DEBUG == M68K_OPT_ON
@@ -2592,8 +2590,6 @@ void M68K_BUILD_OPCODE_TABLE(void)
 
         OSTRUCT++;
     }
-
-    printf("OPCODE TABLE BUILDING COMPLETED SUCCESSFULLY.\n");
 }
 
 #endif
