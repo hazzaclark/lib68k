@@ -2567,8 +2567,12 @@ void M68K_BUILD_OPCODE_TABLE(void)
 
     while (OSTRUCT->HANDLER != NULL)
     {
+        #if USE_OPCODE_DEBUG == M68K_OPT_ON
+
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
                OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
+
+        #endif
 
         for (INDEX = 0; INDEX < 0x10000; INDEX++)
         {
