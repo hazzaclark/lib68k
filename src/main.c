@@ -16,19 +16,12 @@ int main(int argc, char** argv)
     printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
     printf("====================================================\n");
 
-    if(argc < 3)
+    if(argc < 2)
     {
-        printf("USAGE: %s <FILE> [LOAD ADDR]\n", argv[0]);
+        printf("USAGE: %s <FILE>\n", argv[0]);
         return 1;
     }
 
-    // CONVERT THE LOAD ADDRESS INTO THE PROPER UNSIGNED MASK
-    // WHICH IS REQUIRED TO BE ABLE TO BE READ BY THE MEMORY MAPPER
-
-    if(argc > 2)
-    {
-        M68K_REG_PC = strtoul(argv[2], NULL, 16);
-    }
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
     #if M68K_USE_TRACE_CONFIG == M68K_OPT_OFF
