@@ -13,7 +13,7 @@
 int main(int argc, char** argv) 
 {
     printf("====================================================\n");
-    printf("HARRY CLARK - MOTOROLA 680x0 EMULATOR\n");
+    printf("      HARRY CLARK - MOTOROLA 680x0 EMULATOR        \n");
     printf("====================================================\n");
 
     if(argc < 2)
@@ -21,7 +21,6 @@ int main(int argc, char** argv)
         printf("USAGE: %s <FILE>\n", argv[0]);
         return 1;
     }
-
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
     #if M68K_USE_TRACE_CONFIG == M68K_OPT_OFF
