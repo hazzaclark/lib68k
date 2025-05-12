@@ -1386,6 +1386,8 @@ M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
     M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
     M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
 
+    M68K_WRITE_16(DESTINATION, SRC);
+
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
     M68K_CCR_HOOK();
 }
@@ -2469,8 +2471,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
     {MOVE_32_ABS_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, <ea>
-    {MOVE_CCR_16_DA_0,          0xFFC0,     0x44C0,     12}, // MOVE CCR,<ea>
-    {MOVE_SR_16_DA_0,           0xFFC0,     0x46C0,     12}, // MOVE SR,<ea>
+    {MOVE_CCR_16_DA_0,          0xFFFF,     0x44FC,     12}, // MOVE CCR,<ea>
+    {MOVE_SR_16_DA_0,           0xFFC0,     0x40C0,     12}, // MOVE SR,<ea>
     {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
     {MOVEM_16_DA_0,             0xFB80,     0x4880,     8},  // MOVEM.W <ea>,Regs
     {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
