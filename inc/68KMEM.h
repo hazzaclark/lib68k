@@ -55,13 +55,6 @@ typedef struct
 
 } M68K_MEM_BUFFER;
 
-void ENABLE_TRACE_FLAG(U8 FLAG);
-void DISABLE_TRACE_FLAG(U8 FLAG);
-bool IS_TRACE_ENABLED(U8 FLAG);
-
-void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE);
-void SHOW_TRACE_STATUS(void);
-
 #define         CHECK_TRACE_CONDITION()         (IS_TRACE_ENABLED(M68K_T0_SHIFT) || IS_TRACE_ENABLED(M68K_T1_SHIFT))
 
 /////////////////////////////////////////////////////
@@ -69,6 +62,7 @@ void SHOW_TRACE_STATUS(void);
 /////////////////////////////////////////////////////
 
 #define         MEM_TRACE_HOOK                  M68K_OPT_ON
+#define         VERBOSE_TRACE_HOOK              M68K_OPT_ON
 #define         JUMP_HOOK                       M68K_OPT_ON
 
 #if MEM_TRACE_HOOK == M68K_OPT_OFF
@@ -82,11 +76,11 @@ void SHOW_TRACE_STATUS(void);
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if DEFAULT_TRACE_FLAGS & TRACE_VERBOSE
+#if VERBOSE_TRACK_HOOK == M68K_OPT_OFF
     #define VERBOSE_TRACE(MSG, ...) \
         do { \
-            if (IS_TRACE_ENABLED(TRACE_VERBOSE)) \
-                printf("[VERBOSE] %s:%d " MSG "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
+            if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
+                printf("[VERBOSE] " MSG "\n", ##__VA_ARGS__); \
         } while(0)
 #else
     #define VERBOSE_TRACE(MSG, ...) ((void)0)
@@ -110,6 +104,13 @@ void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, U32 VALUE);
 
 unsigned int M68K_READ_IMM_16(unsigned int ADDRESS);
 unsigned int M68K_READ_IMM_32(unsigned int ADDRESS);
+
+void ENABLE_TRACE_FLAG(U8 FLAG);
+void DISABLE_TRACE_FLAG(U8 FLAG);
+bool IS_TRACE_ENABLED(U8 FLAG);
+
+void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE);
+void SHOW_TRACE_STATUS(void);
 
 void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
 
