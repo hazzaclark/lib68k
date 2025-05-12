@@ -49,7 +49,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Running the simulator with add.bin
 
-![image](https://github.com/user-attachments/assets/0fd79f8d-94ec-4325-b5a5-67f77c058ffe)
+![image](https://github.com/user-attachments/assets/d554a0a6-950e-4949-b085-b18a88a45440)
 
 ## Auto-disable functionality:
 
