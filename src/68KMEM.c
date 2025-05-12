@@ -169,8 +169,8 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
         MEM_BASE->USAGE.LAST_WRITE = ADDRESS;
         MEM_BASE->USAGE.ACCESSED = false;
 
-        uint32_t OFFSET = (ADDRESS - MEM_BASE->BASE);
-        uint32_t BYTES = SIZE / 8;
+        U32 OFFSET = (ADDRESS - MEM_BASE->BASE);
+        U32 BYTES = SIZE / 8;
 
         if(!MEM_BASE->WRITE) 
         {
