@@ -43,7 +43,30 @@ void SHOW_TRACE_STATUS(void)
     printf("\n");
 }
 
-static M68K_MEM_BUFFER* MEM_FIND(uint32_t ADDRESS)
+void SHOW_MEMORY_MAPS(void)
+{
+    printf("\nACTIVE MEMORY MAPS:\n");
+    printf("------------------------------------------------------------\n");
+    printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
+    printf("------------------------------------------------------------\n");
+
+    for(unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
+    {
+        M68K_MEM_BUFFER* BUF = &MEM_BUFFERS[INDEX];
+        printf(" 0x%08X 0x%08X %6dKB  %s  %6u  %6u      %s\n",
+                BUF->BASE,
+                BUF->BASE + BUF->SIZE - 1,
+                BUF->SIZE / 1024,
+                BUF->WRITE ? "RW" : "RO",
+                BUF->USAGE.READ_COUNT,
+                BUF->USAGE.WRITE_COUNT,
+                BUF->USAGE.ACCESSED ? "YES" : "NO");
+    }
+
+    printf("------------------------------------------------------------\n");
+}
+
+static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
 {
     VERBOSE_TRACE("FOUND ADDRESS AT PC -> 0x%04X", ADDRESS);
 
@@ -51,17 +74,23 @@ static M68K_MEM_BUFFER* MEM_FIND(uint32_t ADDRESS)
     {
         M68K_MEM_BUFFER* MEM_BASE = MEM_BUFFERS + INDEX;
 
+        if((MEM_BASE == NULL) && MEM_BASE->BASE != ADDRESS)
+        {
+            VERBOSE_TRACE("NO BUFFER FOUND FOR ADDRESS: 0x%08x\n", ADDRESS);
+            return NULL; 
+        }
+
         if((MEM_BASE->BUFFER != NULL) && (ADDRESS >= MEM_BASE->BASE) && ((ADDRESS - MEM_BASE->BASE) < MEM_BASE->SIZE))
         {
+            VERBOSE_TRACE("BUFFER FOUND WITH SIZE 0x%04X\n", MEM_BUFFERS);
             return MEM_BASE;
         }
     }
 
-    VERBOSE_TRACE("NO BUFFER FOUND FOR ADDRESS: 0x%08x\n", ADDRESS);
     return NULL;
 }
 
-static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
+static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
 {
     VERBOSE_TRACE("READING ADDRESS FROM 0x%04X (SIZE = %d)", ADDRESS, SIZE);
 
@@ -78,7 +107,13 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
 
     if(MEM_BASE != NULL)
     {
-        uint32_t OFFSET = (ADDRESS - MEM_BASE->BASE);
+        // FIRST WE READ AND DETERMINE THE READ STATISTICS OF THE CURRENT MEMORY MAP BEING ALLOCATED
+        
+        MEM_BASE->USAGE.READ_COUNT++;
+        MEM_BASE->USAGE.LAST_READ = ADDRESS;
+        MEM_BASE->USAGE.ACCESSED = true;
+
+        U32 OFFSET = (ADDRESS - MEM_BASE->BASE);
 
         if((OFFSET + (SIZE / 8)) > MEM_BASE->SIZE)
         {
@@ -90,8 +125,8 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
         // THIS MEMORY POINTER WILL ALLOCATE ITSELF RELATIVE TO THE BUFFER
         // AS WELL AS THE BIT SHIFT OFFSET THAT IS PRESENT WITH THE RESPECTIVE BIT VALUE
 
-        uint8_t* MEM_PTR = MEM_BASE->BUFFER + OFFSET;
-        uint32_t MEM_RETURN = 0;
+        U8* MEM_PTR = MEM_BASE->BUFFER + OFFSET;
+        U32 MEM_RETURN = 0;
 
         switch (SIZE)
         {
@@ -111,22 +146,29 @@ static uint32_t MEMORY_READ(uint32_t ADDRESS, uint32_t SIZE)
                 MEM_RETURN = *MEM_PTR;
                 break;
         }
+
         MEM_TRACE(MEM_READ, ADDRESS, SIZE, MEM_RETURN);
         return MEM_RETURN;
     }
 
 MALFORMED_READ:
     fprintf(stderr, "BAD READ AT ADDRESS: 0x%08X\n", ADDRESS);
-    MEM_TRACE(MEM_INVALID_READ, ADDRESS, SIZE, ~(uint32_t)0);
+    MEM_TRACE(MEM_INVALID_READ, ADDRESS, SIZE, ~(U32)0);
     return 0;
 }
 
-static void MEMORY_WRITE(uint32_t ADDRESS, uint32_t SIZE, uint32_t VALUE)
+static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
 {
     M68K_MEM_BUFFER* MEM_BASE = MEM_FIND(ADDRESS);
 
     if(MEM_BASE != NULL)
     {
+         // FIRST WE READ AND DETERMINE THE WRITE STATISTICS OF THE CURRENT MEMORY MAP BEING ALLOCATED
+
+        MEM_BASE->USAGE.WRITE_COUNT++;
+        MEM_BASE->USAGE.LAST_WRITE = ADDRESS;
+        MEM_BASE->USAGE.ACCESSED = false;
+
         uint32_t OFFSET = (ADDRESS - MEM_BASE->BASE);
         uint32_t BYTES = SIZE / 8;
 
@@ -142,7 +184,7 @@ static void MEMORY_WRITE(uint32_t ADDRESS, uint32_t SIZE, uint32_t VALUE)
             goto MALFORMED;
         }
 
-        uint8_t* MEM_PTR = MEM_BASE->BUFFER + OFFSET;
+        U8* MEM_PTR = MEM_BASE->BUFFER + OFFSET;
         MEM_TRACE(MEM_WRITE, ADDRESS, SIZE, VALUE);
 
         switch (SIZE)
@@ -172,7 +214,7 @@ MALFORMED:
     MEM_TRACE(MEM_INVALID_WRITE, ADDRESS, SIZE, VALUE);
 }
 
-void MEMORY_MAP(uint32_t BASE, uint32_t SIZE, bool WRITABLE) 
+void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE) 
 {
     if(MEM_NUM_BUFFERS >= M68K_MAX_BUFFERS) 
     {
@@ -186,6 +228,9 @@ void MEMORY_MAP(uint32_t BASE, uint32_t SIZE, bool WRITABLE)
     BUF->WRITE = WRITABLE;
     BUF->BUFFER = calloc(SIZE, 1);
     memset(BUF->BUFFER, 0, SIZE);
+
+    memset(&BUF->USAGE, 0, sizeof(M68K_MEM_USAGE));
+    BUF->USAGE.ACCESSED = false;
 
     #if M68K_MEM_DEBUG == M68K_OPT_ON
 
