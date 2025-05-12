@@ -385,35 +385,47 @@ M68K_MAKE_OPCODE(AND, 32, D, 0)
 
 M68K_MAKE_OPCODE(ANDI, 8, EA, 0)
 {
-    int DESTINATION = M68K_DATA_HIGH;
-    int RESULT = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+    int SRC = READ_IMM_8();
+    int EA = M68K_ADDRESS_LOW + READ_IMM_16();
+    int RESULT = SRC & M68K_READ_8(EA);
 
-    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_8(EA, RESULT);
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ANDI, 16, EA, 0)
 {
-    int DESTINATION = M68K_DATA_HIGH;
-    int RESULT = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+    int SRC = READ_IMM_16();
+    int EA = M68K_ADDRESS_LOW + READ_IMM_16();
+    int RESULT = SRC & M68K_READ_16(EA);
 
-    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ANDI, 32, EA, 0)
 {
-    int DESTINATION = M68K_DATA_HIGH;
-    int RESULT = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+    int SRC = READ_IMM_32();
+    int EA = M68K_ADDRESS_LOW;
+    int RESULT = SRC & M68K_READ_32(EA);
 
-    M68K_FLAG_N = M68K_HIGH_NIBBLE(RESULT);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_32(EA, RESULT);
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(ANDI_CCR, 8, CCR, 0)
@@ -2394,7 +2406,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {AND_32_D_0,                0xF1C0,     0xC080,     8},  // AND.L <ea>,Dn
     {ANDI_8_EA_0,               0xFF00,     0x0200,     8},  // ANDI.B #<data>,<ea>
     {ANDI_16_EA_0,              0xFF00,     0x0240,     8},  // ANDI.W #<data>,<ea>
-    {ANDI_32_EA_0,              0xFF00,     0x0280,     16}, // ANDI.L #<data>,<ea>
+    {ANDI_32_EA_0,              0xFFF8,     0x0280,     16}, // ANDI.L #<data>,<ea>
     {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
     {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
     {ASL_8_ASR_0,               0xFFFF,     0xE121,     6},  // ASL.B Dn,Dy
