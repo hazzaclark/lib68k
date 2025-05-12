@@ -48,10 +48,21 @@ typedef enum
 
 typedef struct
 {
+    uint32_t READ_COUNT;
+    uint32_t WRITE_COUNT;
+    uint32_t LAST_READ;
+    uint32_t LAST_WRITE;
+    bool ACCESSED;
+
+} M68K_MEM_USAGE;
+
+typedef struct
+{
     U32 BASE;
     U32 SIZE;
     U8* BUFFER;
     bool WRITE;
+    M68K_MEM_USAGE USAGE;
 
 } M68K_MEM_BUFFER;
 
@@ -60,6 +71,8 @@ typedef struct
 /////////////////////////////////////////////////////
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
+
+#ifndef M68K_USE_DEBUG_HOOKS
 
 #define         MEM_TRACE_HOOK                  M68K_OPT_ON
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_ON
@@ -76,7 +89,7 @@ typedef struct
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if VERBOSE_TRACK_HOOK == M68K_OPT_OFF
+#if VERBOSE_TRACK_HOOK == M68K_OPT_ON
     #define VERBOSE_TRACE(MSG, ...) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
@@ -94,6 +107,8 @@ typedef struct
             (T1) ? ENABLE_TRACE_FLAG(M68K_T1_SHIFT) : DISABLE_TRACE_FLAG(M68K_T1_SHIFT); \
     } while(0)
 
+#endif
+
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS);
 unsigned int M68K_READ_MEMORY_16(unsigned int ADDRESS);
 unsigned int M68K_READ_MEMORY_32(unsigned int ADDRESS);
@@ -110,6 +125,7 @@ void DISABLE_TRACE_FLAG(U8 FLAG);
 bool IS_TRACE_ENABLED(U8 FLAG);
 
 void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE);
+void SHOW_MEMORY_MAPS(void);
 void SHOW_TRACE_STATUS(void);
 
 void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
