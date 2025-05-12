@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     }
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
-    #if M68K_USE_TRACE_CONFIG == M68K_OPT_OFF
+    #if M68K_USE_TRACE_CONFIG == M68K_OPT_ON
 
     ENABLED_FLAGS = M68K_OPT_FLAGS;
     SET_TRACE_FLAGS(1, 0);
@@ -32,6 +32,8 @@ int main(int argc, char** argv)
     #endif
     
     M68K_INIT();
+    SHOW_MEMORY_MAPS();
+
     printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
 
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
@@ -48,6 +50,8 @@ int main(int argc, char** argv)
 
     printf("BEGINNING EXECUTION AT PC: 0x%04X\n", M68K_REG_PC);
     M68K_EXEC(500);
+
+    SHOW_MEMORY_MAPS();
 
     return 0;
 }
