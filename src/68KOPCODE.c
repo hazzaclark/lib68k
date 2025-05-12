@@ -1200,6 +1200,8 @@ M68K_MAKE_OPCODE(MOVE, 8, D, 0)
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
     M68K_CCR_HOOK();
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, 0)
@@ -1216,6 +1218,8 @@ M68K_MAKE_OPCODE(MOVE, 16, D, 0)
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
     M68K_CCR_HOOK();
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 32, D, 0)
@@ -1225,13 +1229,15 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
 
     *DEST = RESULT;
 
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
-    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_N = RESULT;
+    M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
     M68K_CCR_HOOK();
+
+    M68K_REG_PC += 4;
 }
 
  // WHAT MAKES THESE DIFFERENT IS THAT THIS ACTUALLY TAKES INTO 
@@ -2404,8 +2410,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {AND_8_D_0,                 0xF1C0,     0xC000,     4},  // AND.B <ea>,Dn
     {AND_16_D_0,                0xF1C0,     0xC040,     4},  // AND.W <ea>,Dn
     {AND_32_D_0,                0xF1C0,     0xC080,     8},  // AND.L <ea>,Dn
-    {ANDI_8_EA_0,               0xFF00,     0x0200,     8},  // ANDI.B #<data>,<ea>
-    {ANDI_16_EA_0,              0xFF00,     0x0240,     8},  // ANDI.W #<data>,<ea>
+    {ANDI_8_EA_0,               0xFFF8,     0x0200,     8},  // ANDI.B #<data>,<ea>
+    {ANDI_16_EA_0,              0xFFF8,     0x0240,     8},  // ANDI.W #<data>,<ea>
     {ANDI_32_EA_0,              0xFFF8,     0x0280,     16}, // ANDI.L #<data>,<ea>
     {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
     {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
