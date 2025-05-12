@@ -1349,6 +1349,8 @@ M68K_MAKE_OPCODE(MOVE, 32, POST_INC, 0)
     M68K_WRITE_32(M68K_DATA_LOW, VALUE);
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
@@ -1368,16 +1370,15 @@ M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
 
 M68K_MAKE_OPCODE(MOVE, 32, D, POST_DEC)
 {
-    unsigned RESULT = M68K_POST_DEC_32();
-    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned EA = M68K_ADDRESS_HIGH;
 
-    *DEST = RESULT;
-
-    M68K_FLAG_N = ((RESULT) >> 24);
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
+    M68K_WRITE_16(EA, RESULT & 0xFFFF);
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
 }
 
@@ -2511,7 +2512,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_D_0,              0xFFFF,     0x1200,     20},  // MOVE.B Dn,Dn
     {MOVE_16_D_D_0,             0xFFFF,     0x3200,     20},  // MOVE.W Dn,Dn
     {MOVE_32_D_D_0,             0xFFFF,     0x2200,     24},   // MOVE.L Dn,Dn
-    {MOVE_32_D_POST_DEC,        0xFFFF,     0x2F00,     14},  // MOVE.L, Dn, -(SP)
+    {MOVE_32_D_POST_DEC,        0xF1F8,     0x2100,     14},  // MOVE.L, Dn, -(SP)
     {MOVEA_16_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
     {MOVEA_16_IMM_0,            0xF1C0,     0x3040,     8},  // MOVEA.W #imm,An 
