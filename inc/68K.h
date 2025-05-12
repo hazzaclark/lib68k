@@ -149,7 +149,7 @@
 #define         M68K_BIT_1F(VALUE)                                  ((VALUE) & 0x80000000)
 
 #define         M68K_LOW_NIBBLE(VALUE)
-#define         M68K_HIGH_NIBBLE(VALUE)                             ((VALUE >> 9) << 16)
+#define         M68K_HIGH_NIBBLE(VALUE)             ((VALUE & 0x8000) ? 1 : 0)
 
 #define         M68K_IMM_NIBBLE()                   \
             ((U32)READ_IMM_32() << 31) | READ_IMM_32()
