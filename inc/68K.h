@@ -65,36 +65,9 @@
 #define         M68K_BASE_BITMASK               256
 
 /*===============================================================================*/
-/*-------------------------------------------------------------------------------*/
 /*                          68000 MEMORY UTILITY MACROS                          */
 /*                      FOR READING THE BYTE ORDER OF MEMORY                     */
-/*-------------------------------------------------------------------------------*/
-/*              THE FOLLOWING MACROS ARE DESIGNED FOR READING MEMORY             */
-/*                      FROM A PREDEFINED MEMORY MAPPER                          */
-
-/*                      BY BITSHIFTING THE CORRESPONDING BITS                    */
-/*                      TO THE DESIGNATED DATA TYPE                              */
-/*-------------------------------------------------------------------------------*/
-/*===============================================================================*/
-
-
-#define WRITE_BYTE(BASE, ADDR, VAL) (BASE)[ADDR] = (VAL)&0xff
-#define WRITE_WORD(BASE, ADDR, VAL) (BASE)[ADDR] = ((VAL)>>8) & 0xff; \
-                                    (BASE)[(ADDR)+1] = (VAL)&0xff
-#define WRITE_LONG(BASE, ADDR, VAL) (BASE)[ADDR] = ((VAL)>>24) & 0xff; \
-                                    (BASE)[(ADDR)+1] = ((VAL)>>16)&0xff; \
-                                    (BASE)[(ADDR)+2] = ((VAL)>>8)&0xff; \
-                                    (BASE)[(ADDR)+3] = (VAL)&0xff
-
-#define READ_BYTE(BASE, ADDR) (BASE)[(ADDR)^1]
-
-#define READ_WORD(BASE, ADDR) (((BASE)[ADDR]<<8) | (BASE)[(ADDR)+1])
-
-#define READ_WORD_LONG(BASE, ADDR) (((BASE)[(ADDR)+1]<<24) |      \
-                                    ((BASE)[(ADDR)]<<16) |  \
-                                    ((BASE)[(ADDR)+3]<<8) |   \
-                                    (BASE)[(ADDR)+2])
-                                                        
+/*===============================================================================*/  
 
 #define     M68K_READ_8(VALUE)                              M68K_READ_MEMORY_8(VALUE)
 #define     M68K_READ_16(VALUE)                             M68K_READ_MEMORY_16(VALUE)
