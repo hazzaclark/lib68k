@@ -46,14 +46,14 @@ void SHOW_TRACE_STATUS(void)
 void SHOW_MEMORY_MAPS(void)
 {
     printf("\nACTIVE MEMORY MAPS:\n");
-    printf("------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
-    printf("------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------\n");
 
     for(unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
         M68K_MEM_BUFFER* BUF = &MEM_BUFFERS[INDEX];
-        printf(" 0x%08X 0x%08X %6dKB  %s  %6u  %6u      %s\n",
+        printf(" 0x%08X 0x%08X %6dKB    %s  %6u  %6u     %s\n",
                 BUF->BASE,
                 BUF->BASE + BUF->SIZE - 1,
                 BUF->SIZE / 1024,
@@ -63,7 +63,7 @@ void SHOW_MEMORY_MAPS(void)
                 BUF->USAGE.ACCESSED ? "YES" : "NO");
     }
 
-    printf("------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------\n");
 }
 
 static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
