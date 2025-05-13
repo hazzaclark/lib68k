@@ -438,6 +438,14 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_MASTER_CYC         CPU.MASTER_CYCLES
 #define         M68K_REFRESH_CYC        CPU.REFRESH_CYCLES
 
+#define         M68K_COND_FLAG_Z()      M68K_FLAG_Z
+#define         M68K_COND_FLAG_V()      M68K_FLAG_V
+#define         M68K_COND_FLAG_C()      M68K_FLAG_C
+#define         M68K_COND_FLAG_X()      M68K_FLAG_X
+#define         M68K_COND_FLAG_Z()      M68K_FLAG_Z
+#define         M68K_COND_FLAG_M()      M68K_FLAG_M
+#define         M68K_COND_FLAG_S()      M68K_FLAG_S
+
 /*==============================================================================*/
 /*                          68000 MAIN CPU FUNCTIONALIY                         */
 /*==============================================================================*/
