@@ -557,13 +557,37 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
 {
-    if(!(M68K_REG_SR & M68K_FLAG_Z))
+    if(!M68K_COND_FLAG_Z())
     {
-        S8 DISP = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
-        M68K_BRANCH_8(DISP);
+        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    }
+
+    M68K_REG_PC += 2;
+    M68K_USE_CYCLES(8);
+}
+
+M68K_MAKE_OPCODE(BNE, 16, 0, 0)
+{
+    if(M68K_COND_FLAG_Z())
+    {
+        unsigned OFFSET = READ_IMM_8();
+        M68K_REG_PC -= 2;
+        M68K_BRANCH_16(OFFSET);
         return;
     }
 
+    M68K_REG_PC += 2;
+    M68K_USE_CYCLES(8);
+}
+
+M68K_MAKE_OPCODE(BNE, 32, 0, 0)
+{
+    if(!M68K_COND_FLAG_Z())
+    {
+        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    }
+
+    M68K_REG_PC += 4;
     M68K_USE_CYCLES(8);
 }
 
@@ -2518,14 +2542,16 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
-    {BNE_8_0_0,                 0xF000,     0x6600,     10},  // BNE <ea>
+    {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
+    {BNE_16_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
+    {BNE_32_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
     {CHK_16_EA_0,               0xFFFF,     0x41B9,     10}, // CHK <ea>,Dn
-    {CLR_8_D_0,                 0xFFFF,     0x4200,     4},  // CLR.B Dn
-    {CLR_16_D_0,                0xFFFF,     0x4240,     4},  // CLR.W Dn
-    {CLR_32_D_0,                0xFFFF,     0x4280,     6},  // CLR.L Dn
+    {CLR_8_D_0,                 0xFFF8,     0x4200,     4},  // CLR.B Dn
+    {CLR_16_D_0,                0xFFF8,     0x4240,     4},  // CLR.W Dn
+    {CLR_32_D_0,                0xFFF8,     0x4280,     6},  // CLR.L Dn
     {CLR_8_EA_0,                0xFFF8,     0x4210,     12},  // CLR.B <ea>
     {CLR_16_EA_0,               0xFFF8,     0x4250,     12},  // CLR.B <ea>
     {CLR_32_EA_0,               0xFFF8,     0x4290,     12},  // CLR.B <ea>
