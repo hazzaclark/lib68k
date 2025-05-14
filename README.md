@@ -5,8 +5,6 @@ Motorola 680x0 Standalone Emulation Library
 
 The motive behind this repository is to provide a surrogate means of aiding in relevant Motorola 68000 developments.
 
-Such is the case with one of the many ambitions, to create a dedicated OS Kernel specifically for this series of microprocessors
-
 Created using ANSI C99 standard, this project aims to promote an ease of use means of creating a library that emulates the likeness of these microprocessors
 
 # Usage:
