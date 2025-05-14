@@ -172,6 +172,13 @@ void M68K_SET_S_FLAG(unsigned VALUE)
     M68K_REG_SP = M68K_FLAG_S;
 }
 
+void M68K_SET_SR(unsigned VALUE)
+{
+    M68K_FLAG_T1 = M68K_BIT_F(VALUE);
+    M68K_SET_CCR(VALUE);
+    M68K_SET_S_FLAG((VALUE >> 15) & 1);
+}
+
 void M68K_SET_CCR(unsigned VALUE)
 {
     // SOURCE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=14
@@ -269,7 +276,7 @@ int M68K_EXEC(int CYCLES)
 
         // QUITE SELF EXPLANATORY BUT, JUST REMEMBER THAT SO YOU AREN'T
         // SCRATCHING YOUR HEAD TRYING TO GET THE EXEC LOOP WORKING ON
-        // BOTH THIS AND THE MD EMULATOR
+        // BOTH THIS AND THE MD EMULATOR 
 
         M68K_REG_PC += 2;
         CPU.MASTER_CYCLES -= CURRENT_CYCLES;
