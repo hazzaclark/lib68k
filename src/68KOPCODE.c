@@ -576,7 +576,7 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
         return;
     }
 
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 4;
     M68K_USE_CYCLES(8);
 }
 
@@ -587,7 +587,7 @@ M68K_MAKE_OPCODE(BNE, 32, 0, 0)
         M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
     }
 
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 6;
     M68K_USE_CYCLES(8);
 }
 
@@ -2313,7 +2313,7 @@ M68K_MAKE_OPCODE(SUBI, 16, D, 0)
     *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(SUBI, 32, D, 0)
@@ -2321,7 +2321,7 @@ M68K_MAKE_OPCODE(SUBI, 32, D, 0)
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
     unsigned RESULT = *DEST - SRC;
-    
+
     M68K_FLAG_N = M68K_READ_32(RESULT);
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
     M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
@@ -2330,8 +2330,7 @@ M68K_MAKE_OPCODE(SUBI, 32, D, 0)
     *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    M68K_REG_PC += 6;
-
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(SUBQ, 8, D, 0)
@@ -2551,7 +2550,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BNE_16_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
-    {BNE_32_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
+    {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
@@ -2670,9 +2669,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {SUB_32_D_0,                0xF1C0,     0x9080,     6},  // SUB.L <ea>,Dn
     {SUBA_16_DA_0,              0xF1C0,     0x90C0,     8},  // SUBA.W <ea>,An
     {SUBA_32_DA_0,              0xF1C0,     0x91C0,     8},  // SUBA.L <ea>,An
-    {SUBI_8_D_0,                0xFF00,     0x0400,     8},  // SUBI.B #<data>,<ea>
-    {SUBI_16_D_0,               0xFF00,     0x0440,     8},  // SUBI.W #<data>,<ea>
-    {SUBI_32_D_0,               0xFF00,     0x0480,     16}, // SUBI.L #<data>,<ea>
+    {SUBI_8_D_0,                0xFFC0,     0x0400,     8},  // SUBI.B #<data>,<ea>
+    {SUBI_16_D_0,               0xFFC0,     0x0440,     8},  // SUBI.W #<data>,<ea>
+    {SUBI_32_D_0,               0xFFC0,     0x0480,     16}, // SUBI.L #<data>,<ea>
     {SUBQ_8_D_0,                0xF1C0,     0x5100,     4},  // SUBQ.B #<data>,<ea>
     {SUBQ_16_D_0,               0xF1C0,     0x5140,     4},  // SUBQ.W #<data>,<ea>
     {SUBQ_32_D_0,               0xF1C0,     0x5180,     8},  // SUBQ.L #<data>,<ea>
