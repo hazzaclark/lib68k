@@ -45,7 +45,7 @@ void SHOW_TRACE_STATUS(void)
 
 void SHOW_MEMORY_MAPS(void)
 {
-    printf("\nACTIVE MEMORY MAPS:\n");
+    printf("\n%s EXEC MEMORY MAP:\n", M68K_CPU_STOPPED ? "AFTER" : "BEFORE");
     printf("--------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
     printf("--------------------------------------------------------------\n");
