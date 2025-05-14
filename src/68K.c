@@ -229,7 +229,7 @@ void M68K_INIT(void)
 int M68K_EXEC(int CYCLES) 
 {
     M68K_INITIAL_CYCLES = CYCLES;
-    CPU.MASTER_CYCLES = CYCLES;
+    M68K_MASTER_CYC = CYCLES;
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
     printf("------------------------------------------------------------\n");
@@ -253,7 +253,6 @@ int M68K_EXEC(int CYCLES)
         }
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
-
 
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
