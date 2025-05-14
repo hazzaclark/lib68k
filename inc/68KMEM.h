@@ -78,11 +78,11 @@ typedef struct
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_ON
 #define         JUMP_HOOK                       M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_OFF
+#if MEM_TRACE_HOOK == M68K_OPT_ON
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c ADDR:0x%08X SIZE:%d VALUE:0x%08X\n", \
+                printf("[TRACE] %c ADDR:0x%04X SIZE:%d VALUE:0x%04X\n", \
                       (char)(OP), (ADDR), (SIZE), (VAL)); \
         } while(0)
 #else
