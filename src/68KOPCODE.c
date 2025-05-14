@@ -700,6 +700,8 @@ M68K_MAKE_OPCODE(CLR, 8, EA, 0)
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(CLR, 16, EA, 0)
@@ -709,15 +711,19 @@ M68K_MAKE_OPCODE(CLR, 16, EA, 0)
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(CLR, 32, EA, 0)
 {
-    M68K_WRITE_8(M68K_DATA_HIGH, 0);
+    M68K_WRITE_32(M68K_ADDRESS_LOW, 0);
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(CMP, 8, D, 0)
@@ -2558,9 +2564,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CLR_8_D_0,                 0xFFF8,     0x4200,     4},  // CLR.B Dn
     {CLR_16_D_0,                0xFFF8,     0x4240,     4},  // CLR.W Dn
     {CLR_32_D_0,                0xFFF8,     0x4280,     6},  // CLR.L Dn
-    {CLR_8_EA_0,                0xFFF8,     0x4210,     12},  // CLR.B <ea>
-    {CLR_16_EA_0,               0xFFF8,     0x4250,     12},  // CLR.B <ea>
-    {CLR_32_EA_0,               0xFFF8,     0x4290,     12},  // CLR.B <ea>
+    {CLR_8_EA_0,                0xFFF0,     0x4230,     12},  // CLR.B <ea>
+    {CLR_16_EA_0,               0xFFF0,     0x4270,     12},  // CLR.B <ea>
+    {CLR_32_EA_0,               0xFFF0,     0x42B0,     12},  // CLR.B <ea>
     {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
     {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
     {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
