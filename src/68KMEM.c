@@ -45,7 +45,7 @@ void SHOW_TRACE_STATUS(void)
 
 void SHOW_MEMORY_MAPS(void)
 {
-    printf("\n%s EXEC MEMORY MAP:\n", M68K_CPU_STOPPED ? "AFTER" : "BEFORE");
+    printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "INACTIVE" : "ACTIVE");
     printf("--------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
     printf("--------------------------------------------------------------\n");
@@ -68,7 +68,7 @@ void SHOW_MEMORY_MAPS(void)
 
 static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
 {
-    VERBOSE_TRACE("FOUND ADDRESS AT PC -> 0x%04X", ADDRESS);
+    VERBOSE_TRACE("FOUND MEMORY: 0x%04X", ADDRESS);
 
     for(unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
@@ -80,9 +80,17 @@ static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
             return NULL; 
         }
 
-        if((MEM_BASE->BUFFER != NULL) && (ADDRESS >= MEM_BASE->BASE) && ((ADDRESS - MEM_BASE->BASE) < MEM_BASE->SIZE))
+        if((MEM_BASE->BUFFER != NULL) && 
+                (ADDRESS >= MEM_BASE->BASE) && 
+                ((ADDRESS - MEM_BASE->BASE) < MEM_BASE->SIZE))
         {
-            VERBOSE_TRACE("BUFFER FOUND WITH SIZE 0x%04X\n", MEM_BUFFERS);
+            VERBOSE_TRACE("ACCESSED: 0x%08x [%s] IN BUFFER %u: 0x%08x - 0x%08x\n", 
+                ADDRESS, 
+                MEM_BASE->WRITE ? "RW" : "RO", 
+                INDEX, 
+                MEM_BASE->BASE, 
+                MEM_BASE->BASE + MEM_BASE->SIZE - 1);
+
             return MEM_BASE;
         }
     }
@@ -92,7 +100,7 @@ static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
 
 static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
 {
-    VERBOSE_TRACE("READING ADDRESS FROM 0x%04X (SIZE = %d)", ADDRESS, SIZE);
+    VERBOSE_TRACE("READING ADDRESS: 0x%04X (SIZE = %d)", ADDRESS, SIZE);
 
     // BOUND CHECKS FOR INVALID ADDRESSING
 
