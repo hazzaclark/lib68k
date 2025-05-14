@@ -236,7 +236,7 @@ void M68K_INIT(void)
 int M68K_EXEC(int CYCLES) 
 {
     M68K_INITIAL_CYCLES = CYCLES;
-    M68K_MASTER_CYC = CYCLES;
+    M68K_SET_CYCLES(CYCLES);
     
     printf("M68K SETUP WITH CYCLES %d\n", CYCLES);
     printf("------------------------------------------------------------\n");
