@@ -1851,17 +1851,15 @@ M68K_MAKE_OPCODE(NOT, 16, D, 0)
 
 M68K_MAKE_OPCODE(NOT, 32, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned RESULT = *DEST = M68K_MASK_OUT_ABOVE_32(*DEST);
 
-    *DEST = RESULT;
-
-    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = RESULT;
-
     M68K_FLAG_C = 0;
     M68K_FLAG_V = 0;
 
+    M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
 }
 
@@ -1893,9 +1891,9 @@ M68K_MAKE_OPCODE(OR, 16, D, 0)
 
 M68K_MAKE_OPCODE(OR, 32, D, 0)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_32((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH)));
+    unsigned RESULT = M68K_DATA_LOW ^= M68K_DATA_HIGH;
 
-    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_C = 0;
     M68K_FLAG_V = 0;
@@ -2290,52 +2288,60 @@ M68K_MAKE_OPCODE(SUBA, 32, DA, 0)
 
 M68K_MAKE_OPCODE(SUBI, 8, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
-    unsigned RESULT = *DEST - SRC;
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_8();
+    unsigned MASK = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = MASK - SRC;
 
-    M68K_FLAG_N = M68K_READ_8(RESULT);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_8(RESULT);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
 
     *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | M68K_FLAG_Z;
 
+    M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(SUBI, 16, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
     unsigned SRC = READ_IMM_16();
     unsigned MASK = M68K_MASK_OUT_ABOVE_16(*DEST);
     unsigned RESULT = MASK - SRC;
 
-    M68K_FLAG_N = ((RESULT) >> 8);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = ((RESULT) >> 8);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
 
     *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
 
+    M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(SUBI, 32, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
-    unsigned RESULT = *DEST - SRC;
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_32();
+    unsigned MASK = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = MASK - SRC;
 
-    M68K_FLAG_N = M68K_READ_32(RESULT);
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = M68K_READ_32(RESULT);
-    M68K_FLAG_V = 0;
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
 
     *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
 
+    M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_REG_PC += 4;
 }
@@ -2645,7 +2651,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
     {NOT_8_D_0,                 0xFFF0,     0x4639,     4},  // NOT.B <ea>
     {NOT_16_D_0,                0xFFF0,     0x4640,     4},  // NOT.W <ea>
-    {NOT_32_D_0,                0xFFF0,     0x4680,     6},  // NOT.L <ea>
+    {NOT_32_D_0,                0xFFF8,     0x4680,     6},  // NOT.L <ea>
     {NOP_0_0_0,                 0xFFFF,     0x4E71,     4},  // NOP
     {OR_8_D_0,                  0xF1C0,     0x8000,     4},  // OR.B <ea>,Dn
     {OR_16_D_0,                 0xF1C0,     0x8040,     4},  // OR.W <ea>,Dn
