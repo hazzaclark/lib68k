@@ -13,18 +13,22 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-#define         M68K_MAX_BUFFERS            16
-#define         M68K_OPT_BASIC              (1 << 0)
-#define         M68K_OPT_VERB               (1 << 1)
-#define         M68K_OPT_DEVICE             (1 << 2)
+#define         M68K_MAX_BUFFERS                16
+#define         M68K_OPT_BASIC                  (1 << 0)
+#define         M68K_OPT_VERB                   (1 << 1)
+#define         M68K_OPT_DEVICE                 (1 << 2)
 
-#define         M68K_OPT_FLAGS              (M68K_OPT_BASIC | M68K_OPT_VERB)
+#define         M68K_OPT_PHASE_FETCH            (1 << 4)  
+#define         M68K_OPT_PHASE_DATA             (1 << 5)  
+#define         M68K_OPT_PHASE_EXEC             (1 << 6)  
 
 #define         M68K_MAX_ADDR_START             0xFFFFFFF0
 #define         M68K_MAX_ADDR_END               0xFFFFFFFF
 
 #define         M68K_T0_SHIFT                   (1 << 3)
 #define         M68K_T1_SHIFT                   (1 << 4)
+
+#define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB | M68K_OPT_PHASE_FETCH | M68K_OPT_PHASE_DATA | M68K_OPT_PHASE_EXEC)
 
 typedef enum
 {
@@ -108,6 +112,15 @@ typedef struct
             (T1) ? ENABLE_TRACE_FLAG(M68K_T1_SHIFT) : DISABLE_TRACE_FLAG(M68K_T1_SHIFT); \
     } while(0)
 
+#if PHASE_HOOK == M68K_OPT_OFF
+    #define PHASE_TRACE(PHASE, MSG, ...) \
+        do { \
+            if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
+                printf("[%s] " MSG "\n", PHASE, ##__VA_ARGS__); \
+        } while (0)
+#else
+    #define PHASE_TRACE(MSG, ...) ((void)0)
+#endif
 #endif
 
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS);
@@ -132,10 +145,10 @@ void SHOW_TRACE_STATUS(void);
 void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
 
 extern U8 ENABLED_FLAGS;
-extern bool TRACE_ENABLED;
+static bool TRACE_ENABLED;
 
 extern M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
-extern unsigned MEM_NUM_BUFFERS;
+static unsigned MEM_NUM_BUFFERS;
 extern U32 MEM_FUNCTION_CALL;
 
 #endif
