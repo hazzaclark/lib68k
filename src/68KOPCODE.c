@@ -756,6 +756,36 @@ M68K_MAKE_OPCODE(CLR, 32, PI, 0)
     M68K_FLAG_Z = 0;
 }
 
+M68K_MAKE_OPCODE(CLR, 8, PD, 0)
+{
+    M68K_WRITE_8(M68K_ADDRESS_LOW, 0);
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CLR, 16, PD, 0)
+{
+    M68K_WRITE_16(M68K_ADDRESS_LOW, 0);
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
+M68K_MAKE_OPCODE(CLR, 32, PD, 0)
+{
+    M68K_WRITE_32(M68K_ADDRESS_LOW, 0);
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
 M68K_MAKE_OPCODE(CMP, 8, D, 0)
 {
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
@@ -2605,8 +2635,11 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CLR_16_EA_0,               0xFFF0,     0x4270,     12},  // CLR.W <ea>
     {CLR_32_EA_0,               0xFFF0,     0x42B0,     12},  // CLR.L <ea>
     {CLR_8_PI_0,                0xFFF8,     0x4218,     12},  // CLR.B (An)+ 
-    {CLR_16_PI_0,               0xFFF8,     0x4258,     12},  // CLR.B (An)+
-    {CLR_32_PI_0,               0xFFF8,     0x4298,     12},  // CLR.B (An)+  
+    {CLR_16_PI_0,               0xFFF8,     0x4258,     12},  // CLR.W (An)+
+    {CLR_32_PI_0,               0xFFF8,     0x4298,     12},  // CLR.L (An)+  
+    {CLR_8_PD_0,                0xFFF8,     0x4220,     12},  // CLR.B -(An)
+    {CLR_16_PD_0,               0xFFF8,     0x4260,     12},  // CLR.W -(An)
+    {CLR_32_PD_0,                0xFFF8,     0x42A0,     12},  // CLR.L -(An)
     {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
     {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
     {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
