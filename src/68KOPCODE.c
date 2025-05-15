@@ -552,7 +552,7 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
     // AND MASK IT AT 32 TO AVOID BAD READS
 
     M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
-    M68K_REG_PC += 6;
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
@@ -1740,6 +1740,21 @@ M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
     M68K_REG_PC += 6;
 }
 
+M68K_MAKE_OPCODE(MOVE, 8, D, IMM)
+{
+    unsigned RESULT = M68K_ADDRESS_HIGH;
+    unsigned* DEST = &M68K_DATA_HIGH;
+
+    *DEST = ~M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 6;
+}
+
 M68K_MAKE_OPCODE(MULS, 16, D, 0)
 {
     unsigned* DEST = &M68K_DATA_LOW;
@@ -2616,7 +2631,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)!
+    {BRA_16_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (16-bit displacement)!
     {BRA_32_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (32-bit displacement)
     {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
@@ -2706,6 +2721,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEP_16_ER_0,             0xFFF8,     0x0188,     16}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xFFF8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
+    {MOVE_8_D_IMM,              0xFFFF,     0x13FC,     14}, // MOVE.B #imm, <ea>
     {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
     {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
     {NBCD_8_D_0,                0xFFFF,     0x4839,     6},  // NBCD <ea>
