@@ -706,7 +706,7 @@ M68K_MAKE_OPCODE(CLR, 8, EA, 0)
 
 M68K_MAKE_OPCODE(CLR, 16, EA, 0)
 {
-    M68K_WRITE_8(M68K_DATA_HIGH, 0);
+    M68K_WRITE_16(M68K_DATA_HIGH, 0);
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -723,7 +723,7 @@ M68K_MAKE_OPCODE(CLR, 32, EA, 0)
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
 
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CLR, 8, PI, 0)
@@ -2639,7 +2639,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CLR_32_PI_0,               0xFFF8,     0x4298,     12},  // CLR.L (An)+  
     {CLR_8_PD_0,                0xFFF8,     0x4220,     12},  // CLR.B -(An)
     {CLR_16_PD_0,               0xFFF8,     0x4260,     12},  // CLR.W -(An)
-    {CLR_32_PD_0,                0xFFF8,     0x42A0,     12},  // CLR.L -(An)
+    {CLR_32_PD_0,               0xFFF8,     0x42A0,     12},  // CLR.L -(An)
     {CMP_8_D_0,                 0xF1C0,     0xB000,     4},  // CMP.B <ea>,Dn
     {CMP_16_D_0,                0xF1C0,     0xB040,     4},  // CMP.W <ea>,Dn
     {CMP_32_D_0,                0xF1C0,     0xB080,     6},  // CMP.L <ea>,Dn
