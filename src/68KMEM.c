@@ -12,6 +12,8 @@
 M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
 U32 MEM_FUNCTION_CALL;
 U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
+unsigned MEM_NUM_BUFFERS;
+bool TRACE_ENABLED;
 
 void ENABLE_TRACE_FLAG(U8 FLAG)
 {
@@ -43,7 +45,7 @@ void SHOW_TRACE_STATUS(void)
 
 void SHOW_MEMORY_MAPS(void)
 {
-    printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "INACTIVE" : "ACTIVE");
+    printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "AFTER EXEC" : "BEFORE EXEC");
     printf("--------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
     printf("--------------------------------------------------------------\n");
