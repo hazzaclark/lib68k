@@ -68,8 +68,6 @@ void SHOW_MEMORY_MAPS(void)
 
 static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
 {
-    VERBOSE_TRACE("FOUND MEMORY: 0x%04X", ADDRESS);
-
     for(unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
         M68K_MEM_BUFFER* MEM_BASE = MEM_BUFFERS + INDEX;
@@ -84,7 +82,7 @@ static M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS)
                 (ADDRESS >= MEM_BASE->BASE) && 
                 ((ADDRESS - MEM_BASE->BASE) < MEM_BASE->SIZE))
         {
-            VERBOSE_TRACE("ACCESSED: 0x%08x [%s] IN BUFFER %u: 0x%08x - 0x%08x\n", 
+            VERBOSE_TRACE("ACCESSED: 0x%08X [%s] IN BUFFER %u: 0x%08X - 0x%08X\n", 
                 ADDRESS, 
                 MEM_BASE->WRITE ? "RW" : "RO", 
                 INDEX, 
