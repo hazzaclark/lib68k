@@ -79,7 +79,7 @@ typedef struct
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK == M68K_OPT_OFF
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
@@ -90,7 +90,7 @@ typedef struct
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if VERBOSE_TRACK_HOOK == M68K_OPT_OFF
+#if VERBOSE_TRACK_HOOK == M68K_OPT_ON
     #define VERBOSE_TRACE(MSG, ...) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
@@ -131,10 +131,10 @@ void SHOW_TRACE_STATUS(void);
 void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
 
 extern U8 ENABLED_FLAGS;
-static bool TRACE_ENABLED;
+extern bool TRACE_ENABLED;
 
 extern M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
-static unsigned MEM_NUM_BUFFERS;
+extern unsigned MEM_NUM_BUFFERS;
 extern U32 MEM_FUNCTION_CALL;
 
 #endif
