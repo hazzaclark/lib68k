@@ -81,7 +81,7 @@
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
         do { \
-            printf("[JUMP TRACE] TO: 0x%08X FROM: 0x%08X\n", (ADDR), (FROM_ADDR)); \
+            printf("[JUMP TRACE] TO PC: 0x%04X FROM PC: 0x%04X\n", (ADDR), (FROM_ADDR)); \
         } while(0)
 	#endif
 
@@ -180,6 +180,8 @@
 #define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15) & 1
 #define		M68K_BIT_SHIFT_32(VALUE)			((VALUE) >> 31) & 1
 
+#define		M68K_BIT_SHIFT_N_8(VALUE)			(VALUE)
+#define		M68K_BIT_SHIFT_N_16(VALUE)			((VALUE) >> 8)
 #define		M68K_BIT_SHIFT_N_32(VALUE)			((VALUE) >> 24)
 
 #define		M68K_MAX_RAM						0xFFFF
