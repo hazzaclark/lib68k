@@ -145,7 +145,7 @@
         do { \
             int EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
             int EA_REG = M68K_GET_EA_REG(M68K_REG_IR); \
-            printf("EA Mode: %d, EA Register: %d\n", EA_MODE, EA_REG); \
+            printf("EA MODE: %d, EA REGISTER: %d\n", EA_MODE, EA_REG); \
         } while(0)
 	#else
     	#define M68K_EA_PRINT_HOOK(REG_ARRAY) ((void)0)
