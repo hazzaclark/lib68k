@@ -119,6 +119,8 @@ M68K_MAKE_OPCODE(ADD, 32, EA, 0)
 
     M68K_FLAG_X = M68K_FLAG_C = ((U32)(SRC + DESTINATION + RESULT));
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_EA_PRINT_HOOK(M68K_REG_BASE);
 }
 
 M68K_MAKE_OPCODE(ADD, 32, D, 0)
@@ -2641,9 +2643,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
     {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
-    {ADD_8_EA_0,                0xF1C0,     0xD000,     4},  // ADD.B <ea>,Dn
-    {ADD_16_EA_0,               0xF1C0,     0xD040,     8},  // ADD.W <ea>,Dn
-    {ADD_32_EA_0,               0xF1C0,     0xD080,     12},  // ADD.L <ea>,Dn
+    {ADD_8_EA_0,                0xF1F8,     0xD010,     4},  // ADD.B <ea>,Dn
+    {ADD_16_EA_0,               0xF1F8,     0xD048,     8},  // ADD.W <ea>,Dn
+    {ADD_32_EA_0,               0xF1F8,     0xD088,     12},  // ADD.L <ea>,Dn
     {ADD_32_D_0,                0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
