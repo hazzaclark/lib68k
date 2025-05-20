@@ -11,6 +11,7 @@
 /* NESTED INCLUDES */
 
 #include "common.h"
+#include "68K.h"
 #include "68KMEM.h"
 
 /*==============================================================================*/
@@ -67,8 +68,6 @@
 	#else
 		#define M68K_CCR_HOOK() ((void)0)
 		#endif
-	#else
-    	#define M68K_CCR_HOOK() ((void)0)
 #endif
 
 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
@@ -77,6 +76,7 @@
 	#define		M68K_ILLEGAL_HOOK	M68K_OPT_ON
 	#define		M68K_LEA_HOOK		M68K_OPT_ON
 	#define		M68K_ADDR_HOOK		M68K_OPT_ON
+	#define		M68K_EA_HOOK		M68K_OPT_ON			
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -138,6 +138,17 @@
 		} while(0)
 	#else
 		#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) ((void)0)
+	#endif
+
+	#if M68K_EA_HOOK == M68K_OPT_ON
+    #define M68K_EA_PRINT_HOOK(REG_ARRAY) \
+        do { \
+            int EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
+            int EA_REG = M68K_GET_EA_REG(M68K_REG_IR); \
+            printf("EA Mode: %d, EA Register: %d\n", EA_MODE, EA_REG); \
+        } while(0)
+	#else
+    	#define M68K_EA_PRINT_HOOK(REG_ARRAY) ((void)0)
 	#endif
 
 	#endif
