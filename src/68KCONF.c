@@ -136,7 +136,8 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
             exit(1);
     }
 
-	printf("CPU SET TO TYPE: %u\n", CPU_TYPE);
+	printf("\nCPU INFORMATION:	\n");
+	printf("  CPU SET TO TYPE: %u\n", CPU_TYPE);
 }
 
 int M68K_CYCLES_RUN(void)
