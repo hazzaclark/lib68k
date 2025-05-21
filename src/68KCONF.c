@@ -154,6 +154,7 @@ int M68K_CYCLES_REMAINING(void)
 /* ON THE CPU BASED ON EACH RESPECTIVE REGISTER */
 
 /* SEE: RESET OPERATION - https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=75 */
+/* https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=537 */
 
 void M68K_PULSE_RESET(void)
 {
@@ -176,7 +177,6 @@ void M68K_PULSE_RESET(void)
 		M68K_REG_VBR = (S16)0x0000;
 	}
 
-	M68K_FLAG_T1 = M68K_FLAG_T0 = 0;
 	M68K_BASE_RES_HOOK(M68K_FLAG_T0, M68K_FLAG_T1, M68K_REG_PC, M68K_REG_SP);
 
 	#endif
