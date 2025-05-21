@@ -85,7 +85,7 @@
 #define         M68K_EA_DECR_WORD()                         (M68K_ADDRESS_HIGH -= 2)
 #define         M68K_EA_DECR_WORD_LONG()                    (M68K_ADDRESS_HIGH -= 4)
 
-#define         M68K_GET_CCR()                              (((M68K_FLAG_X & 0x100) >> 4) << 8)
+#define         M68K_GET_CCR()                             (((M68K_FLAG_X & 0x100) >> 4) << 8)
 #define         M68K_GET_SR()                              (((M68K_FLAG_X & 0x100) >> 1) << 13)
 
 #define         M68K_BIT_0(VALUE)                                   ((VALUE) & 0x00000001)
@@ -120,6 +120,16 @@
 #define         M68K_BIT_1D(VALUE)                                  ((VALUE) & 0x20000000)
 #define         M68K_BIT_1E(VALUE)                                  ((VALUE) & 0x40000000)
 #define         M68K_BIT_1F(VALUE)                                  ((VALUE) & 0x80000000)
+
+#define         M68K_GET_EA_MODE(IR) \
+                ((M68K_BIT_5(IR) ? 4 : 0) | \
+                (M68K_BIT_4(IR) ? 2 : 0) | \
+                (M68K_BIT_3(IR) ? 1 : 0))
+
+#define         M68K_GET_EA_REG(IR) \
+                ((M68K_BIT_2(IR) ? 4 : 0) | \
+                (M68K_BIT_1(IR) ? 2 : 0) | \
+                (M68K_BIT_0(IR) ? 1 : 0))
 
 #define         M68K_LOW_NIBBLE(VALUE)
 #define         M68K_HIGH_NIBBLE(VALUE)             ((VALUE & 0x8000) ? 1 : 0)
