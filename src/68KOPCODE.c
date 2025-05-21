@@ -1476,47 +1476,6 @@ M68K_MAKE_OPCODE(MOVE, 32, D, I)
     M68K_REG_PC += 4;
 }
 
- // WHAT MAKES THESE DIFFERENT IS THAT THIS ACTUALLY TAKES INTO 
- // ACCOUNT A DN BEING USED AS AN EA AS WELL AS A DESTINATION
-
-M68K_MAKE_OPCODE(MOVE, 8, D_D, 0)
-{
-    unsigned RESULT = READ_IMM_8();
-    unsigned* DEST = &M68K_DATA_LOW;
-
-    *DEST = ~M68K_MASK_OUT_ABOVE_8(*DEST | RESULT);
-
-    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
-    M68K_FLAG_Z = (RESULT == 0);
-    M68K_FLAG_V = 0;
-    M68K_FLAG_C = 0;
-}
-
-M68K_MAKE_OPCODE(MOVE, 16, D_D, 0)
-{
-    unsigned RESULT = READ_IMM_16();
-    unsigned* DEST = &M68K_DATA_LOW;
-
-    *DEST = ~M68K_MASK_OUT_ABOVE_16(*DEST | RESULT);
-
-    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
-    M68K_FLAG_Z = (RESULT == 0);
-    M68K_FLAG_V = 0;
-    M68K_FLAG_C = 0;
-}
-
-M68K_MAKE_OPCODE(MOVE, 32, D_D, 0)
-{
-    unsigned RESULT = READ_IMM_32();
-
-    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
-    M68K_FLAG_Z = (RESULT == 0);
-    M68K_FLAG_V = 0;
-    M68K_FLAG_C = 0;
-
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
-}
-
 M68K_MAKE_OPCODE(MOVE, 16, D, PRE_DEC)
 {
     unsigned RESULT = M68K_DATA_LOW;
@@ -1635,7 +1594,6 @@ M68K_MAKE_OPCODE(MOVEA, 32, DA, 0)
     M68K_ADDRESS_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
-
     M68K_REG_PC += 4;
 }
 
@@ -1654,6 +1612,7 @@ M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
     unsigned VALUE = READ_IMM_32();
     M68K_ADDRESS_LOW = VALUE;
 
+    M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
 
     M68K_REG_PC += 4;
@@ -2846,9 +2805,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_I,                0xF1C0,     0x103C,     8},    // MOVE.B <imm> Dn
     {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
     {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
-    {MOVE_8_D_D_0,              0xFFFF,     0x1200,     20},  // MOVE.B Dn,Dn
-    {MOVE_16_D_D_0,             0xFFFF,     0x3200,     20},  // MOVE.W Dn,Dn
-    {MOVE_32_D_D_0,             0xFFFF,     0x2200,     24},   // MOVE.L Dn,Dn
     {MOVE_32_D_POST_DEC,        0xF1F8,     0x2100,     14},  // MOVE.L, Dn, -(SP)
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
     {MOVE_16_PI_A,              0xF1F8,     0x30D8,     12},  // MOVE.W (An)+, (Ay)+
