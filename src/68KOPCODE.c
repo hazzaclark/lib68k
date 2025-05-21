@@ -2681,6 +2681,42 @@ M68K_MAKE_OPCODE(TST, 32, D, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(TST, 8, IMM, 0)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z  = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(TST, 16, IMM, 0)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z  = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(TST, 32, IMM, 0)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z  = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 {
     unsigned* DEST = &M68K_ADDRESS_HIGH;
@@ -2884,9 +2920,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {SWAP_16_D_0,               0xFFF8,     0x4840,     4},  // SWAP Dn
     {TRAP_0_0_0,                0xFFFF,     0x4E4F,     4},  // TRAP #<ea>
     {TAS_8_D_0,                 0xFFC0,     0x4AC0,     4},  // TAS <ea>
-    {TST_8_D_0,                 0xFFF0,     0x4A30,     4},  // TST.B <ea>
-    {TST_16_D_0,                0xFFF0,     0x4A70,     4},  // TST.W <ea>
-    {TST_32_D_0,                0xFFF0,     0x4AB0,     4},  // TST.L <ea>
+    {TST_8_D_0,                 0xFFF0,     0x4A00,     4},  // TST.B Dn
+    {TST_16_D_0,                0xFFF0,     0x4A40,     4},  // TST.W Dn
+    {TST_32_D_0,                0xFFF0,     0x4A80,     4},  // TST.L Dn
+    {TST_8_IMM_0,               0xFFF0,     0x4A30,     4},  // TST.B <ea>
+    {TST_16_IMM_0,              0xFFF0,     0x4A70,     4},  // TST.W <ea>
+    {TST_32_IMM_0,              0xFFF0,     0x4AB0,     4},  // TST.L <ea>
     {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
     {NULL,                      0,          0,          0}   // NULL TERM
 };
