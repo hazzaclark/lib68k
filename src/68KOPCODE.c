@@ -1443,6 +1443,8 @@ M68K_MAKE_OPCODE(MOVE, 8, D, I)
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, I)
@@ -1450,14 +1452,15 @@ M68K_MAKE_OPCODE(MOVE, 16, D, I)
     unsigned RESULT = READ_IMM_16();
     unsigned* EA = &M68K_DATA_HIGH;
 
-    *EA = ~M68K_MASK_OUT_ABOVE_16(*EA) | RESULT;
+    *EA = M68K_MASK_OUT_ABOVE_16(*EA) | RESULT;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
-}
 
+    M68K_REG_PC += 2;
+}
 M68K_MAKE_OPCODE(MOVE, 32, D, I)
 {
     unsigned RESULT = READ_IMM_32();
@@ -1469,6 +1472,8 @@ M68K_MAKE_OPCODE(MOVE, 32, D, I)
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 4;
 }
 
  // WHAT MAKES THESE DIFFERENT IS THAT THIS ACTUALLY TAKES INTO 
@@ -2839,7 +2844,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_D_0,               0xF1C0,     0x3000,     8},   // MOVE.W <ea>,Dn 
     {MOVE_32_D_0,               0xF1C0,     0x2000,     20},   // MOVE.L <ea>,Dn
     {MOVE_8_D_I,                0xF1C0,     0x103C,     8},    // MOVE.B <imm> Dn
-    {MOVE_16_D_I,               0xF1FF,     0x303C,     8},    // MOVE.W <imm> Dn
+    {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
     {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
     {MOVE_8_D_D_0,              0xFFFF,     0x1200,     20},  // MOVE.B Dn,Dn
     {MOVE_16_D_D_0,             0xFFFF,     0x3200,     20},  // MOVE.W Dn,Dn
