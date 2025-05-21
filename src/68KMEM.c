@@ -33,19 +33,19 @@ bool IS_TRACE_ENABLED(U8 FLAG)
 void SHOW_TRACE_STATUS(void)
 {
     printf("\nTRACE CONFIG:\n"); \
-    printf("  BASIC:   %s\n", IS_TRACE_ENABLED(M68K_OPT_BASIC) ? "ENABLED" : "DISABLED"); \
-    printf("  VERBOSE: %s\n", IS_TRACE_ENABLED(M68K_OPT_VERB) ? "ENABLED" : "DISABLED"); \
-    printf("  DEVICE TRACES:  %s\n", IS_TRACE_ENABLED(M68K_OPT_DEVICE) ? "ENABLED" : "DISABLED"); \
-    printf("  T0 FLAG:    %s  (SHIFT: 0x%02X)\n", M68K_FLAG_T0 ? "ON" : "OFF", M68K_T0_SHIFT); \
-    printf("  T1 FLAG:    %s (SHIFT: 0x%02X)\n", M68K_FLAG_T1 ? "ON" : "OFF", M68K_T1_SHIFT); \
-    printf("  T0 ACTIVE:  %s\n", IS_TRACE_ENABLED(M68K_T0_SHIFT) ? "YES" : "NO"); \
-    printf("  T1 ACTIVE:  %s\n", IS_TRACE_ENABLED(M68K_T1_SHIFT) ? "YES" : "NO"); \
+    printf("  BASIC:            %s\n", IS_TRACE_ENABLED(M68K_OPT_BASIC) ? "ENABLED" : "DISABLED"); \
+    printf("  VERBOSE:          %s\n", IS_TRACE_ENABLED(M68K_OPT_VERB) ? "ENABLED" : "DISABLED"); \
+    printf("  DEVICE TRACES:    %s\n", IS_TRACE_ENABLED(M68K_OPT_DEVICE) ? "ENABLED" : "DISABLED"); \
+    printf("  T0 FLAG:          %s  (SHIFT: 0x%02X)\n", M68K_FLAG_T0 ? "ON" : "OFF", M68K_T0_SHIFT); \
+    printf("  T1 FLAG:          %s (SHIFT: 0x%02X)\n", M68K_FLAG_T1 ? "ON" : "OFF", M68K_T1_SHIFT); \
+    printf("  T0 ACTIVE:        %s\n", IS_TRACE_ENABLED(M68K_T0_SHIFT) ? "YES" : "NO"); \
+    printf("  T1 ACTIVE:        %s\n", IS_TRACE_ENABLED(M68K_T1_SHIFT) ? "YES" : "NO"); \
     printf("\n");
 }
 
 void SHOW_MEMORY_MAPS(void)
 {
-    printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "AFTER EXEC" : "BEFORE EXEC");
+    printf("\n%s MEMORY MAP(S):\n", M68K_CPU_STOPPED ? "AFTER EXEC" : "BEFORE EXEC");
     printf("--------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
     printf("--------------------------------------------------------------\n");
