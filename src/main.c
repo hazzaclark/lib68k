@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     }
 
     // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
-    #if M68K_USE_TRACE_CONFIG == M68K_OPT_ON
+    #if M68K_USE_DEBUG_HOOKS == M68K_OPT_OFF
 
     ENABLED_FLAGS = M68K_OPT_FLAGS;
     SET_TRACE_FLAGS(1, 0);
@@ -52,6 +52,5 @@ int main(int argc, char** argv)
     M68K_EXEC(500);
 
     SHOW_MEMORY_MAPS();
-
     return 0;
 }
