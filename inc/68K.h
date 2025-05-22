@@ -132,9 +132,9 @@
                 (M68K_BIT_0(IR) ? 1 : 0))
 
 #define         M68K_GET_EA_VALUE(IR) \
-                ((M68K_BIT_2(IR) ? 4 : 0) | \
-                (M68K_BIT_1(IR) ? 2 : 0) | \
-                (M68K_BIT_0(IR) ? 1 : 0))
+                ((M68K_BIT_5(IR) ? 4 : 0) | \
+                (M68K_BIT_4(IR) ? 2 : 0) | \
+                (M68K_BIT_3(IR) ? 1 : 0))
 
 #define         M68K_LOW_NIBBLE(VALUE)
 #define         M68K_HIGH_NIBBLE(VALUE)             ((VALUE & 0x8000) ? 1 : 0)
