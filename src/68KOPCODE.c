@@ -1686,23 +1686,20 @@ M68K_MAKE_OPCODE(MOVE_USP, 32, DA, 0)
 M68K_MAKE_OPCODE(MOVEM, 16, DA, 0)
 {
     unsigned INDEX = 0;
-    unsigned REGISTERS = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned REGISTERS = READ_IMM_16();
     unsigned EA = M68K_ADDRESS_HIGH;
 
-    unsigned COUNT = 0;
-
-    for(INDEX = 0; INDEX < 16; INDEX++)
+    for(; INDEX < 16; INDEX++)
     {
         if(REGISTERS & (1 << INDEX))
         {
-            EA -= 2;
-            M68K_WRITE_16(EA, M68K_MASK_OUT_ABOVE_16(M68K_REG_DA[15 - INDEX]));
-            COUNT++;
+            EA = REGISTERS;
+            M68K_WRITE_16(M68K_REG_DA[INDEX], M68K_MASK_OUT_ABOVE_16(EA));
         }
     }
 
     M68K_ADDRESS_HIGH = EA;
-    M68K_USE_CYCLES(COUNT * (U16)M68K_READ_16(M68K_DATA_HIGH));
+    M68K_USE_CYCLES(M68K_READ_16(M68K_DATA_HIGH));
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
 
     M68K_REG_PC += 6;
@@ -1711,23 +1708,20 @@ M68K_MAKE_OPCODE(MOVEM, 16, DA, 0)
 M68K_MAKE_OPCODE(MOVEM, 32, DA, 0)
 {
     unsigned INDEX = 0;
-    unsigned REGISTERS = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned REGISTERS = READ_IMM_32();
     unsigned EA = M68K_ADDRESS_HIGH;
 
-    unsigned COUNT = 0;
-
-    for(INDEX = 0; INDEX < 16; INDEX++)
+    for(; INDEX < 16; INDEX++)
     {
         if(REGISTERS & (1 << INDEX))
         {
-            EA -= 2;
-            M68K_WRITE_32(EA, M68K_MASK_OUT_ABOVE_32(M68K_REG_DA[15 - INDEX]));
-            COUNT++;
+            EA = REGISTERS;
+            M68K_WRITE_32(M68K_REG_DA[INDEX], M68K_MASK_OUT_ABOVE_32(EA));
         }
     }
 
     M68K_ADDRESS_HIGH = EA;
-    M68K_USE_CYCLES(COUNT * M68K_READ_16(M68K_DATA_HIGH));
+    M68K_USE_CYCLES(M68K_READ_16(M68K_DATA_HIGH));
     M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
 
     M68K_REG_PC += 6;
