@@ -2639,6 +2639,7 @@ M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
 
     M68K_FLAG_N = 0;
     M68K_FLAG_Z = (M68K_FLAG_N == 0);
+    M68K_FLAG_S = (M68K_FLAG_N == 0);
     M68K_FLAG_C = 0;
     M68K_FLAG_V = 0;
 
