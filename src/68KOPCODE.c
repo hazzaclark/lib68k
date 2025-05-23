@@ -2902,12 +2902,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_CCR_16_DA_0,          0xFFFF,     0x44FC,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x40C0,     12}, // MOVE SR,<ea>
     {MOVE_USP_32_DA_0,          0xFFF8,     0x4E60,     4},  // MOVE USP,An
-    {MOVEM_16_DA_0,             0xFB80,     0x4880,     8},  // MOVEM.W <ea>,Regs
-    {MOVEM_32_DA_0,             0xFB80,     0x48C0,     12}, // MOVEM.L <ea>,Regs
-    {MOVEM_16_POST_INC_0,       0xFFF8,     0x48A0,     8},  // MOVEM.W <reglist>, (An)+
-    {MOVEM_32_POST_INC_0,       0xFFF8,     0x48E0,     8},  // MOVEM.L <reglist>, (An)+
-    {MOVEM_16_POST_INC_A,       0xFFF8,     0x4C90,     12}, // MOVEM.L (An)+, <reglist>
-    {MOVEM_32_POST_INC_A,       0xFFF8,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
+    {MOVEM_16_DA_0,             0xFFF0,     0x48B0,     8},  // MOVEM.W <ea>,Regs
+    {MOVEM_32_DA_0,             0xFFF0,     0x48F0,     12}, // MOVEM.L <ea>,Regs
+    {MOVEM_16_POST_INC_0,       0xFFF0,     0x48A0,     8},  // MOVEM.W <reglist>, (An)+
+    {MOVEM_32_POST_INC_0,       0xFFF0,     0x48E0,     8},  // MOVEM.L <reglist>, (An)+
+    {MOVEM_16_POST_INC_A,       0xFFF0,     0x4C90,     12}, // MOVEM.L (An)+, <reglist>
+    {MOVEM_32_POST_INC_A,       0xFFF0,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
     {MOVEP_16_ER_0,             0xFFF8,     0x0188,     16}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xFFF8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
