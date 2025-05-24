@@ -206,6 +206,72 @@ M68K_MAKE_OPCODE(ADD, 32, D, 0)
     M68K_EA_PRINT_HOOK(M68K_REG_D);
 }
 
+M68K_MAKE_OPCODE(ADD, 8, EA, DISP)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = M68K_REG_D[SRC_REG];
+    U32 DEST_VALUE = M68K_REG_D[DEST_REG];
+    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+
+    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+
+    M68K_FLAG_N = (RESULT >> 7) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 7 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 7) & 1;
+
+    M68K_CCR_HOOK();
+    M68K_EA_PRINT_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(ADD, 16, EA, DISP)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = M68K_REG_D[SRC_REG];
+    U32 DEST_VALUE = M68K_REG_D[DEST_REG];
+    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+
+    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+
+    M68K_FLAG_N = (RESULT >> 15) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 15 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 15) & 1;
+
+    M68K_CCR_HOOK();
+    M68K_EA_PRINT_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(ADD, 32, EA, DISP)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = M68K_REG_D[SRC_REG];
+    U32 DEST_VALUE = M68K_REG_D[DEST_REG];
+    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+
+    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+
+    M68K_FLAG_N = (RESULT >> 31) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 31 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 31) & 1;
+
+    M68K_CCR_HOOK();
+    M68K_EA_PRINT_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(ADD, 16, PRE_DEC, D)
 {
     U8 SRC_REG = M68K_DATA_LOW;
@@ -3090,6 +3156,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_0,                 0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
     {ADD_16_D_0,                0xF1C0,     0xD040,     8},  // ADD.L Dn, Dm
     {ADD_32_D_0,                0xF1C0,     0xD080,     8},  // ADD.L Dn, Dm
+    {ADD_8_EA_DISP,             0xF1F8,     0xD028,     8},  // ADD.B (An), Dy
+    {ADD_16_EA_DISP,            0xF1F8,     0xD068,     8},  // ADD.W (An), Dy
+    {ADD_32_EA_DISP,            0xF1F8,     0xD0A8,     20},  // ADD.W (An), Dy
     {ADD_8_D_EA,                0xFFF8,     0xD110,     8},  // ADD.B Dn, (Ay)
     {ADD_16_D_EA,               0xFFF8,     0xD150,     8},  // ADD.W Dn, (Ay)
     {ADD_32_D_EA,               0xFFF8,     0xD190,     8},  // ADD.L Dn, (Ay)
@@ -3099,8 +3168,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_EA_PRE_DEC,        0xFFF8,     0xD120,     8},  // ADD.B Dn, -(Ay)
     {ADD_16_D_EA_PRE_DEC,       0xFFF8,     0xD160,     8},  // ADD.W Dn, -(Ay)
     {ADD_32_D_EA_PRE_DEC,       0xFFF8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
-    {ADD_16_PRE_DEC_D,          0xF1F8,     0xD068,     12}, // ADD.L -(An), Dy 
-    {ADD_32_PRE_DEC_D,          0xF1F8,     0xD0A8,     12}, // ADD.L -(An), Dy 
+    {ADD_16_PRE_DEC_D,          0xF1C0,     0xD068,     12}, // ADD.L -(An), Dy 
+    {ADD_32_PRE_DEC_D,          0xF1C0,     0xD0A8,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xF1C0,     0xD028,     8},  // ADD.B $imm(An), Ay
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
