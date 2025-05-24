@@ -206,6 +206,28 @@ M68K_MAKE_OPCODE(ADD, 32, D, 0)
     M68K_EA_PRINT_HOOK(M68K_REG_D);
 }
 
+M68K_MAKE_OPCODE(ADD, 32, PRE_DEC, D)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = M68K_REG_D[SRC_REG];
+    U32 DEST_VALUE = M68K_REG_D[DEST_REG];
+    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+
+    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+
+    M68K_FLAG_N = (RESULT >> 31) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 31 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 31) & 1;
+
+    M68K_CCR_HOOK();
+    M68K_EA_PRINT_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 2;
+}
+
 M68K_MAKE_OPCODE(ADDA, 16, D, 0)
 {
     int DESTINATION = M68K_DATA_HIGH;
@@ -1397,7 +1419,7 @@ M68K_MAKE_OPCODE(MOVE, 8, D, 0)
 
     *DEST = RESULT;
 
-    M68K_FLAG_N = RESULT;
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -1415,7 +1437,7 @@ M68K_MAKE_OPCODE(MOVE, 16, D, 0)
 
     *DEST = RESULT;
 
-    M68K_FLAG_N = RESULT;
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -1433,7 +1455,7 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
 
     *DEST = RESULT;
 
-    M68K_FLAG_N = RESULT;
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -1492,6 +1514,34 @@ M68K_MAKE_OPCODE(MOVE, 32, D, I)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(MOVE, 16, PRE_DEC, IMM)
+{
+    unsigned RESULT = M68K_DI_16();
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, PRE_DEC, IMM)
+{
+    unsigned RESULT = M68K_DI_32();
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_32(EA + 2, RESULT);
+
+    M68K_REG_PC += 2;
+}
+
 M68K_MAKE_OPCODE(MOVE, 16, D, PRE_DEC)
 {
     unsigned RESULT = M68K_DATA_LOW;
@@ -1510,24 +1560,28 @@ M68K_MAKE_OPCODE(MOVE, 32, D, PRE_DEC)
     unsigned RESULT = M68K_DATA_LOW;
     unsigned EA = M68K_ADDRESS_HIGH;
 
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = RESULT == 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
-    M68K_WRITE_16(EA, RESULT & 0xFFFF);
+    M68K_WRITE_32(EA, RESULT & 0xFFFF);
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_INC)
 {
     U16 VALUE = M68K_DATA_HIGH;
     M68K_WRITE_16(M68K_DATA_LOW, VALUE);
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 32, POST_INC, 0)
 {
     U32 VALUE = M68K_DATA_HIGH;
     M68K_WRITE_32(M68K_DATA_LOW, VALUE);
+
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
@@ -2785,6 +2839,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_0,                 0xF1C0,     0xD000,     8},  // ADD.L Dn, Dm
     {ADD_16_D_0,                0xF1C0,     0xD040,     8},  // ADD.L Dn, Dm
     {ADD_32_D_0,                0xF1C0,     0xD080,     8},  // ADD.L Dn, Dm
+    {ADD_32_PRE_DEC_D,          0xFFF8,     0xD0A8,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xF1C0,     0xD028,     8},  // ADD.B $imm(An), Ay
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
@@ -2879,6 +2934,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_I,                0xF1FF,     0x103C,     8},    // MOVE.B <imm> Dn
     {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
     {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
+    {MOVE_16_PRE_DEC_IMM,       0xF1F8,     0x3028,     16},   // MOVE.L -(An), Dn
+    {MOVE_32_PRE_DEC_IMM,       0xF1F8,     0x2028,     24},   // MOVE.L -(An), Dn
     {MOVE_32_D_POST_DEC,        0xF1F8,     0x2100,     14},  // MOVE.L, Dn, -(SP)
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
     {MOVE_16_PI_A,              0xF1F8,     0x30D8,     12},  // MOVE.W (An)+, (Ay)+
@@ -2887,7 +2944,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
     {MOVEA_16_IMM_0,            0xF1C0,     0x3040,     8},  // MOVEA.W #imm,An 
     {MOVEA_32_IMM_0,            0xF1C0,     0x2040,     12}, // MOVEA.L #imm,An
-    {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W (An)+,Dn
+    {MOVE_16_D_POST_INC,        0xF1C0,     0x30C0,     8},   // MOVE.W (An)+,Dn
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3100,     8},   // MOVE.W Dn, (-SP)
     {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L (An)+,Dn
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
