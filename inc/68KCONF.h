@@ -39,7 +39,7 @@
 	#define		M68K_C_FLAG_HOOK	M68K_OPT_ON
 	#define		M68K_N_FLAG_HOOK	M68K_OPT_ON
 
-#if M68K_CCR_LOGGING == M68K_OPT_ON
+	#if M68K_CCR_LOGGING == M68K_OPT_OFF
 	#if (M68K_S_FLAG_HOOK == M68K_OPT_ON || \
 		M68K_X_FLAG_HOOK == M68K_OPT_ON || \
 		M68K_Z_FLAG_HOOK == M68K_OPT_ON || \
@@ -68,7 +68,12 @@
 	#else
 		#define M68K_CCR_HOOK() ((void)0)
 		#endif
-#endif
+
+	// EXTRA #ELSE CLAUSE SO THAT THE COMPILER WILL SHUT UP
+
+	#else
+	#define M68K_CCR_HOOK() ((void)0)
+	#endif
 
 	#define 	M68K_JUMP_HOOK 		M68K_OPT_ON
 	#define		M68K_RTS_HOOK		M68K_OPT_ON
@@ -213,10 +218,6 @@
 /*==============================================================================*/
 
 extern U8 M68K_VECTOR_TABLE[5][256];
-int M68K_SET_INT_CALLBACK(int LEVEL);
-void M68K_DEFAULT_INSTR_CALLBACK(void);
-void M68K_SET_FUNC_CALLBACK(void (*CALLBACK)(void));
-void M68K_SET_INSTR_CALLBACK(unsigned CALLBACK, unsigned PC);
 U32 M68K_FETCH_LONG();
 
 /*===============================================================================*/
