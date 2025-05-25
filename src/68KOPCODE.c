@@ -461,7 +461,7 @@ M68K_MAKE_OPCODE(ADD, 8, D, EA_PRE_DEC)
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
 
-    M68K_WRITE_8(DEST_VALUE, RESULT);
+    M68K_WRITE_8(DEST_REG, RESULT);
 }
 
 M68K_MAKE_OPCODE(ADD, 16, D, EA_PRE_DEC)
@@ -483,7 +483,7 @@ M68K_MAKE_OPCODE(ADD, 16, D, EA_PRE_DEC)
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
 
-    M68K_WRITE_16(DEST_VALUE, RESULT);
+    M68K_WRITE_16(DEST_REG, RESULT);
 }
 
 M68K_MAKE_OPCODE(ADD, 32, D, EA_PRE_DEC)
@@ -505,7 +505,7 @@ M68K_MAKE_OPCODE(ADD, 32, D, EA_PRE_DEC)
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
 
-    M68K_WRITE_32(DEST_VALUE, RESULT);
+    M68K_WRITE_32(DEST_REG, RESULT);
 }
 
 M68K_MAKE_OPCODE(ADDA, 16, D, 0)
@@ -3165,9 +3165,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_EA_POST_INC,       0xF1F8,     0xD118,     8},  // ADD.B Dn, (Ay)+
     {ADD_16_D_EA_POST_INC,      0xF1F8,     0xD158,     8},  // ADD.W Dn, (Ay)+
     {ADD_32_D_EA_POST_INC,      0xF1F8,     0xD198,     8},  // ADD.L Dn, (Ay)+
-    {ADD_8_D_EA_PRE_DEC,        0xFFF8,     0xD120,     8},  // ADD.B Dn, -(Ay)
-    {ADD_16_D_EA_PRE_DEC,       0xFFF8,     0xD160,     8},  // ADD.W Dn, -(Ay)
-    {ADD_32_D_EA_PRE_DEC,       0xFFF8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
+    {ADD_8_D_EA_PRE_DEC,        0xF1F8,     0xD120,     8},  // ADD.B Dn, -(Ay)
+    {ADD_16_D_EA_PRE_DEC,       0xF1F8,     0xD160,     8},  // ADD.W Dn, -(Ay)
+    {ADD_32_D_EA_PRE_DEC,       0xF1F8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
     {ADD_16_PRE_DEC_D,          0xF1C0,     0xD068,     12}, // ADD.L -(An), Dy 
     {ADD_32_PRE_DEC_D,          0xF1C0,     0xD0A8,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xF1C0,     0xD028,     8},  // ADD.B $imm(An), Ay
