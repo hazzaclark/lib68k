@@ -1742,6 +1742,63 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
 }
 
+M68K_MAKE_OPCODE(MOVE, 8, D, EA)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = M68K_DATA_HIGH;
+
+    *DEST = RESULT = EA;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, D, EA)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = M68K_DATA_HIGH;
+
+    *DEST = RESULT = EA;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 4;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, D, EA)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned EA = M68K_DATA_HIGH;
+
+    *DEST = RESULT = EA;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(MOVE, 8, D, I)
 {
     unsigned RESULT = READ_IMM_8();
@@ -3259,10 +3316,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_0,                0xF1C0,     0x1000,     8},   // MOVE.B Dn,Dy 
     {MOVE_16_D_0,               0xF1C0,     0x3000,     8},   // MOVE.W Dn,Dy 
     {MOVE_32_D_0,               0xF1C0,     0x2000,     20},   // MOVE.L Dn,Dy
-
-
-
-
+    {MOVE_8_D_EA,               0xF1FF,     0x1039,     12},  // MOVE.B <ea>, Dy
+    {MOVE_16_D_EA,              0xF1FF,     0x3039,     12},  // MOVE.W <ea>, Dy
+    {MOVE_32_D_EA,              0xF1FF,     0x2039,     24},  // MOVE.L <ea>, Dy
     {MOVE_8_D_I,                0xF1FF,     0x103C,     8},    // MOVE.B <imm> Dn
     {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
     {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
