@@ -3159,9 +3159,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_EA_DISP,             0xF1F8,     0xD028,     8},  // ADD.B (An), Dy
     {ADD_16_EA_DISP,            0xF1F8,     0xD068,     8},  // ADD.W (An), Dy
     {ADD_32_EA_DISP,            0xF1F8,     0xD0A8,     20},  // ADD.W (An), Dy
-    {ADD_8_D_EA,                0xFFF8,     0xD110,     8},  // ADD.B Dn, (Ay)
-    {ADD_16_D_EA,               0xFFF8,     0xD150,     8},  // ADD.W Dn, (Ay)
-    {ADD_32_D_EA,               0xFFF8,     0xD190,     8},  // ADD.L Dn, (Ay)
+    {ADD_8_D_EA,                0xF1F8,     0xD110,     8},  // ADD.B Dn, (Ay)
+    {ADD_16_D_EA,               0xF1F8,     0xD150,     8},  // ADD.W Dn, (Ay)
+    {ADD_32_D_EA,               0xF1F8,     0xD190,     8},  // ADD.L Dn, (Ay)
     {ADD_8_D_EA_POST_INC,       0xFFF8,     0xD118,     8},  // ADD.B Dn, (Ay)+
     {ADD_16_D_EA_POST_INC,      0xFFF8,     0xD158,     8},  // ADD.W Dn, (Ay)+
     {ADD_32_D_EA_POST_INC,      0xFFF8,     0xD198,     8},  // ADD.L Dn, (Ay)+
