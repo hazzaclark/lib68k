@@ -1706,8 +1706,6 @@ M68K_MAKE_OPCODE(MOVE, 8, D, 0)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
-
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, 0)
@@ -3262,7 +3260,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_D_0,               0xF1C0,     0x3000,     8},   // MOVE.W Dn,Dy 
     {MOVE_32_D_0,               0xF1C0,     0x2000,     20},   // MOVE.L Dn,Dy
 
-    
+
 
 
     {MOVE_8_D_I,                0xF1FF,     0x103C,     8},    // MOVE.B <imm> Dn
