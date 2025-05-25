@@ -3162,9 +3162,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_EA,                0xF1F8,     0xD110,     8},  // ADD.B Dn, (Ay)
     {ADD_16_D_EA,               0xF1F8,     0xD150,     8},  // ADD.W Dn, (Ay)
     {ADD_32_D_EA,               0xF1F8,     0xD190,     8},  // ADD.L Dn, (Ay)
-    {ADD_8_D_EA_POST_INC,       0xFFF8,     0xD118,     8},  // ADD.B Dn, (Ay)+
-    {ADD_16_D_EA_POST_INC,      0xFFF8,     0xD158,     8},  // ADD.W Dn, (Ay)+
-    {ADD_32_D_EA_POST_INC,      0xFFF8,     0xD198,     8},  // ADD.L Dn, (Ay)+
+    {ADD_8_D_EA_POST_INC,       0xF1F8,     0xD118,     8},  // ADD.B Dn, (Ay)+
+    {ADD_16_D_EA_POST_INC,      0xF1F8,     0xD158,     8},  // ADD.W Dn, (Ay)+
+    {ADD_32_D_EA_POST_INC,      0xF1F8,     0xD198,     8},  // ADD.L Dn, (Ay)+
     {ADD_8_D_EA_PRE_DEC,        0xFFF8,     0xD120,     8},  // ADD.B Dn, -(Ay)
     {ADD_16_D_EA_PRE_DEC,       0xFFF8,     0xD160,     8},  // ADD.W Dn, -(Ay)
     {ADD_32_D_EA_PRE_DEC,       0xFFF8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
