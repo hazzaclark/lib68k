@@ -14,7 +14,7 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
  - Flexible Memory Mapper Scheme (RAM, ROM, IO and Vectors)
  - auto-disable for options
  - Specialised Interrupt Handler and Vector Exception Table  
- 
+ - Fully expandable Macros definitions (for pre-processing functions at compile time)
 
 ## Usage:
 
