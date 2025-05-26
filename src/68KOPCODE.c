@@ -2075,7 +2075,7 @@ M68K_MAKE_OPCODE(MOVEA, 32, DA, 0)
     M68K_REG_PC += 4;
 }
 
-M68K_MAKE_OPCODE(MOVEA, 16, IMM, 0)
+M68K_MAKE_OPCODE(MOVEA, 16, D, 0)
 {
     unsigned VALUE = READ_IMM_16();
     M68K_ADDRESS_LOW = (S16)VALUE;
@@ -2086,7 +2086,7 @@ M68K_MAKE_OPCODE(MOVEA, 16, IMM, 0)
     M68K_REG_PC += 2;
 }
 
-M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
+M68K_MAKE_OPCODE(MOVEA, 32, D, 0)
 {
     unsigned VALUE = READ_IMM_32();
     M68K_ADDRESS_LOW = VALUE;
@@ -2095,7 +2095,18 @@ M68K_MAKE_OPCODE(MOVEA, 32, IMM, 0)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
 
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(MOVEA, 16, EA, AY)
+{
+    unsigned VALUE = READ_IMM_16();
+    M68K_ADDRESS_LOW = (S16)VALUE;
+
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
+    M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
@@ -3369,13 +3380,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
     {MOVE_16_PI_A,              0xF1F8,     0x30D8,     12},  // MOVE.W (An)+, (Ay)+
     {MOVE_32_PI_A,              0xF1F8,     0x20D8,     12},  // MOVE.L (An)+, (Ay)+
-    {MOVEA_16_DA_0,             0xF1C0,     0x303C,     4},  // MOVEA.W <ea>,An
+    {MOVEA_16_DA_0,             0xF1F0,     0x303C,     4},  // MOVEA.W <ea>,An
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
+    {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
+    {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
+    {MOVEA_16_EA_AY,            0xF1FF,     0x3079,     10},  // MOVEA.W <ea>,Ay 
 
-    
-
-    {MOVEA_16_IMM_0,            0xF1C0,     0x3040,     8},  // MOVEA.W #imm,An 
-    {MOVEA_32_IMM_0,            0xF1C0,     0x2040,     12}, // MOVEA.L #imm,An
     {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L (An)+,Dn
     {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.W Dn, (Ay)+
