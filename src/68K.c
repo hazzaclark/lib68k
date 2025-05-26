@@ -20,6 +20,7 @@
 #endif
 
 #ifndef USE_68K
+#ifdef BUILD_OP_TABLE
 
 int M68K_INITIAL_CYCLES;
 unsigned int M68K_ADDRESSING_SPACE; 
@@ -255,7 +256,9 @@ int M68K_EXEC(int CYCLES)
     printf("EXECUTION STOPPED AT %08X\n", M68K_REG_PC);
     printf("TOTAL CYCLES USED: %d\n", M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES);
     printf("CYCLES REMAINING: %d\n", CPU.MASTER_CYCLES);
+
     return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
 
+#endif
 #endif
