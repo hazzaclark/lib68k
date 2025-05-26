@@ -2575,6 +2575,51 @@ M68K_MAKE_OPCODE(NEG, 32, EA, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(NEG, 8, D, 0)
+{
+    unsigned SRC = M68K_READ_8(M68K_EA());
+    unsigned DEST = M68K_DATA_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_WRITE_8(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 16, D, 0)
+{
+    unsigned SRC = M68K_READ_16(M68K_EA());
+    unsigned DEST = M68K_DATA_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_WRITE_16(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 32, D, 0)
+{
+    unsigned SRC = M68K_READ_32(M68K_EA());
+    unsigned DEST = M68K_DATA_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_WRITE_32(RESULT, DEST);
+}
+
 M68K_MAKE_OPCODE(NEGX, 8, DA, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
@@ -3548,6 +3593,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEG_8_EA_0,                0xFFFF,     0x4439,     4},  // NEG.B <ea>
     {NEG_16_EA_0,               0xFFFF,     0x4479,     8},  // NEG.W <ea>
     {NEG_32_EA_0,               0xFFFF,     0x44B9,     12},  // NEG.L <ea>
+    {NEG_8_D_0,                 0xFFF8,     0x4400,     4},  // NEG.B Dn
+    {NEG_16_D_0,                0xFFF8,     0x4440,     8},  // NEG.W Dn
+    {NEG_32_D_0,                0xFFF8,     0x4480,     12},  // NEG.L Dn
     {NEGX_8_DA_0,               0xFFFF,     0x4039,     4},  // NEGX.B <ea>
     {NEGX_16_DA_0,              0xFFFF,     0x4079,     4},  // NEGX.W <ea>
     {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
