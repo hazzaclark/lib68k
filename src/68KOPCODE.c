@@ -1113,7 +1113,7 @@ M68K_MAKE_OPCODE(CLR, 8, EA, 0)
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
 
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CLR, 16, EA, 0)
@@ -1129,7 +1129,7 @@ M68K_MAKE_OPCODE(CLR, 16, EA, 0)
 
 M68K_MAKE_OPCODE(CLR, 32, EA, 0)
 {
-    M68K_WRITE_32(M68K_ADDRESS_LOW, 0);
+    M68K_WRITE_32(M68K_DATA_HIGH, 0);
     M68K_FLAG_N = 0;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -3427,8 +3427,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3100,     8},   // MOVE.W Dn, (-SP)
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
-
-
     {MOVE_32_ABS_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, <ea>
     {MOVE_CCR_16_DA_0,          0xFFFF,     0x44FC,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x40C0,     12}, // MOVE SR,<ea>
