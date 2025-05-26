@@ -1138,6 +1138,19 @@ M68K_MAKE_OPCODE(CLR, 32, EA, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(CLR, 8, EA, AN)
+{
+    unsigned EA = M68K_EA();
+    M68K_WRITE_8(M68K_DATA_HIGH, EA);
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+
+    M68K_REG_PC += 4;
+    M68K_EA_PRINT_HOOK(M68K_REG_A);
+}
+
 M68K_MAKE_OPCODE(CLR, 8, PI, 0)
 {
     M68K_WRITE_8(M68K_ADDRESS_LOW, 0);
@@ -3352,6 +3365,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CLR_8_EA_0,                0xFFF0,     0x4230,     12},  // CLR.B <ea>
     {CLR_16_EA_0,               0xFFF0,     0x4270,     12},  // CLR.W <ea>
     {CLR_32_EA_0,               0xFFF0,     0x42B0,     12},  // CLR.L <ea>
+    {CLR_8_EA_AN,               0xFFF0,     0x4210,     12},  // CLR.B (An)
+
+
     {CLR_8_PI_0,                0xFFF8,     0x4218,     12},  // CLR.B (An)+ 
     {CLR_16_PI_0,               0xFFF8,     0x4258,     12},  // CLR.W (An)+
     {CLR_32_PI_0,               0xFFF8,     0x4298,     12},  // CLR.L (An)+  
