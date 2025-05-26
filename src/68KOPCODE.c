@@ -1992,6 +1992,24 @@ M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_INC)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
+{
+    U16 VALUE = M68K_DATA_HIGH;
+    U16 EA = M68K_EA();
+    M68K_WRITE_16(EA, VALUE);
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, EA)
+{
+    U32 VALUE = M68K_DATA_HIGH;
+    U32 EA = M68K_EA();
+    M68K_WRITE_32(EA, VALUE);
+
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
 {
     unsigned RESULT = M68K_DATA_LOW;
@@ -3397,17 +3415,20 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
     {MOVEA_16_EA_AY,            0xF1FF,     0x3079,     10},  // MOVEA.W <ea>,Ay
     {MOVEA_32_EA_AY,            0xF1FF,     0x2079,     20},  // MOVEA.L <ea>,Ay  
-
     {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L (An)+,Dn
     {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.W Dn, (Ay)+
     {MOVE_16_POST_INC_D,        0xFFF8,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
     {MOVE_32_POST_INC_D,        0xFFF8,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
-    {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.W #imm, (An)+
+    {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
+    {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
+    {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.W #imm, (An)
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3100,     8},   // MOVE.W Dn, (-SP)
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
+
+
     {MOVE_32_ABS_D,             0xFFF8,     0x23C0,     20}, // MOVE.L Dn, <ea>
     {MOVE_CCR_16_DA_0,          0xFFFF,     0x44FC,     12}, // MOVE CCR,<ea>
     {MOVE_SR_16_DA_0,           0xFFC0,     0x40C0,     12}, // MOVE SR,<ea>
