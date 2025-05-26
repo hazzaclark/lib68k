@@ -2417,15 +2417,15 @@ M68K_MAKE_OPCODE(MOVEP, 32, ER, 0)
 
 M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
 {
-    unsigned RESULT = M68K_DATA_HIGH = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
+    unsigned RESULT = M68K_DATA_HIGH = M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
     
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
     M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
 }
 
 M68K_MAKE_OPCODE(MOVE, 8, D, IMM)
@@ -3532,7 +3532,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_POST_INC_A,       0xFFF0,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
     {MOVEP_16_ER_0,             0xFFF8,     0x0188,     16}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xFFF8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
-    {MOVEQ_32_D_0,              0xF1C0,     0x7000,     4},  // MOVEQ #<data>,Dn
+    {MOVEQ_32_D_0,              0xF100,     0x7000,     4},  // MOVEQ #<data>,Dn
     {MOVE_8_D_IMM,              0xFFFF,     0x13FC,     14}, // MOVE.B #imm, <ea>
     {MOVE_16_D_IMM,             0xFFFF,     0x33FC,     14}, // MOVE.W #imm, <ea>
     {MOVE_32_D_IMM,             0xFFFF,     0x23FC,     14}, // MOVE.L #imm, <ea>
