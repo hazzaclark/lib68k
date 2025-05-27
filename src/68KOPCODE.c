@@ -2665,6 +2665,96 @@ M68K_MAKE_OPCODE(NEG, 32, AN, EA)
     M68K_WRITE_32(RESULT, DEST);
 }
 
+M68K_MAKE_OPCODE(NEG, 8, EA, POST_INC)
+{
+    unsigned SRC = M68K_READ_8(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_WRITE_8(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 16, EA, POST_INC)
+{
+    unsigned SRC = M68K_READ_16(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_WRITE_16(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 32, EA, POST_INC)
+{
+    unsigned SRC = M68K_READ_32(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_WRITE_32(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 8, EA, PRE_DEC)
+{
+    unsigned SRC = M68K_READ_8(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_WRITE_8(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 16, EA, PRE_DEC)
+{
+    unsigned SRC = M68K_READ_16(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_WRITE_16(RESULT, DEST);
+}
+
+M68K_MAKE_OPCODE(NEG, 32, EA, PRE_DEC)
+{
+    unsigned SRC = M68K_READ_32(M68K_EA());
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = SRC - DEST;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_X = M68K_FLAG_C;
+    M68K_FLAG_V = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_WRITE_32(RESULT, DEST);
+}
+
 M68K_MAKE_OPCODE(NEGX, 8, DA, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
@@ -3644,6 +3734,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEG_8_AN_EA,               0xFFF8,     0x4410,     4},  // NEG.B (An)
     {NEG_16_AN_EA,              0xFFF8,     0x4450,     8},  // NEG.W (An)
     {NEG_32_AN_EA,              0xFFF8,     0x4490,     12},  // NEG.L (An)
+    {NEG_8_EA_POST_INC,         0xFFF8,     0x4418,     4},  // NEG.B (An)+
+    {NEG_16_EA_POST_INC,        0xFFF8,     0x4458,     8},  // NEG.W (An)+
+    {NEG_32_EA_POST_INC,        0xFFF8,     0x4498,     12},  // NEG.L (An)+
+    {NEG_8_EA_PRE_DEC,          0xFFF8,     0x4420,     4}, // NEG.B -(An)
+    {NEG_16_EA_PRE_DEC,         0xFFF8,     0x4460,     8}, // NEG.W -(An)
+    {NEG_32_EA_PRE_DEC,         0xFFF8,     0x44A0,     8}, // NEG.L -(An)
     {NEGX_8_DA_0,               0xFFFF,     0x4039,     4},  // NEGX.B <ea>
     {NEGX_16_DA_0,              0xFFFF,     0x4079,     4},  // NEGX.W <ea>
     {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
