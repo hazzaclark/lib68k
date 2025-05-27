@@ -9,10 +9,10 @@
 
 #include "68KMEM.h"
 
-M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
-U32 MEM_FUNCTION_CALL;
+static M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
+static unsigned MEM_NUM_BUFFERS;
+static U32 MEM_FUNCTION_CALL;
 U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
-unsigned MEM_NUM_BUFFERS;
 bool TRACE_ENABLED;
 
 void ENABLE_TRACE_FLAG(U8 FLAG)
@@ -131,8 +131,8 @@ static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
         U32 OFFSET = (ADDRESS - MEM_BASE->BASE);
         if((OFFSET + (SIZE / 8)) > MEM_BASE->SIZE)
         {
-            VERBOSE_TRACE("READ OUT OF BOUNDS: OFFSET = %d, SIZE = %d, REGION SIZE = %d\n", 
-                         OFFSET, SIZE/8, MEM_BASE->SIZE);
+            MEM_BASE->USAGE.VIOLATION++;
+            VERBOSE_TRACE("READ OUT OF BOUNDS: OFFSET = %d, SIZE = %d, VIOLATION #%u\n", OFFSET, SIZE, MEM_BASE->USAGE.VIOLATION);
             goto MALFORMED_READ;
         }
         
@@ -182,7 +182,8 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
 
         if(!MEM_BASE->WRITE) 
         {
-            VERBOSE_TRACE("WRITE ATTEMPT TO READ-ONLY MEMORY AT 0x%08x\n", ADDRESS);
+            MEM_BASE->USAGE.VIOLATION++;
+            VERBOSE_TRACE("WRITE ATTEMPT TO READ-ONLY MEMORY AT 0x%08x, VIOLATION #%u\n", ADDRESS, MEM_BASE->USAGE.VIOLATION);
             goto MALFORMED;
         }
 
@@ -194,12 +195,6 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
 
         U32 OFFSET = (ADDRESS - MEM_BASE->BASE);
         U32 BYTES = SIZE / 8;
-
-        if(!MEM_BASE->WRITE) 
-        {
-            VERBOSE_TRACE("WRITE ATTEMPT TO READ-ONLY MEMORY AT 0x%08x\n", ADDRESS);
-            goto MALFORMED;
-        }
 
         if((OFFSET + BYTES) > MEM_BASE->SIZE) 
         {
@@ -232,7 +227,7 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
     }
 
 MALFORMED:
-    fprintf(stderr, "BAD WRITE AT ADDRESS: 0x%08X (SIZE: 0x%02X, VALUE: 0x%08X)\n", 
+    fprintf(stderr, "BAD WRITE AT ADDRESS: 0x%08X (SIZE: %d, VALUE: 0x%08X)\n", 
             ADDRESS, SIZE, VALUE);
     MEM_TRACE(MEM_INVALID_WRITE, ADDRESS, SIZE, VALUE);
 }
@@ -293,28 +288,6 @@ void M68K_WRITE_MEMORY_16(unsigned int ADDRESS, uint16_t VALUE)
 void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, uint32_t VALUE) 
 {
     MEMORY_WRITE(ADDRESS, MEM_SIZE_32, VALUE);
-}
-
-unsigned int M68K_READ_IMM_16(unsigned int ADDRESS)
-{
-    bool TRACE = TRACE_ENABLED;
-    TRACE_ENABLED = false;
-
-    unsigned int RESULT = M68K_READ_MEMORY_16(ADDRESS);
-    TRACE_ENABLED = TRACE;
-
-    return RESULT;
-}
-
-unsigned int M68K_READ_IMM_32(unsigned int ADDRESS)
-{
-    bool TRACE = TRACE_ENABLED;
-    TRACE_ENABLED = false;
-
-    unsigned int RESULT = M68K_READ_MEMORY_32(ADDRESS);
-    TRACE_ENABLED = TRACE;
-
-    return RESULT;
 }
 
 void MEM_SET_FC(unsigned int NEW_FUNC_CALL)
