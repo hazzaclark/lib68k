@@ -89,7 +89,7 @@ M68K_MAKE_OPCODE(ADD, 8, EA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
 
     RESULT = M68K_MASK_OUT_ABOVE_8(RESULT) | M68K_FLAG_Z;
-
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
     M68K_REG_PC += 4;
 }
 
@@ -106,7 +106,7 @@ M68K_MAKE_OPCODE(ADD, 16, EA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
 
     RESULT = M68K_MASK_OUT_ABOVE_16(RESULT) | M68K_FLAG_Z;
-
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
     M68K_REG_PC += 4;
 }
 
@@ -3560,8 +3560,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
     {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
-    {ADD_8_EA_0,                0xF1F8,     0xD010,     4},  // ADD.B <ea>,Dn
-    {ADD_16_EA_0,               0xF1F8,     0xD048,     8},  // ADD.W <ea>,Dn
+    {ADD_8_EA_0,                0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
+    {ADD_16_EA_0,               0xF1FF,     0xD079,     8},  // ADD.W <ea>,Dn
     {ADD_32_EA_0,               0xF1FF,     0xD0B9,     12},  // ADD.L <ea>,Dn
     {ADD_8_D_0,                 0xF1F8,     0xD000,     8},  // ADD.B Dn, Dm
     {ADD_16_D_0,                0xF1F8,     0xD040,     8},  // ADD.W Dn, Dm
