@@ -617,7 +617,7 @@ M68K_MAKE_OPCODE(ADD, 32, D, EA_PRE_DEC)
     M68K_WRITE_32(DEST_REG, RESULT);
 }
 
-M68K_MAKE_OPCODE(ADDA, 16, D, 0)
+M68K_MAKE_OPCODE(ADDA, 16, EA, 0)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = ((U16)DESTINATION);
@@ -627,7 +627,7 @@ M68K_MAKE_OPCODE(ADDA, 16, D, 0)
     M68K_REG_PC += 4;
 }
 
-M68K_MAKE_OPCODE(ADDA, 32, D, 0)
+M68K_MAKE_OPCODE(ADDA, 32, EA, 0)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = ((U32)DESTINATION);
@@ -635,6 +635,22 @@ M68K_MAKE_OPCODE(ADDA, 32, D, 0)
     DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
 
     M68K_REG_PC += 4;
+}
+
+M68K_MAKE_OPCODE(ADDA, 16, AN, AY)
+{
+    int DESTINATION = M68K_ADDRESS_LOW;
+    int SRC = ((U32)DESTINATION);
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_16(DESTINATION + SRC);
+}
+
+M68K_MAKE_OPCODE(ADDA, 32, AN, AY)
+{
+    int DESTINATION = M68K_ADDRESS_LOW;
+    int SRC = ((U32)DESTINATION);
+
+    DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
 }
 
 M68K_MAKE_OPCODE(ADDI, 8, IMM, 0)
@@ -3646,7 +3662,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_32_D_EA_POST_INC,      0xF1F8,     0xD198,     8},  // ADD.L Dn, (Ay)+
     {ADD_8_D_EA_PRE_INC,        0xF1F8,     0xD018,     8},  // ADD.B (An)+, Dy
     {ADD_16_D_EA_PRE_INC,       0xF1F8,     0xD058,     8},  // ADD.W (An)+, Dy
-    {ADD_32_D_EA_PRE_INC,       0xF1F8,     0xD098,     8},  // ADD.L (An)+, Dy
+    {ADD_32_D_EA_PRE_INC,       0xF1F8,     0xD098,     12},  // ADD.L (An)+, Dy
     {ADD_8_D_EA_PRE_DEC,        0xF1F8,     0xD120,     8},  // ADD.B Dn, -(Ay)
     {ADD_16_D_EA_PRE_DEC,       0xF1F8,     0xD160,     8},  // ADD.W Dn, -(Ay)
     {ADD_32_D_EA_PRE_DEC,       0xF1F8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
@@ -3655,8 +3671,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_A_AI,                0xFFF8,     0xD028,     8},  // ADD.B $imm(An), Dy
     {ADD_16_A_AI,               0xFFF8,     0xD068,     8},  // ADD.W $imm(An), Dy
     {ADD_32_A_AI,               0xFFF8,     0xD0A8,     10},  // ADD.L $imm(An), Dy
-    {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
-    {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
+    {ADDA_16_EA_0,              0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
+    {ADDA_32_EA_0,              0xF1C0,     0xD1C0,     12},  // ADDA.L <ea>,An
+    {ADDA_16_AN_AY,             0xF1F8,     0xD0C8,     8},  // ADDA.W An, Ay
+    {ADDA_32_AN_AY,             0xF1F8,     0xD1C8,     8},  // ADDA.W An, Ay
     {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
     {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
