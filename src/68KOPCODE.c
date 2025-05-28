@@ -3727,9 +3727,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     16},  // ADDA.L -(An), Ay
     {ADDA_16_PI_AY,             0xF1F8,     0xD0D8,     12},  // ADDA.W (An)+, Ay
     {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     16},  // ADDA.L (An)+, Ay
-    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
-    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
-    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
+    {ADDI_8_IMM_0,              0xFFFF,     0x0639,     8},  // ADDI.B #<data>,<ea>
+    {ADDI_16_IMM_0,             0xFFFF,     0x0679,     8},  // ADDI.W #<data>,<ea>
+    {ADDI_32_IMM_0,             0xFFFF,     0x06B9,     16}, // ADDI.L #<data>,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
