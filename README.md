@@ -52,7 +52,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
 
-### Motorola 68K-specific Big Endian Reads, handled with LE in mind
+### Motorola 68K-specific Big Endian Reads, accounting for Endianness Swap
 
 ![image](https://github.com/user-attachments/assets/2bb2ef5e-c1c6-46c1-9c2c-928b9809aa50)
 
