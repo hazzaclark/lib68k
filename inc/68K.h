@@ -263,8 +263,8 @@ typedef struct CPU_68K
     U32 CACHE_CONTROL;
     U32 CACHE_ADDRESS;
 
-    char INSTRUCTION_MODE;
-    char TRACE_FLAG;
+    unsigned INSTRUCTION_MODE;
+    unsigned TRACE_FLAG;
 
     unsigned int PREVIOUS_DATA;
     unsigned int PREVIOUS_ADDRESS;
@@ -425,6 +425,8 @@ typedef enum CPU_68K_FLAGS
 
 #define         M68K_MASTER_CYC         CPU.MASTER_CYCLES
 #define         M68K_REFRESH_CYC        CPU.REFRESH_CYCLES
+
+#define         M68K_INSTR_MODE         CPU.INSTRUCTION_MODE
 
 #define         M68K_COND_FLAG_Z()      M68K_FLAG_Z
 #define         M68K_COND_FLAG_V()      M68K_FLAG_V
