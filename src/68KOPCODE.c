@@ -1157,19 +1157,22 @@ M68K_MAKE_OPCODE(BNE, 32, 0, 0)
 
 M68K_MAKE_OPCODE(BEQ, 8, 0, 0)
 {
-    M68K_BRANCH_8(M68K_REG_PC);
+    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    M68K_REG_PC += 2;
     return;
 }
 
 M68K_MAKE_OPCODE(BEQ, 16, 0, 0)
 {
-    M68K_BRANCH_16(M68K_REG_PC);
+    M68K_BRANCH_16(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    M68K_REG_PC += 2;
     return;
 }
 
 M68K_MAKE_OPCODE(BEQ, 32, 0, 0)
 {
-    M68K_BRANCH_8(M68K_REG_PC);
+    M68K_BRANCH_32(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+    M68K_REG_PC += 2;
     return;
 }
 
@@ -1448,8 +1451,6 @@ M68K_MAKE_OPCODE(CMP, 8, D, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
     M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
     M68K_FLAG_C = (RESULT == 0);
-    
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CMP, 16, D, 0)
@@ -1463,8 +1464,6 @@ M68K_MAKE_OPCODE(CMP, 16, D, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
     M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
     M68K_FLAG_C = (RESULT == 0);
-    
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CMP, 32, D, 0)
@@ -1478,8 +1477,6 @@ M68K_MAKE_OPCODE(CMP, 32, D, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
     M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
     M68K_FLAG_C = (RESULT == 0);
-    
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CMPA, 16, DA, 0)
@@ -3778,7 +3775,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (16-bit displacement)!
     {BRA_32_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (32-bit displacement)
-    {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
+    {BEQ_8_0_0,                 0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
