@@ -5,7 +5,7 @@ Motorola 680x0 Standalone Emulation Library
 
 # Motive:
 
-The motive behind this repository is to provide a surrogate means of aiding in relevant Motorola 68000 developments.
+The motive behind this repository is to provide a surrogate means of aiding in [relevant](https://github.com/hazzaclark/mdemu) Motorola 68000 developments.
 
 Created using ANSI C99 standard, this project aims to promote an ease of use means of creating a library that emulates the likeness of these microprocessors
 
