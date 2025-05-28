@@ -216,13 +216,6 @@
 #define		M68K_USE_ADDRESS_ERROR					M68K_OPT_ON
 #define		M68K_USE_CHECK_PC_ERROR					M68K_OPT_ON
 
-/*==============================================================================*/
-/*							68000 CALLBACKS										*/
-/*==============================================================================*/
-
-extern U8 M68K_VECTOR_TABLE[5][256];
-U32 M68K_FETCH_LONG();
-
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
 /*===============================================================================*/
@@ -252,5 +245,7 @@ extern unsigned int M68K_POST_DEC_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SP(void);
+
+extern U8 M68K_VECTOR_TABLE[5][256];
 
 #endif
