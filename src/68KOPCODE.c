@@ -798,48 +798,6 @@ M68K_MAKE_OPCODE(ADDQ, 32, D, 0)
     RESULT -= M68K_MASK_OUT_ABOVE_32(RESULT) | M68K_FLAG_Z;
 }
 
-M68K_MAKE_OPCODE(ADDQ, 8, I, 0)
-{
-    int SRC = ((((M68K_REG_IR >> 9) - 1) & 7) + 1);
-    int EA = READ_IMM_8();
-
-    unsigned DEST = M68K_READ_MEMORY_8(EA);
-    unsigned RESULT = SRC + DEST;
-
-    M68K_FLAG_N = (U8)RESULT;
-    M68K_FLAG_V = (U8)(SRC + DEST + RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = 0;
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
-}
-
-M68K_MAKE_OPCODE(ADDQ, 16, I, 0)
-{
-    int SRC = ((((M68K_REG_IR >> 9) - 1) & 7) + 1);
-    int EA = READ_IMM_16();
-
-    unsigned DEST = M68K_READ_MEMORY_16(EA);
-    unsigned RESULT = SRC + DEST;
-
-    M68K_FLAG_N = (U16)RESULT;
-    M68K_FLAG_V = (U16)(SRC + DEST + RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = 0;
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
-}
-
-M68K_MAKE_OPCODE(ADDQ, 32, I, 0)
-{
-    int SRC = ((((M68K_REG_IR >> 9) - 1) & 7) + 1);
-    int EA = READ_IMM_32();
-
-    unsigned DEST = M68K_READ_MEMORY_32(EA);
-    unsigned RESULT = SRC + DEST;
-
-    M68K_FLAG_N = (U32)RESULT;
-    M68K_FLAG_V = (U32)(SRC + DEST + RESULT);
-    M68K_FLAG_X = M68K_FLAG_C = 0;
-    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
-}
-
 M68K_MAKE_OPCODE(ADDX, 8, RR, 0)
 {
     int DESTINATION = M68K_DATA_HIGH;
@@ -3733,9 +3691,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
-    {ADDQ_8_I_0,                0xF1F8,     0x5028,     16}, // ADDQ.B #imm, Dn
-    {ADDQ_16_I_0,               0xF1F8,     0x5068,     16}, // ADDQ.W #imm, Dn
-    {ADDQ_32_I_0,               0xF1F8,     0x50A8,     24}, // ADDQ.l #imm, Dn
     {ADDX_8_RR_0,               0xF1F8,     0xD100,     4},  // ADDX.B Dy,Dx
     {ADDX_16_RR_0,              0xF1F8,     0xD140,     4},  // ADDX.W Dy,Dx
     {ADDX_32_RR_0,              0xF1F8,     0xD180,     8},  // ADDX.L Dy,Dx
