@@ -124,6 +124,7 @@ M68K_MAKE_OPCODE(ADD, 32, EA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
 
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
     M68K_REG_PC += 6;
 }
 
@@ -2586,7 +2587,6 @@ M68K_MAKE_OPCODE(NEG, 8, D, 0)
     M68K_FLAG_Z = (RESULT == 0);
 
     *DEST = M68K_FLAG_Z;
-
     M68K_CCR_HOOK();
 }
 
@@ -3562,10 +3562,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
     {ADD_8_EA_0,                0xF1F8,     0xD010,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_0,               0xF1F8,     0xD048,     8},  // ADD.W <ea>,Dn
-    {ADD_32_EA_0,               0xF1F8,     0xD088,     12},  // ADD.L <ea>,Dn
-    {ADD_8_D_0,                 0xF1C0,     0xD000,     8},  // ADD.B Dn, Dm
-    {ADD_16_D_0,                0xF1C0,     0xD040,     8},  // ADD.W Dn, Dm
-    {ADD_32_D_0,                0xF1C0,     0xD080,     8},  // ADD.L Dn, Dm
+    {ADD_32_EA_0,               0xF1FF,     0xD0B9,     12},  // ADD.L <ea>,Dn
+    {ADD_8_D_0,                 0xF1F8,     0xD000,     8},  // ADD.B Dn, Dm
+    {ADD_16_D_0,                0xF1F8,     0xD040,     8},  // ADD.W Dn, Dm
+    {ADD_32_D_0,                0xF1F8,     0xD080,     8},  // ADD.L Dn, Dm
     {ADD_8_EA_DISP,             0xF1F8,     0xD028,     8},  // ADD.B (An), Dy
     {ADD_16_EA_DISP,            0xF1F8,     0xD068,     8},  // ADD.W (An), Dy
     {ADD_32_EA_DISP,            0xF1F8,     0xD0A8,     20},  // ADD.W (An), Dy
@@ -3582,7 +3582,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_32_PRE_DEC_D,          0xF1C0,     0xD0A8,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xFFF8,     0xD028,     8},  // ADD.B $imm(An), Dy
     {ADD_16_A_AI,               0xFFF8,     0xD068,     8},  // ADD.W $imm(An), Dy
-    {ADD_32_A_AI,               0xFFF8,     0xD0A8,     10},  // ADD.W $imm(An), Dy
+    {ADD_32_A_AI,               0xFFF8,     0xD0A8,     10},  // ADD.L $imm(An), Dy
     {ADDA_16_D_0,               0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_D_0,               0xF1C0,     0xD1C0,     8},  // ADDA.L <ea>,An
     {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
