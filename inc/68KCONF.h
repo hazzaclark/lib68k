@@ -213,6 +213,9 @@
 #define		M68K_SET_FC(A)					MEM_SET_FC(A)
 #define		M68K_ADDRESS_LINE(A)			((A)&M68K_ADDRESS_MASK)
 
+#define		M68K_USE_ADDRESS_ERROR					M68K_OPT_ON
+#define		M68K_USE_CHECK_PC_ERROR					M68K_OPT_ON
+
 /*==============================================================================*/
 /*							68000 CALLBACKS										*/
 /*==============================================================================*/
