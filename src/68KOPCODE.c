@@ -859,8 +859,8 @@ M68K_MAKE_OPCODE(AND, 8, D, 0)
 
     int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_8(DESTINATION);
 
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
-    M68K_FLAG_N += (U8)M68K_FLAG_Z;
     
     M68K_REG_PC += 4;
     M68K_CCR_HOOK();
@@ -873,8 +873,8 @@ M68K_MAKE_OPCODE(AND, 16, D, 0)
 
     int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_16(DESTINATION);
 
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
-    M68K_FLAG_N += (U16)M68K_FLAG_Z; 
 
     M68K_REG_PC += 4;
     M68K_CCR_HOOK();
@@ -887,8 +887,8 @@ M68K_MAKE_OPCODE(AND, 32, D, 0)
 
     int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_32(DESTINATION);
 
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
-    M68K_FLAG_N += (U32)M68K_FLAG_Z; 
 
     M68K_REG_PC += 4;
     M68K_CCR_HOOK();
@@ -944,13 +944,14 @@ M68K_MAKE_OPCODE(ANDI_CCR, 8, CCR, 0)
     int DESTINATION = M68K_LOW_BITMASK;
     int SRC = M68K_MASK_OUT_ABOVE_8(DESTINATION);
 
-    M68K_FLAG_X = M68K_BIT_4(SRC) | 0;
-    M68K_FLAG_N = M68K_BIT_3(SRC) | 0;
-    M68K_FLAG_Z = M68K_BIT_2(SRC) | 0;
-    M68K_FLAG_V = M68K_BIT_1(SRC) | 0;
-    M68K_FLAG_C = M68K_BIT_0(SRC) | 0;
+    M68K_FLAG_X = M68K_BIT_4(SRC) == 0;
+    M68K_FLAG_N = M68K_BIT_3(SRC) == 0;
+    M68K_FLAG_Z = M68K_BIT_2(SRC) == 0;
+    M68K_FLAG_V = M68K_BIT_1(SRC) == 0;
+    M68K_FLAG_C = M68K_BIT_0(SRC) == 0;
 
     M68K_REG_PC += 2;
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(ANDI_SR, 16, SR, 0)
@@ -962,6 +963,7 @@ M68K_MAKE_OPCODE(ANDI_SR, 16, SR, 0)
     M68K_FLAG_C = (M68K_REG_SR & 0x0001) ? 1 : 0;
 
     M68K_REG_PC += 2;
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(ASL, 8, ASR, 0)
@@ -970,10 +972,40 @@ M68K_MAKE_OPCODE(ASL, 8, ASR, 0)
     int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
     int RESULT = READ_IMM_8();
 
-    M68K_FLAG_N = (M68K_MAX_BITMASK)*RESULT;
-    M68K_FLAG_Z = M68K_MAX_BITMASK | 0;
-    M68K_FLAG_V = M68K_MAX_BITMASK | 0;
-    M68K_FLAG_C = OPERAND | 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASL, 16, ASR, 0)
+{
+    int SRC = M68K_MAX_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = READ_IMM_16();
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASL, 32, ASR, 0)
+{
+    int SRC = M68K_MAX_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = READ_IMM_32();
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(ASR, 8, ASR, 0)
@@ -982,10 +1014,40 @@ M68K_MAKE_OPCODE(ASR, 8, ASR, 0)
     int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
     int RESULT = READ_IMM_8();
 
-    M68K_FLAG_N = (M68K_MAX_BITMASK)*RESULT;
-    M68K_FLAG_Z = M68K_MAX_BITMASK | 0;
-    M68K_FLAG_V = M68K_MAX_BITMASK | 0;
-    M68K_FLAG_C = OPERAND | 0;
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASR, 16, ASR, 0)
+{
+    int SRC = M68K_LOW_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = READ_IMM_16();
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
+{
+    int SRC = M68K_LOW_BITMASK;
+    int OPERAND = SRC + M68K_FLAG_C + M68K_FLAG_X;
+    int RESULT = READ_IMM_32();
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_Z = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_V = (M68K_MAX_BITMASK == 0);
+    M68K_FLAG_C = (OPERAND == 0);
+
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(BCC, 16, 0, 0)
@@ -3703,10 +3765,14 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ANDI_8_EA_0,               0xFFF8,     0x0200,     8},  // ANDI.B #<data>,<ea>
     {ANDI_16_EA_0,              0xFFF8,     0x0240,     8},  // ANDI.W #<data>,<ea>
     {ANDI_32_EA_0,              0xFFF8,     0x0280,     16}, // ANDI.L #<data>,<ea>
-    {ANDI_CCR_8_CCR_0,          0xFF00,     0x023C,     20}, // ANDI #<data>,CCR
-    {ANDI_SR_16_SR_0,           0xFF00,     0x027C,     20}, // ANDI #<data>,SR
-    {ASL_8_ASR_0,               0xFFFF,     0xE121,     6},  // ASL.B Dn,Dy
-    {ASR_8_ASR_0,               0xFFFF,     0xE021,     6},  // ASR.B Dn, Dy
+    {ANDI_CCR_8_CCR_0,          0xFFFF,     0x023C,     20}, // ANDI #<data>,CCR
+    {ANDI_SR_16_SR_0,           0xFFFF,     0x027C,     20}, // ANDI #<data>,SR
+    {ASL_8_ASR_0,               0xF1F8,     0xE120,     6},  // ASL.B Dn,Dy
+    {ASL_16_ASR_0,              0xF1F8,     0xE160,     6},  // ASL.W Dn,Dy
+    {ASL_32_ASR_0,              0xF1F8,     0xE1A0,     6},  // ASL.L Dn,Dy
+    {ASR_8_ASR_0,               0xF1F8,     0xE020,     6},  // ASR.B Dn, Dy
+    {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
+    {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
