@@ -757,6 +757,64 @@ M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(ADDI, 8, IMM, EA)
+{
+    int EA = M68K_ADDRESS_LOW;
+    int DESTINATION = M68K_READ_8(EA);
+    int SRC = READ_IMM_8();
+    int RESULT = SRC + DESTINATION;
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_V = ((SRC + DESTINATION + RESULT) == 0);
+
+    M68K_FLAG_X = M68K_FLAG_C = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+
+    M68K_CCR_HOOK();
+
+    M68K_WRITE_8(EA, M68K_FLAG_Z);
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(ADDI, 16, IMM, EA)
+{
+    int EA = M68K_ADDRESS_LOW;
+    int DESTINATION = M68K_READ_16(EA);
+    int SRC = READ_IMM_16();
+    int RESULT = SRC + DESTINATION;
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_V = ((SRC + DESTINATION + RESULT) == 0);
+
+    M68K_FLAG_X = M68K_FLAG_C = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+
+    M68K_CCR_HOOK();
+
+    M68K_WRITE_16(EA, M68K_FLAG_Z);
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(ADDI, 32, IMM, EA)
+{
+    int EA = M68K_ADDRESS_LOW;
+    int DESTINATION = M68K_READ_32(EA);
+    int SRC = READ_IMM_32();
+    int RESULT = SRC + DESTINATION;
+
+    M68K_FLAG_N = (RESULT == 0);
+    M68K_FLAG_V = ((SRC + DESTINATION + RESULT) == 0);
+
+    M68K_FLAG_X = M68K_FLAG_C = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+
+    M68K_CCR_HOOK();
+
+    M68K_WRITE_32(EA, M68K_FLAG_Z);
+    M68K_REG_PC += 8;
+}
+
+
 M68K_MAKE_OPCODE(ADDQ, 8, D, 0)
 {
     int DESTINATION = M68K_DATA_LOW;
@@ -3754,9 +3812,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     16},  // ADDA.L -(An), Ay
     {ADDA_16_PI_AY,             0xF1F8,     0xD0D8,     12},  // ADDA.W (An)+, Ay
     {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     16},  // ADDA.L (An)+, Ay
-    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
-    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
-    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
+    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,Dy
+    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,Dy
+    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,Dy
+    {ADDI_8_IMM_EA,             0xFFFF,     0x0639,     16}, // ADDI.B #imm,<ea>
+    {ADDI_16_IMM_EA,            0xFFFF,     0x0679,     16}, // ADDI.W #imm,<ea>
+    {ADDI_32_IMM_EA,             0xFFFF,     0x06B9,     16}, // ADDI.L #imm,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     8},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     8},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
