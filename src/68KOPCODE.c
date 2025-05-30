@@ -635,7 +635,7 @@ M68K_MAKE_OPCODE(ADDA, 16, EA, 0)
 
     DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
 
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ADDA, 32, EA, 0)
@@ -654,6 +654,8 @@ M68K_MAKE_OPCODE(ADDA, 16, AN, AY)
     int SRC = ((U32)DESTINATION);
 
     DESTINATION = M68K_MASK_OUT_ABOVE_16(DESTINATION + SRC);
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ADDA, 32, AN, AY)
@@ -662,6 +664,8 @@ M68K_MAKE_OPCODE(ADDA, 32, AN, AY)
     int SRC = ((U32)DESTINATION);
 
     DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION + SRC);
+
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(ADDA, 16, PI, AY)
@@ -3753,8 +3757,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,<ea>
     {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,<ea>
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,<ea>
-    {ADDQ_8_D_0,                0xF1C0,     0x5000,     4},  // ADDQ.B #<data>,Dn
-    {ADDQ_16_D_0,               0xF1C0,     0x5040,     4},  // ADDQ.W #<data>,Dn
+    {ADDQ_8_D_0,                0xF1C0,     0x5000,     8},  // ADDQ.B #<data>,Dn
+    {ADDQ_16_D_0,               0xF1C0,     0x5040,     8},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
     {ADDX_8_RR_0,               0xF1F8,     0xD100,     4},  // ADDX.B Dy,Dx
     {ADDX_16_RR_0,              0xF1F8,     0xD140,     4},  // ADDX.W Dy,Dx
