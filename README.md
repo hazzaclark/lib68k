@@ -166,4 +166,6 @@ M68K_REG_PC += 2;
 
 [68K Instruction Timings](https://wiki.neogeodev.org/index.php?title=68k_instructions_timings)
 
+[imHex (for being a brilliant Hex Editor)](https://github.com/WerWolv/ImHex)
+
 [More 68K Instruction Timings](https://oldwww.nvg.ntnu.no/amiga/MC680x0_Sections/mc68000timing.HTML)
