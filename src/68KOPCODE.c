@@ -150,7 +150,7 @@ M68K_MAKE_OPCODE(ADD, 8, A, AI)
     M68K_FLAG_V = (((SRC ^ RESULT) & (DEST ^ RESULT)) == 0);
     M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
     M68K_FLAG_Z = (RESULT == 0);
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 2;
 
     *EA = ~M68K_MASK_OUT_ABOVE_8(*EA) | M68K_FLAG_Z;
 
@@ -169,7 +169,7 @@ M68K_MAKE_OPCODE(ADD, 16, A, AI)
     M68K_FLAG_V = (((SRC ^ RESULT) & (DEST ^ RESULT)) == 0);
     M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
     M68K_FLAG_Z = (RESULT == 0);
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 2;
 
     *EA = ~M68K_MASK_OUT_ABOVE_16(*EA) | M68K_FLAG_Z;
 
@@ -3966,7 +3966,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_32_D_EA,              0xF1FF,     0x2039,     24},  // MOVE.L <ea>, Dy
     {MOVE_8_D_I,                0xF1FF,     0x103C,     8},    // MOVE.B <imm> Dn
     {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
-    {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
+    {MOVE_32_D_I,               0xF1FF,     0x203C,     20},    // MOVE.L <imm> Dn
     {MOVE_16_PRE_DEC_IMM,       0xF1F8,     0x3028,     16},   // MOVE.W -(An), Dn
     {MOVE_32_PRE_DEC_IMM,       0xF1F8,     0x2028,     24},   // MOVE.L -(An), Dn
     {MOVE_32_D_POST_DEC,        0xF1F8,     0x2100,     14},  // MOVE.L, Dn, -(SP)
