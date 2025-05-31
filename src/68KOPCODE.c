@@ -3967,7 +3967,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_D_I,                0xF1FF,     0x103C,     8},    // MOVE.B <imm> Dn
     {MOVE_16_D_I,               0xF1FF,     0x303C,     12},    // MOVE.W <imm> Dn
     {MOVE_32_D_I,               0xF1FF,     0x203C,     16},    // MOVE.L <imm> Dn
-    {MOVE_16_PRE_DEC_IMM,       0xF1F8,     0x3028,     16},   // MOVE.L -(An), Dn
+    {MOVE_16_PRE_DEC_IMM,       0xF1F8,     0x3028,     16},   // MOVE.W -(An), Dn
     {MOVE_32_PRE_DEC_IMM,       0xF1F8,     0x2028,     24},   // MOVE.L -(An), Dn
     {MOVE_32_D_POST_DEC,        0xF1F8,     0x2100,     14},  // MOVE.L, Dn, -(SP)
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
@@ -3985,11 +3985,11 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_PRE_DEC_AY,       0xF1F8,     0x2060,     20}, // MOVEA.L -(An),Ay
     {MOVEA_16_EA_AY,            0xF1FF,     0x307C,     10},  // MOVEA.W <ea>,Ay    
     {MOVEA_32_EA_AY,            0xF1FF,     0x207C,     20},  // MOVEA.L <ea>,Ay 
-    {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W (An)+,Dn
-    {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L (An)+,Dn
-    {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.W Dn, (Ay)+
-    {MOVE_16_POST_INC_D,        0xFFF8,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
-    {MOVE_32_POST_INC_D,        0xFFF8,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
+    {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     10},   // MOVE.W (An)+,Dn
+    {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     20},  // MOVE.L (An)+,Dn
+    {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
+    {MOVE_16_POST_INC_D,        0xF1C0,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
+    {MOVE_32_POST_INC_D,        0xF1C0,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
