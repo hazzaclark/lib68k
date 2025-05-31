@@ -2431,12 +2431,12 @@ M68K_MAKE_OPCODE(MOVEA, 16, EA, AY)
 M68K_MAKE_OPCODE(MOVEA, 32, EA, AY)
 {
     unsigned VALUE = READ_IMM_32();
-    M68K_ADDRESS_LOW = (S32)VALUE;
+    M68K_ADDRESS_LOW = VALUE;
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
-    M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+    M68K_EA_PRINT_HOOK(M68K_REG_A);
 
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
@@ -3658,9 +3658,6 @@ M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
     // GET THE CURRENT SR VALUE - WHICH WILL ALLOW THE SYSCALL
     // TO CLEAR THE TRACE LEVEL TEMPORARILY BEFORE APPLYING THE APPROPRIATE CALL
 
-    M68K_FLAG_T1 = 0;
-
-    M68K_TRACE_CLEAR();
     M68K_SET_S_FLAG(4);
 
     M68K_FLAG_N = 0;
@@ -3817,7 +3814,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,Dy
     {ADDI_8_IMM_EA,             0xFFFF,     0x0639,     16}, // ADDI.B #imm,<ea>
     {ADDI_16_IMM_EA,            0xFFFF,     0x0679,     16}, // ADDI.W #imm,<ea>
-    {ADDI_32_IMM_EA,             0xFFFF,     0x06B9,     16}, // ADDI.L #imm,<ea>
+    {ADDI_32_IMM_EA,            0xFFFF,     0x06B9,     16}, // ADDI.L #imm,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     8},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     8},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
@@ -3926,8 +3923,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
     {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
-    {MOVEA_16_EA_AY,            0xF1FF,     0x3079,     10},  // MOVEA.W <ea>,Ay
-    {MOVEA_32_EA_AY,            0xF1FF,     0x2079,     20},  // MOVEA.L <ea>,Ay  
+    {MOVEA_16_EA_AY,            0xF1FF,     0x307C,     10},  // MOVEA.W <ea>,Ay
+    {MOVEA_32_EA_AY,            0xF1FF,     0x207C,     20},  // MOVEA.L <ea>,Ay  
     {MOVE_16_D_POST_INC,        0xF1F8,     0x30C0,     8},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1C0,     0x20C0,     12},  // MOVE.L (An)+,Dn
     {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.W Dn, (Ay)+
