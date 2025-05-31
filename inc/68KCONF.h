@@ -138,7 +138,7 @@
 	#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) \
 		do { \
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
-			printf("ADDRESS FOUND WITH REGISTER D%d\n", \
+			printf("ADDRESS FOUND WITH REGISTER: %d\n", \
 				REG_NUM); \
 		} while(0)
 	#else
