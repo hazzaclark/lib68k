@@ -21,15 +21,10 @@ int main(int argc, char** argv)
         printf("USAGE: %s <FILE>\n", argv[0]);
         return 1;
     }
-
-    // ENABLE THE CURRENT VERBOSE TRACE INFORMATION
-    #if M68K_USE_DEBUG_HOOKS == M68K_OPT_OFF
-
+    
     ENABLED_FLAGS = M68K_OPT_FLAGS;
     SET_TRACE_FLAGS(1, 0);
     SHOW_TRACE_STATUS();
-
-    #endif
     
     M68K_INIT();
     SHOW_MEMORY_MAPS();
