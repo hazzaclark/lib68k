@@ -1580,6 +1580,48 @@ M68K_MAKE_OPCODE(CMPA, 32, DA, 0)
     M68K_FLAG_C = (SRC > DEST);
 }
 
+M68K_MAKE_OPCODE(CMPA, 16, AN, DISP)
+{
+    unsigned SRC = (U16)M68K_DATA_HIGH;
+
+    #ifndef USE_ADDRESSING
+        SRC = (U16)M68K_ADDRESS_HIGH;
+    #endif
+
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+    
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31;    
+    M68K_FLAG_C = (SRC > DEST);
+
+    M68K_CCR_HOOK();
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(CMPA, 32, AN, DISP)
+{
+    unsigned SRC = (U32)M68K_DATA_HIGH;
+
+    #ifndef USE_ADDRESSING
+        SRC = (U32)M68K_ADDRESS_HIGH;
+    #endif
+
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+    
+    M68K_FLAG_N = (U32)RESULT;
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    
+    M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31;    
+    M68K_FLAG_C = (SRC > DEST);
+
+    M68K_CCR_HOOK();
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(CMPI, 8, DA, 0)
 {
     unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
@@ -3927,6 +3969,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMP_32_D_0,                0xF1F0,     0xB080,     4},  // CMP.L Dn,Dy
     {CMPA_16_DA_0,              0xF1C0,     0xB0C0,     6},  // CMPA.W <ea>,An
     {CMPA_32_DA_0,              0xF1C0,     0xB1C0,     6},  // CMPA.L <ea>,An
+    {CMPA_16_AN_DISP,           0xFFF8,     0xB0E8,     6},  // CMPA.W #imm(An),Ay
+    {CMPA_32_AN_DISP,           0xFFF8,     0xB1E8,     8},  // CMPA.L #imm(An),Ay
     {CMPI_8_DA_0,               0xFF00,     0x0C00,     8},  // CMPI.B #<data>,<ea>
     {CMPI_16_DA_0,              0xFF00,     0x0C40,     8},  // CMPI.W #<data>,<ea>
     {CMPI_32_DA_0,              0xFF00,     0x0C80,     14}, // CMPI.L #<data>,<ea>
