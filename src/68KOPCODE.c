@@ -1747,8 +1747,6 @@ M68K_MAKE_OPCODE(CMPM, 8, A, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
     M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 7;
     M68K_FLAG_C = (SRC > DEST);
-
-    printf("VALUE READ: 0x%p\n", &SRC);
 }
 
 M68K_MAKE_OPCODE(CMPM, 16, A, 0)
@@ -1827,6 +1825,55 @@ M68K_MAKE_OPCODE(DIVS, 16, D, 0)
         *DEST = M68K_MASK_OUT_ABOVE_32(M68K_MASK_OUT_ABOVE_16(QUOTIENT) | REMAINDER << 16);
         return;
     }
+}
+
+M68K_MAKE_OPCODE(DIVS, 16, IMM, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    signed SRC = (short)READ_IMM_16();
+    signed long DIV = (signed long)*DEST;
+    signed long QUOTIENT;
+    signed long REMAINDER;
+
+    if(SRC != 0)
+    {
+        if(DIV == (signed long)0x80000000 && SRC == -1)
+        {
+
+            M68K_FLAG_Z = 0;
+            M68K_FLAG_N = 0;
+            M68K_FLAG_C = 0;
+            M68K_FLAG_V = 1;
+            return;
+
+        }
+    }
+
+    QUOTIENT = (((U32)*DEST) / SRC);
+    REMAINDER = (((U32)*DEST) % SRC);
+
+    // MODULO TYPE CAST TO HANDLE NEW SIGNED BIAS
+    // (02/06/25 - I WAS HANDLING THE MODULO CALCULATION WRONG)
+
+    // IT NEEDS TO MAKE SURE THAT IT IS WITHIN THE SPECIFIC RANGE
+    // OTHER THE IMM VALUE WILL AUTOMATICALLY RESULT IN AN OVERFLOW
+
+    if (QUOTIENT < -32768 || QUOTIENT > 32767) 
+    {
+        M68K_FLAG_V = 1; 
+        M68K_FLAG_N = (QUOTIENT < 0);
+        M68K_FLAG_Z = 0;
+        M68K_FLAG_C = 0;
+        return;
+    }
+
+    *DEST = (REMAINDER << 16) | (QUOTIENT & 0xFFFF);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_N = (QUOTIENT < 0);
+    M68K_FLAG_Z = (QUOTIENT == 0);
+    M68K_FLAG_C = 0;
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(DIVU, 16, D, 0)
@@ -4058,8 +4105,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
     {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
-    {DIVS_16_D_0,               0xF1C0,     0x81C0,     158},// DIVS.W <ea>,Dn
-    {DIVU_16_D_0,               0xF1C0,     0x80C0,     140},// DIVU.W <ea>,Dn
+    {DIVS_16_D_0,               0xF1F8,     0x81C0,     4},// DIVS.W Dn,Dy
+    {DIVS_16_IMM_0,             0xF1FF,     0x81FC,     4}, // DIVS.W #imm, Dy
+    {DIVU_16_D_0,               0xF1F8,     0x80C0,     4},// DIVU.W <ea>, Dy
     {EOR_8_D_0,                 0xFFFF,     0xB101,     4},  // EOR.B Dn,<ea>
     {EOR_16_D_0,                0xFFFF,     0xB141,     4},  // EOR.W Dn,<ea>
     {EOR_32_D_0,                0xFFFF,     0xB181,     8},  // EOR.L Dn,<ea>
