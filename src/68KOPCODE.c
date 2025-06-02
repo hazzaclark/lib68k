@@ -3367,6 +3367,36 @@ M68K_MAKE_OPCODE(OR, 32, D, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(OR, 8, DN, DY)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(OR, 16, DN, DY)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH)));
+
+    M68K_FLAG_N = M68K_READ_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
+M68K_MAKE_OPCODE(OR, 32, DN, DY)
+{
+    unsigned RESULT = M68K_DATA_LOW ^= M68K_DATA_HIGH;
+
+    M68K_FLAG_N = M68K_READ_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+}
+
 M68K_MAKE_OPCODE(ORI, 8, D, 0)
 {
     unsigned RESULT = M68K_MASK_OUT_ABOVE_8((M68K_DATA_LOW |= M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH)));
@@ -4270,6 +4300,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {OR_8_D_0,                  0xF1C0,     0x8000,     4},  // OR.B <ea>,Dn
     {OR_16_D_0,                 0xF1C0,     0x8040,     4},  // OR.W <ea>,Dn
     {OR_32_D_0,                 0xF1C0,     0x8080,     6},  // OR.L <ea>,Dn
+    {OR_8_DN_DY,                0xF1F8,     0x8000,     6},  // OR.B Dn,Dy
+    {OR_16_DN_DY,               0xF1F8,     0x8040,     6},  // OR.W Dn,Dy
+    {OR_32_DN_DY,               0xF1F8,     0x8080,     8},  // OR.l Dn,Dy
     {ORI_8_D_0,                 0xFFF0,     0x0000,     8},  // ORI.B #<data>,<ea>
     {ORI_16_D_0,                0xFFF0,     0x0040,     8},  // ORI.W #<data>,<ea>
     {ORI_32_D_0,                0xFFF0,     0x0080,     16}, // ORI.L #<data>,<ea>
