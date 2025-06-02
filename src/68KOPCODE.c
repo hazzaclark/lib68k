@@ -2667,7 +2667,7 @@ M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
 
     M68K_WRITE_16(DESTINATION, SRC);
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_CCR_HOOK();
 
     M68K_REG_PC += 2;
@@ -4232,8 +4232,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
     {MOVE_16_PI_A,              0xF1F8,     0x30D8,     12},  // MOVE.W (An)+, (Ay)+
     {MOVE_32_PI_A,              0xF1F8,     0x20D8,     12},  // MOVE.L (An)+, (Ay)+
-    {MOVEA_16_DA_0,             0xF1F0,     0x303C,     4},  // MOVEA.W <ea>,An
-    {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L <ea>,An
+    {MOVEA_16_DA_0,             0xF1F0,     0x303C,     4},  // MOVEA.W Dn,Ay
+    {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L Dn,Ay
     {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
     {MOVEA_16_AN_AY,            0xF1F8,     0x3050,     16}, // MOVEA.W (An),Ay
@@ -4242,8 +4242,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_16_PRE_DEC_AY,       0xF1F8,     0x3060,     20}, // MOVEA.W -(An),Ay
     {MOVEA_32_POST_INC_AY,      0xF1F8,     0x2058,     20}, // MOVEA.L (An)+,Ay
     {MOVEA_32_PRE_DEC_AY,       0xF1F8,     0x2060,     20}, // MOVEA.L -(An),Ay
-    {MOVEA_16_EA_AY,            0xF1FF,     0x307C,     10},  // MOVEA.W <ea>,Ay    
-    {MOVEA_32_EA_AY,            0xF1FF,     0x207C,     20},  // MOVEA.L <ea>,Ay 
+    {MOVEA_16_EA_AY,            0xF1FF,     0x3079,     10},  // MOVEA.W <ea>,Ay    
+    {MOVEA_32_EA_AY,            0xF1FF,     0x2079,     20},  // MOVEA.L <ea>,Ay 
     {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     10},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     20},  // MOVE.L (An)+,Dn
     {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
