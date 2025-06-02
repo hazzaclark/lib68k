@@ -25,7 +25,7 @@
 	#define M68K_OPT_ON			1
 
 	#ifndef 	USE_M68K_HOOKS
-	#define 	USE_M68K_HOOKS
+	#define 	USE_M68K_HOOKS	
 
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
@@ -190,6 +190,11 @@
 #define 	M68K_MASK_OUT_ABOVE_8(A)            ((A) & 0xFF)
 #define 	M68K_MASK_OUT_ABOVE_16(A)           ((A) & 0xFFFF)
 #define 	M68K_MASK_OUT_ABOVE_32(A)           ((A) & 0xFFFFFFFF)
+
+#define 	M68K_MASK_OUT_BELOW_8(A)  			((A) & ~0xFF)
+#define 	M68K_MASK_OUT_BELOW_16(A)  			((A) & ~0xFFFF)
+#define 	M68K_MASK_OUT_BELOW_32(A)  			((A) & ~0xFFFFFFFF)
+
 #define		M68K_RETURN_ADDRESS(ADDRESS)        (ADDRESS & 0xFFFFFFFFFF)
 
 #define		M68K_BIT_SHIFT_8(VALUE)				((VALUE) >> 7) & 1
