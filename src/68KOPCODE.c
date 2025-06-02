@@ -1740,7 +1740,7 @@ M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
 M68K_MAKE_OPCODE(CMPM, 8, A, 0)
 {
     unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
-    unsigned DEST = M68K_READ_8(M68K_DATA_LOW);
+    unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = (U8)RESULT;
@@ -1752,7 +1752,7 @@ M68K_MAKE_OPCODE(CMPM, 8, A, 0)
 M68K_MAKE_OPCODE(CMPM, 16, A, 0)
 {
     unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
-    unsigned DEST = M68K_READ_16(M68K_DATA_LOW);
+    unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = (U16)RESULT;
@@ -1764,7 +1764,7 @@ M68K_MAKE_OPCODE(CMPM, 16, A, 0)
 M68K_MAKE_OPCODE(CMPM, 32, A, 0)
 {
     unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
-    unsigned DEST = M68K_READ_32(M68K_DATA_LOW);
+    unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = (U32)RESULT;
@@ -4231,7 +4231,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     {
         #if USE_OPCODE_DEBUG == M68K_OPT_OFF
 
-        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
+        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
                OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
 
         #endif
