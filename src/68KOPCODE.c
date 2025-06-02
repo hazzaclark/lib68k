@@ -4105,9 +4105,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
     {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
-    {DIVS_16_D_0,               0xF1F8,     0x81C0,     4},// DIVS.W Dn,Dy
-    {DIVS_16_IMM_0,             0xF1FF,     0x81FC,     4}, // DIVS.W #imm, Dy
-    {DIVU_16_D_0,               0xF1F8,     0x80C0,     4},// DIVU.W <ea>, Dy
+    {DIVS_16_D_0,               0xF1F8,     0x81C0,     4},  // DIVS.W Dn,Dy
+    {DIVS_16_IMM_0,             0xF1FF,     0x81FC,     4},  // DIVS.W #imm, Dy
+    {DIVU_16_D_0,               0xF1F8,     0x80C0,     4},  // DIVU.W <ea>, Dy
     {EOR_8_D_0,                 0xFFFF,     0xB101,     4},  // EOR.B Dn,<ea>
     {EOR_16_D_0,                0xFFFF,     0xB141,     4},  // EOR.W Dn,<ea>
     {EOR_32_D_0,                0xFFFF,     0xB181,     8},  // EOR.L Dn,<ea>
@@ -4203,9 +4203,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEG_8_EA_PRE_DEC,          0xFFF8,     0x4420,     4}, // NEG.B -(An)
     {NEG_16_EA_PRE_DEC,         0xFFF8,     0x4460,     8}, // NEG.W -(An)
     {NEG_32_EA_PRE_DEC,         0xFFF8,     0x44A0,     8}, // NEG.L -(An)
-    {NEGX_8_DA_0,               0xFFFF,     0x4039,     4},  // NEGX.B <ea>
-    {NEGX_16_DA_0,              0xFFFF,     0x4079,     4},  // NEGX.W <ea>
-    {NEGX_32_DA_0,              0xFFFF,     0x40B9,     6},  // NEGX.L <ea>
+    {NEGX_8_DA_0,               0xF1F8,     0x4000,     4},  // NEGX.B <ea>
+    {NEGX_16_DA_0,              0xF1F8,     0x4040,     4},  // NEGX.W <ea>
+    {NEGX_32_DA_0,              0xF1F8,     0x4080,     6},  // NEGX.L <ea>
     {NOT_8_D_0,                 0xFFF0,     0x4639,     4},  // NOT.B <ea>
     {NOT_16_D_0,                0xFFF0,     0x4640,     4},  // NOT.W <ea>
     {NOT_32_D_0,                0xFFF8,     0x4680,     6},  // NOT.L <ea>
