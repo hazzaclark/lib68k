@@ -1739,7 +1739,7 @@ M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
 
 M68K_MAKE_OPCODE(CMPM, 8, A, 0)
 {
-    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned SRC = M68K_READ_8(M68K_ADDRESS_LOW);
     unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
@@ -1747,11 +1747,13 @@ M68K_MAKE_OPCODE(CMPM, 8, A, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
     M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 7;
     M68K_FLAG_C = (SRC > DEST);
+
+    printf("VALUE READ: 0x%p\n", &SRC);
 }
 
 M68K_MAKE_OPCODE(CMPM, 16, A, 0)
 {
-    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned SRC = M68K_READ_16(M68K_ADDRESS_LOW);
     unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
@@ -1763,7 +1765,7 @@ M68K_MAKE_OPCODE(CMPM, 16, A, 0)
 
 M68K_MAKE_OPCODE(CMPM, 32, A, 0)
 {
-    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned SRC = M68K_READ_32(M68K_ADDRESS_LOW);
     unsigned DEST = M68K_DATA_LOW;
     unsigned RESULT = DEST - SRC;
 
