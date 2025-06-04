@@ -3882,6 +3882,8 @@ M68K_MAKE_OPCODE(SUBA, 16, DA, 0)
     unsigned* DATA_DEST = &M68K_DATA_LOW;
     *DATA_DEST = M68K_MASK_OUT_ABOVE_32(*DATA_DEST - M68K_READ_16(M68K_DATA_HIGH));
 
+    M68K_REG_PC += 4;
+
     #ifndef USE_ADDRESSING
 
     unsigned* ADDRESS_DEST = &M68K_ADDRESS_LOW;
@@ -3895,12 +3897,15 @@ M68K_MAKE_OPCODE(SUBA, 32, DA, 0)
     unsigned* DATA_DEST = &M68K_DATA_LOW;
     *DATA_DEST = M68K_MASK_OUT_ABOVE_32(*DATA_DEST - M68K_READ_32(M68K_DATA_HIGH));
 
+    M68K_REG_PC += 4;
+
     #ifndef USE_ADDRESSING
 
     unsigned* ADDRESS_DEST = &M68K_ADDRESS_LOW;
     *ADDRESS_DEST = M68K_MASK_OUT_ABOVE_32(*ADDRESS_DEST - M68K_READ_32(M68K_ADDRESS_HIGH));
 
     #endif
+
 }
 
 M68K_MAKE_OPCODE(SUBI, 8, D, 0)
@@ -3920,7 +3925,7 @@ M68K_MAKE_OPCODE(SUBI, 8, D, 0)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 6;
 }
 
 M68K_MAKE_OPCODE(SUBI, 16, D, 0)
@@ -3940,7 +3945,7 @@ M68K_MAKE_OPCODE(SUBI, 16, D, 0)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    M68K_REG_PC += 2;
+    M68K_REG_PC += 6;
 }
 
 M68K_MAKE_OPCODE(SUBI, 32, D, 0)
@@ -3960,7 +3965,70 @@ M68K_MAKE_OPCODE(SUBI, 32, D, 0)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    M68K_REG_PC += 4;
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(SUBI, 8, IMM, EA)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_8();
+    unsigned MASK = M68K_MASK_OUT_ABOVE_8(*DEST);
+    unsigned RESULT = MASK - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
+
+    *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | M68K_FLAG_Z;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(SUBI, 16, IMM, EA)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_16();
+    unsigned MASK = M68K_MASK_OUT_ABOVE_16(*DEST);
+    unsigned RESULT = MASK - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
+
+    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | M68K_FLAG_Z;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(SUBI, 32, IMM, EA)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_32();
+    unsigned MASK = M68K_MASK_OUT_ABOVE_32(*DEST);
+    unsigned RESULT = MASK - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_C = (SRC > MASK);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = (RESULT == 0);
+
+    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | M68K_FLAG_Z;
+
+    M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+
+    M68K_REG_PC += 8;
 }
 
 M68K_MAKE_OPCODE(SUBQ, 8, D, 0)
@@ -4448,9 +4516,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {SUB_32_D_EA,               0xF1FF,     0x90B9,     20},  // SUB.l <ea> Dy
     {SUBA_16_DA_0,              0xF1C0,     0x90C0,     8},  // SUBA.W <ea>,An
     {SUBA_32_DA_0,              0xF1C0,     0x91C0,     8},  // SUBA.L <ea>,An
-    {SUBI_8_D_0,                0xFFC0,     0x0400,     8},  // SUBI.B #<data>,<ea>
-    {SUBI_16_D_0,               0xFFC0,     0x0440,     8},  // SUBI.W #<data>,<ea>
-    {SUBI_32_D_0,               0xFFC0,     0x0480,     16}, // SUBI.L #<data>,<ea>
+    {SUBI_8_D_0,                0xFFC0,     0x0400,     8},  // SUBI.B #<data>,Dy
+    {SUBI_16_D_0,               0xFFC0,     0x0440,     8},  // SUBI.W #<data>,Dy
+    {SUBI_32_D_0,               0xFFC0,     0x0480,     16}, // SUBI.L #<data>,Dy
+    {SUBI_8_IMM_EA,             0xFFFF,     0x0439,     10},  // SUBI.B #imm,<ea>
+    {SUBI_16_IMM_EA,            0xFFFF,     0x0479,     14},  // SUBI.W #imm,<ea>
+    {SUBI_32_IMM_EA,            0xFFFF,     0x04B9,     20},  // SUBI.L #imm,<ea>
     {SUBQ_8_D_0,                0xF1C0,     0x5100,     4},  // SUBQ.B #<data>,<ea>
     {SUBQ_16_D_0,               0xF1C0,     0x5140,     4},  // SUBQ.W #<data>,<ea>
     {SUBQ_32_D_0,               0xF1C0,     0x5180,     8},  // SUBQ.L #<data>,<ea>
