@@ -2578,6 +2578,8 @@ M68K_MAKE_OPCODE(MOVEA, 32, D, 0)
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(MOVEA, 16, AN, AY)
@@ -4424,7 +4426,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_POST_INC_AY,      0xF1F8,     0x2058,     20}, // MOVEA.L (An)+,Ay
     {MOVEA_32_PRE_DEC_AY,       0xF1F8,     0x2060,     20}, // MOVEA.L -(An),Ay
     {MOVEA_16_EA_AY,            0xF1FF,     0x3079,     10},  // MOVEA.W <ea>,Ay    
-    {MOVEA_32_EA_AY,            0xF1FF,     0x2079,     20},  // MOVEA.L <ea>,Ay 
+    {MOVEA_32_EA_AY,            0xF1F8,     0x2079,     20},  // MOVEA.L <ea>,Ay 
     {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     10},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     20},  // MOVE.L (An)+,Dn
     {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
