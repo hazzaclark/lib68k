@@ -3820,6 +3820,63 @@ M68K_MAKE_OPCODE(SUB, 32, D, 0)
     M68K_CCR_HOOK();
 }
 
+M68K_MAKE_OPCODE(SUB, 8, D, EA)
+{
+    unsigned* BOUND = &M68K_DATA_HIGH;
+    unsigned SRC = READ_IMM_8();
+    unsigned DEST = M68K_MASK_OUT_ABOVE_8(*BOUND);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = ((SRC - DEST - RESULT) == 0);
+    M68K_FLAG_Z = M68K_BIT_SHIFT_8(RESULT);
+
+    M68K_CCR_HOOK();
+    *BOUND = M68K_MASK_OUT_BELOW_8(*BOUND) | M68K_FLAG_Z;
+
+    M68K_REG_PC += 4;
+}
+
+M68K_MAKE_OPCODE(SUB, 16, D, EA)
+{
+    unsigned* BOUND = &M68K_DATA_HIGH;
+    unsigned SRC = READ_IMM_16();
+    unsigned DEST = M68K_MASK_OUT_ABOVE_16(*BOUND);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = ((SRC - DEST - RESULT) == 0);
+    M68K_FLAG_Z = M68K_BIT_SHIFT_16(RESULT);
+
+    M68K_CCR_HOOK();
+    *BOUND = M68K_MASK_OUT_BELOW_16(*BOUND) | M68K_FLAG_Z;
+
+    M68K_REG_PC += 4;
+}
+
+M68K_MAKE_OPCODE(SUB, 32, D, EA)
+{
+    unsigned* BOUND = &M68K_DATA_HIGH;
+    unsigned SRC = READ_IMM_32();
+    unsigned DEST = M68K_MASK_OUT_ABOVE_32(*BOUND);
+
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
+    M68K_FLAG_V = ((SRC - DEST - RESULT) == 0);
+    M68K_FLAG_Z = M68K_BIT_SHIFT_32(RESULT);
+
+    M68K_CCR_HOOK();
+    *BOUND = M68K_MASK_OUT_BELOW_32(*BOUND) | M68K_FLAG_Z;
+    
+    M68K_REG_PC += 4;
+}
+
 M68K_MAKE_OPCODE(SUBA, 16, DA, 0)
 {
     unsigned* DATA_DEST = &M68K_DATA_LOW;
@@ -4383,9 +4440,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
     {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
     {STOP_0_0_0,                0xFFFF,     0x4E72,     4},  // STOP #<data>
-    {SUB_8_D_0,                 0xF1C0,     0x9000,     4},  // SUB.B <ea>,Dn
-    {SUB_16_D_0,                0xF1C0,     0x9040,     4},  // SUB.W <ea>,Dn
-    {SUB_32_D_0,                0xF1C0,     0x9080,     6},  // SUB.L <ea>,Dn
+    {SUB_8_D_0,                 0xF1F8,     0x9000,     6},  // SUB.B Dn,Dy
+    {SUB_16_D_0,                0xF1F8,     0x9040,     6},  // SUB.W Dn,Dy
+    {SUB_32_D_0,                0xF1F8,     0x9080,     12},  // SUB.L Dn,Dy
+    {SUB_8_D_EA,                0xF1FF,     0x9039,     14},  // SUB.B <ea> Dy
+    {SUB_16_D_EA,               0xF1FF,     0x9079,     16},  // SUB.W <ea> Dy
+    {SUB_32_D_EA,               0xF1FF,     0x90B9,     20},  // SUB.l <ea> Dy
     {SUBA_16_DA_0,              0xF1C0,     0x90C0,     8},  // SUBA.W <ea>,An
     {SUBA_32_DA_0,              0xF1C0,     0x91C0,     8},  // SUBA.L <ea>,An
     {SUBI_8_D_0,                0xFFC0,     0x0400,     8},  // SUBI.B #<data>,<ea>
