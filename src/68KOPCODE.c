@@ -3605,7 +3605,7 @@ M68K_MAKE_OPCODE(ROL, 8, R, 0)
 
     M68K_FLAG_C = 0;
     M68K_FLAG_N = (RESULT == 0);
-    M68K_FLAG_Z = SRC;
+    M68K_FLAG_Z = (SRC == 0);
     M68K_FLAG_V = 0;
 }
 
@@ -3630,7 +3630,7 @@ M68K_MAKE_OPCODE(ROL, 16, R, 0)
 
     M68K_FLAG_C = 0;
     M68K_FLAG_N = (RESULT == 0);
-    M68K_FLAG_Z = SRC;
+    M68K_FLAG_Z = (SRC == 0);
     M68K_FLAG_V = 0;
 }
 
@@ -4374,9 +4374,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ROL_8_R_0,                 0xFFF8,     0xE138,     6},  // ROL.B Dn, Dy
     {ROL_16_R_0,                0xFFF8,     0xE178,     6},  // ROL.W Dn, Dy
     {ROL_32_R_0,                0xFFF8,     0xE1B8,     8},  // ROL.L Dn, Dy
-    {ROXL_8_S_0,                0xFFFF,     0xE131,     6},  // ROXL.B Dn,Dy
-    {ROXL_16_S_0,               0xFFFF,     0xE171,     6},  // ROXL.W Dn,Dy
-    {ROXL_32_S_0,               0xFFFF,     0xE1B1,     8},  // ROXL.L Dn,Dy
+    {ROXL_8_S_0,                0xF1F8,     0xE130,     6},  // ROXL.B Dn,Dy
+    {ROXL_16_S_0,               0xF1F8,     0xE170,     6},  // ROXL.W Dn,Dy
+    {ROXL_32_S_0,               0xF1F8,     0xE1B0,     8},  // ROXL.L Dn,Dy
     {RTS_0_0_0,                 0xFFFF,     0x4E75,     16}, // RTS
     {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
     {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
