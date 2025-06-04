@@ -3586,7 +3586,7 @@ M68K_MAKE_OPCODE(ROL, 32, S, 0)
 
 M68K_MAKE_OPCODE(ROL, 8, R, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
     unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
     unsigned NEW_SHIFT = BASE_SHIFT & 7;
 
@@ -3611,7 +3611,7 @@ M68K_MAKE_OPCODE(ROL, 8, R, 0)
 
 M68K_MAKE_OPCODE(ROL, 16, R, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
     unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
     unsigned NEW_SHIFT = BASE_SHIFT & 15;
 
@@ -3636,7 +3636,7 @@ M68K_MAKE_OPCODE(ROL, 16, R, 0)
 
 M68K_MAKE_OPCODE(ROL, 32, R, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
     unsigned BASE_SHIFT = M68K_DATA_LOW & 0x3F;
     unsigned NEW_SHIFT = BASE_SHIFT & 31;
 
@@ -3648,14 +3648,14 @@ M68K_MAKE_OPCODE(ROL, 32, R, 0)
         *DEST = ~M68K_MASK_OUT_ABOVE_16(*DEST) | RESULT;
         M68K_FLAG_C = (SRC >> ((NEW_SHIFT - 32) & 0x1F)) >> 8;
         M68K_FLAG_N = (RESULT == 0);
-        M68K_FLAG_Z = SRC;
+        M68K_FLAG_Z = (SRC);
         M68K_FLAG_V = 0;
         return;
     }
 
     M68K_FLAG_C = 0;
     M68K_FLAG_N = (RESULT == 0);
-    M68K_FLAG_Z = SRC;
+    M68K_FLAG_Z = (SRC == 0);
     M68K_FLAG_V = 0;
 
     M68K_CCR_HOOK();
