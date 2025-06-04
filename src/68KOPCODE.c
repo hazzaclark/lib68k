@@ -3432,6 +3432,54 @@ M68K_MAKE_OPCODE(ORI, 32, D, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(ORI, 8, IMM, EA)
+{
+    unsigned SRC = READ_IMM_8();
+    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC ^ M68K_READ_8(EA);
+
+    M68K_WRITE_8(EA, RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(ORI, 16, IMM, EA)
+{
+    unsigned SRC = READ_IMM_16();
+    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC ^ M68K_READ_16(EA);
+
+    M68K_WRITE_16(EA, RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_REG_PC += 6;
+}
+
+M68K_MAKE_OPCODE(ORI, 32, IMM, EA)
+{
+    unsigned SRC = READ_IMM_32();
+    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned RESULT = SRC ^ M68K_READ_32(EA);
+
+    M68K_WRITE_32(EA, RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_REG_PC += 8;
+}
+
 M68K_MAKE_OPCODE(ORI_CCR, 8, 0, 0)
 {
     int DESTINATION = M68K_LOW_BITMASK;
@@ -4308,6 +4356,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ORI_8_D_0,                 0xF1F8,     0x0000,     8},  // ORI.B #<data>,<ea>
     {ORI_16_D_0,                0xF1F8,     0x0040,     8},  // ORI.W #<data>,<ea>
     {ORI_32_D_0,                0xF1F8,     0x0080,     16}, // ORI.L #<data>,<ea>
+    {ORI_8_IMM_EA,              0xFFFF,     0x0039,     24}, // ORI.B #imm,<ea>
+    {ORI_16_IMM_EA,             0xFFFF,     0x0079,     28}, // ORI.W #imm,<ea>
+    {ORI_32_IMM_EA,             0xFFFF,     0x00B9,     34}, // ORI.L #imm,<ea>
     {ORI_CCR_8_0_0,             0xFF00,     0x003C,     20}, // ORI #<data>,CCR
     {ORI_SR_16_0_0,             0xFF00,     0x007C,     20}, // ORI #<data>,SR
     {PEA_32_D_0,                0xFFFF,     0x4879,     12}, // PEA <ea>
