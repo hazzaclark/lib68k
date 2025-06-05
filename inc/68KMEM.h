@@ -78,7 +78,7 @@ typedef struct
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK == M68K_OPT_OFF
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
@@ -89,7 +89,7 @@ typedef struct
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if VERBOSE_TRACE_HOOK == M68K_OPT_ON
+#if VERBOSE_TRACE_HOOK == M68K_OPT_OFF
     #define VERBOSE_TRACE(MSG, ...) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
