@@ -1012,6 +1012,48 @@ M68K_MAKE_OPCODE(AND, 32, D, 0)
     M68K_CCR_HOOK();
 }
 
+M68K_MAKE_OPCODE(AND, 8, EA, D)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_8(DESTINATION);
+
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
+    M68K_FLAG_Z |= (RESULT == 0);
+    
+    M68K_REG_PC += 4;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(AND, 16, EA, D)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_16(DESTINATION);
+
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
+    M68K_FLAG_Z |= (RESULT == 0);
+    
+    M68K_REG_PC += 4;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(AND, 32, EA, D)
+{
+    int DESTINATION = M68K_DATA_LOW;
+    int SRC = M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    int RESULT = SRC = DESTINATION += M68K_MASK_OUT_ABOVE_32(DESTINATION);
+
+    M68K_FLAG_N += (M68K_FLAG_Z == 0); 
+    M68K_FLAG_Z |= (RESULT == 0);
+    
+    M68K_REG_PC += 4;
+    M68K_CCR_HOOK();
+}
+
 M68K_MAKE_OPCODE(ANDI, 8, EA, 0)
 {
     int SRC = READ_IMM_8();
@@ -4370,6 +4412,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {AND_8_D_0,                 0xF1C0,     0xC000,     4},  // AND.B <ea>,Dn
     {AND_16_D_0,                0xF1C0,     0xC040,     4},  // AND.W <ea>,Dn
     {AND_32_D_0,                0xF1C0,     0xC080,     8},  // AND.L <ea>,Dn
+    {AND_8_EA_D,                0xF1FF,     0xC139,     8},  // AND.B Dn, <ea>
+    {AND_16_EA_D,               0xF1FF,     0xC179,     8},  // AND.B Dn, <ea>
+    {AND_32_EA_D,               0xF1FF,     0xC1B9,     12},  // AND.B Dn, <ea>
     {ANDI_8_EA_0,               0xFFF8,     0x0200,     8},  // ANDI.B #<data>,<ea>
     {ANDI_16_EA_0,              0xFFF8,     0x0240,     8},  // ANDI.W #<data>,<ea>
     {ANDI_32_EA_0,              0xFFF8,     0x0280,     16}, // ANDI.L #<data>,<ea>
