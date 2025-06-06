@@ -3841,13 +3841,13 @@ M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_DATA_LOW;
 
-    unsigned RESULT = *DEST - SRC;
-    RESULT = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned RESULT = (*DEST - SRC) == READ_IMM_8();
 
     M68K_FLAG_V &= RESULT;
     M68K_FLAG_N = M68K_READ_8(RESULT);
-    M68K_FLAG_Z |= RESULT;
+    M68K_FLAG_Z = (RESULT == 0);
 
+    M68K_CCR_HOOK();
     *DEST = M68K_MASK_OUT_ABOVE_8(*DEST) | RESULT;
 }
 
