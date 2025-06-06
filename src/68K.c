@@ -23,7 +23,6 @@
 #ifdef BUILD_OP_TABLE
 
 int M68K_INITIAL_CYCLES;
-unsigned int M68K_ADDRESSING_SPACE; 
 unsigned char CYCLE_RANGE[0x10000];
 
 /*==================================================================================*/
