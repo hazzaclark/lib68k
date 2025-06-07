@@ -180,10 +180,10 @@
 #define         M68K_IRQ_6                  6
 #define         M68K_IRQ_7                  7
 
-#define			M68K_LOW_BITMASK		8*7
-#define			M68K_MID_BITMASK		16*7
-#define			M68K_HIGH_BITMASK		24*7
-#define 		M68K_MAX_BITMASK		32*7
+#define         M68K_LOW_BITMASK		8*7
+#define         M68K_MID_BITMASK		16*7
+#define         M68K_HIGH_BITMASK		24*7
+#define         M68K_MAX_BITMASK		32*7
 
 #define 	    M68K_EXCEPTION_RESET                         0
 #define 	    M68K_EXCEPTION_BUS_ERROR                     2 
@@ -318,7 +318,7 @@ extern CPU_68K CPU;
 
 typedef enum CPU_68K_REGS
 {
-	M68K_REG_TYPE,
+    M68K_REG_TYPE,
     M68K_D0 = 0,    
     M68K_D1 = 1,
     M68K_D2 = 2,
@@ -364,43 +364,43 @@ typedef enum CPU_68K_FLAGS
 } CPU_68K_FLAGS;
 
 #define         M68K_REG_BASE           CPU.REGISTER_BASE
-#define 		M68K_REG_DA             CPU.DATA_REGISTER
-#define			M68K_REG_D              CPU.DATA_REGISTER
-#define			M68K_REG_A              CPU.ADDRESS_REGISTER
-#define			M68K_REG_SR             CPU.STATUS_REGISTER
-#define			M68K_REG_PPC            CPU.PREVIOUS_PC
+#define         M68K_REG_DA             CPU.DATA_REGISTER
+#define         M68K_REG_D              CPU.DATA_REGISTER
+#define         M68K_REG_A              CPU.ADDRESS_REGISTER
+#define         M68K_REG_SR             CPU.STATUS_REGISTER
+#define         M68K_REG_PPC            CPU.PREVIOUS_PC
 #define         M68K_REG_JMP_TARG       CPU.JUMP_TARGET
-#define			M68K_REG_PC             CPU.PC
-#define			M68K_REG_SP             CPU.STACK_POINTER
-#define			M68K_REG_USP            CPU.USER_STACK
-#define			M68K_REG_ISP            CPU.INTERRUPT_SP
-#define			M68K_REG_MSP            CPU.MASTER_SP
-#define			M68K_REG_VBR            CPU.VBR
-#define			M68K_REG_SFC            CPU.SOURCE_FUNCTION_COUNTER
-#define			M68K_REG_DFC            CPU.DEST_FUNCTION_COUNTER
-#define			M68K_REG_CACR           CPU.CACHE_CONTROL
-#define			M68K_REG_CAAR           CPU.CACHE_ADDRESS
-#define			M68K_REG_IR             CPU.INDEX_REGISTER
-#define 		M68K_REG_FPR            CPU.FPR
-#define			M68K_REG_FPCR           CPU.FPCR
-#define			M68K_REG_FPSR           CPU.FPSR
-#define			M68K_REG_FPIAR          CPU.FPIA
+#define         M68K_REG_PC             CPU.PC
+#define         M68K_REG_SP             CPU.STACK_POINTER
+#define         M68K_REG_USP            CPU.USER_STACK
+#define         M68K_REG_ISP            CPU.INTERRUPT_SP
+#define         M68K_REG_MSP            CPU.MASTER_SP
+#define         M68K_REG_VBR            CPU.VBR
+#define         M68K_REG_SFC            CPU.SOURCE_FUNCTION_COUNTER
+#define         M68K_REG_DFC            CPU.DEST_FUNCTION_COUNTER
+#define         M68K_REG_CACR           CPU.CACHE_CONTROL
+#define         M68K_REG_CAAR           CPU.CACHE_ADDRESS
+#define         M68K_REG_IR             CPU.INDEX_REGISTER
+#define         M68K_REG_FPR            CPU.FPR
+#define         M68K_REG_FPCR           CPU.FPCR
+#define         M68K_REG_FPSR           CPU.FPSR
+#define         M68K_REG_FPIAR          CPU.FPIA
 
-#define  		M68K_FLAG_T0            CPU.T0_FLAG
-#define			M68K_FLAG_T1            CPU.T1_FLAG
-#define			M68K_FLAG_S             CPU.S_FLAG
-#define			M68K_FLAG_M             CPU.M_FLAG
-#define			M68K_FLAG_X             CPU.X_FLAG
-#define			M68K_FLAG_N             CPU.N_FLAG
-#define			M68K_FLAG_Z             CPU.Z_FLAG
-#define			M68K_FLAG_V             CPU.V_FLAG
-#define			M68K_FLAG_C             CPU.C_FLAG
-#define			M68K_FLAG_INT_LVL       CPU.INT_LEVEL
-#define			M68K_CPU_STOPPED        CPU.CPU_STOPPED
+#define         M68K_FLAG_T0            CPU.T0_FLAG
+#define         M68K_FLAG_T1            CPU.T1_FLAG
+#define         M68K_FLAG_S             CPU.S_FLAG
+#define         M68K_FLAG_M             CPU.M_FLAG
+#define         M68K_FLAG_X             CPU.X_FLAG
+#define         M68K_FLAG_N             CPU.N_FLAG
+#define         M68K_FLAG_Z             CPU.Z_FLAG
+#define         M68K_FLAG_V             CPU.V_FLAG
+#define         M68K_FLAG_C             CPU.C_FLAG
+#define         M68K_FLAG_INT_LVL       CPU.INT_LEVEL
+#define         M68K_CPU_STOPPED        CPU.CPU_STOPPED
 
 #define         M68K_CYC_REMAIN         CPU.REMAINING_CYCLES
-#define			M68K_CYC_EXCE           CPU.CYCLE_EXCEPTION
-#define 		M68K_CYCLE              CPU.INSTRUCTION_CYCLES
+#define         M68K_CYC_EXCE           CPU.CYCLE_EXCEPTION
+#define         M68K_CYCLE              CPU.INSTRUCTION_CYCLES
 #define         M68K_RESET_LVL          CPU.RESET_MODE
 #define         M68K_RESET_CYCLES       CPU.RESET_CYCLES
 
