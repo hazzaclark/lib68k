@@ -18,7 +18,7 @@
 #define         M68K_OPT_VERB                   (1 << 1)
 #define         M68K_OPT_DEVICE                 (1 << 2)
 
-#define         M68K_MAX_ADDR_START             0xFFFFFFF0
+#define         M68K_MAX_ADDR_START             0x00000000
 #define         M68K_MAX_ADDR_END               0xFFFFFFFF
 
 #define         M68K_T0_SHIFT                   (1 << 3)
@@ -74,6 +74,7 @@ typedef struct
 /////////////////////////////////////////////////////
 
 #define         MEM_TRACE_HOOK                  M68K_OPT_ON
+#define         MEM_MAP_TRACE_HOOK              M68K_OPT_ON
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_ON
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
@@ -87,6 +88,17 @@ typedef struct
         } while(0)
 #else
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
+#endif
+
+#if MEM_MAP_TRACE_HOOK == M68K_OPT_ON
+    #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) \
+        do { \
+            if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
+                printf("[TRACE] %c ADDR:0x%08X SIZE:%u\n", \
+                      (char)(OP), (ADDR), (SIZE)); \
+        } while(0)
+#else
+    #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
 #if VERBOSE_TRACE_HOOK == M68K_OPT_OFF
