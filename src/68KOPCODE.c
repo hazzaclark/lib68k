@@ -2701,6 +2701,24 @@ M68K_MAKE_OPCODE(MOVEA, 32, D, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(MOVEA, 16, A, 0)
+{
+    unsigned VALUE = READ_IMM_16();
+    M68K_ADDRESS_LOW = (S16)VALUE;
+
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
+    M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+}
+
+M68K_MAKE_OPCODE(MOVEA, 32, A, 0)
+{
+    unsigned VALUE = READ_IMM_32();
+    M68K_ADDRESS_LOW = (S32)VALUE;
+
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
+    M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+}
+
 M68K_MAKE_OPCODE(MOVEA, 16, AN, AY)
 {
     unsigned VALUE = READ_IMM_16();
@@ -3785,7 +3803,7 @@ M68K_MAKE_OPCODE(ROXL, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
-    unsigned RESULT = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned RESULT = M68K_DATA_HIGH;
 
     RESULT = ((U32)RESULT + SHIFT);
     RESULT = M68K_MASK_OUT_ABOVE_8(RESULT);
@@ -3801,7 +3819,7 @@ M68K_MAKE_OPCODE(ROXL, 16, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
-    unsigned RESULT = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned RESULT = M68K_DATA_HIGH;
 
     RESULT = ((U32)RESULT + SHIFT);
     RESULT = M68K_MASK_OUT_ABOVE_16(RESULT);
@@ -3817,7 +3835,7 @@ M68K_MAKE_OPCODE(ROXL, 32, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
-    unsigned RESULT = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned RESULT = M68K_DATA_HIGH;
 
     RESULT = ((U32)RESULT + SHIFT);
     RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
@@ -4542,6 +4560,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L Dn,Ay
     {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
+    {MOVEA_16_A_0,              0xFFF8,     0x3048,     20},  // MOVEA.W An,Ay
+    {MOVEA_32_A_0,              0xFFF8,     0x2048,     20},  // MOVEA.l An,Ay
     {MOVEA_16_AN_AY,            0xF1F8,     0x3050,     16}, // MOVEA.W (An),Ay
     {MOVEA_32_AN_AY,            0xF1F8,     0x2050,     16}, // MOVEA.L (An),Ay
     {MOVEA_16_POST_INC_AY,      0xF1F8,     0x3058,     16}, // MOVEA.W (An)+,Ay
