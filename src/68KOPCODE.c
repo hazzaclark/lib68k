@@ -2089,6 +2089,12 @@ M68K_MAKE_OPCODE(EORI_CCR, 8, 0, 0)
 {
     M68K_SET_CCR(M68K_GET_CCR() ^ READ_IMM_16());
 
+    M68K_FLAG_N = 0;
+    M68K_FLAG_X = 0;
+    M68K_FLAG_Z = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
     M68K_REG_PC += 2;
 }
 
