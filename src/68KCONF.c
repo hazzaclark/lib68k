@@ -202,12 +202,16 @@ unsigned int READ_IMM_8(void)
 
 unsigned int READ_IMM_16(void) 
 {
-    return M68K_READ_16(M68K_REG_PC); 
+	int VALUE = M68K_READ_16(M68K_REG_PC);
+	M68K_REG_PC += 2;
+    return VALUE; 
 }
 
 unsigned int READ_IMM_32(void) 
 {
-    return M68K_READ_32(M68K_REG_PC); 
+    int VALUE = M68K_READ_32(M68K_REG_PC);
+	M68K_REG_PC += 4;
+    return VALUE;  
 }
 
 void M68K_BRANCH_8(unsigned OFFSET)
