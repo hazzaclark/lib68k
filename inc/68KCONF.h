@@ -99,10 +99,10 @@
     	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
 	#endif
 
-	#if M68K_RESET_HOOK == M68K_OPT_ON
+	#if M68K_RESET_HOOK == M68K_OPT_OFF
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04x -> CURRENT SP: 0x%04X\n", \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%04X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 	#else
@@ -245,11 +245,17 @@ extern unsigned int M68K_DI_8(void);
 extern unsigned int M68K_DI_16(void);
 extern unsigned int M68K_DI_32(void); 
 
+extern unsigned int M68K_GET_EA_EXT(unsigned BASE);
+
 extern unsigned int M68K_POST_DEC_16(void);
 extern unsigned int M68K_POST_DEC_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SP(void);
+
+extern unsigned int M68K_GET_IX_8(void);
+extern unsigned int M68K_GET_IX_16(void);
+extern unsigned int M68K_GET_IX_32(void);
 
 extern U8 M68K_VECTOR_TABLE[5][256];
 
