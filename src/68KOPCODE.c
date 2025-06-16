@@ -171,16 +171,15 @@ M68K_MAKE_OPCODE(ADD, 8, A, AI)
 {
     unsigned* EA = &M68K_DATA_HIGH;
     unsigned SRC = READ_IMM_8();
-    unsigned DEST = M68K_MASK_OUT_ABOVE_8(*EA);
+    unsigned DEST = *EA;
     unsigned RESULT = SRC + DEST;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
     M68K_FLAG_V = (((SRC ^ RESULT) & (DEST ^ RESULT)) == 0);
     M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
     M68K_FLAG_Z = (RESULT == 0);
-    M68K_REG_PC += 2;
 
-    *EA = ~M68K_MASK_OUT_ABOVE_8(*EA) | M68K_FLAG_Z;
+    *EA = M68K_FLAG_Z;
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
@@ -190,16 +189,15 @@ M68K_MAKE_OPCODE(ADD, 16, A, AI)
 {
     unsigned* EA = &M68K_DATA_HIGH;
     unsigned SRC = READ_IMM_16();
-    unsigned DEST = M68K_MASK_OUT_ABOVE_16(*EA);
+    unsigned DEST = *EA;
     unsigned RESULT = SRC + DEST;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_V = (((SRC ^ RESULT) & (DEST ^ RESULT)) == 0);
     M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
     M68K_FLAG_Z = (RESULT == 0);
-    M68K_REG_PC += 2;
 
-    *EA = ~M68K_MASK_OUT_ABOVE_16(*EA) | M68K_FLAG_Z;
+    *EA = M68K_FLAG_Z;
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
@@ -208,17 +206,16 @@ M68K_MAKE_OPCODE(ADD, 16, A, AI)
 M68K_MAKE_OPCODE(ADD, 32, A, AI)
 {
     unsigned* EA = &M68K_DATA_HIGH;
-    unsigned SRC = READ_IMM_32();
-    unsigned DEST = M68K_MASK_OUT_ABOVE_32(*EA);
+    unsigned SRC = READ_IMM_16();
+    unsigned DEST = *EA;
     unsigned RESULT = SRC + DEST;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_V = (((SRC ^ RESULT) & (DEST ^ RESULT)) == 0);
     M68K_FLAG_X = M68K_FLAG_C = (RESULT == 0);
     M68K_FLAG_Z = (RESULT == 0);
-    M68K_REG_PC += 2;
 
-    *EA = ~M68K_MASK_OUT_ABOVE_32(*EA) | M68K_FLAG_Z;
+    *EA = M68K_FLAG_Z;
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
@@ -2425,7 +2422,7 @@ M68K_MAKE_OPCODE(MOVE, 32, D, EA)
 
 M68K_MAKE_OPCODE(MOVE, 8, D, I)
 {
-    unsigned RESULT = READ_IMM_8();
+    unsigned RESULT = M68K_GET_IX_8();
     unsigned* EA = &M68K_DATA_HIGH;
 
     *EA = ~M68K_MASK_OUT_ABOVE_8(*EA) | RESULT;
@@ -2438,15 +2435,14 @@ M68K_MAKE_OPCODE(MOVE, 8, D, I)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE, 16, D, I)
 {
-    unsigned RESULT = READ_IMM_16();
+    unsigned RESULT = M68K_GET_IX_16();
     unsigned* EA = &M68K_DATA_HIGH;
 
-    *EA = M68K_MASK_OUT_ABOVE_16(*EA) | RESULT;
+    *EA = ~M68K_MASK_OUT_ABOVE_16(*EA) | RESULT;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
@@ -2456,8 +2452,8 @@ M68K_MAKE_OPCODE(MOVE, 16, D, I)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
-    M68K_REG_PC += 2;
 }
+
 M68K_MAKE_OPCODE(MOVE, 32, D, I)
 {
     unsigned RESULT = READ_IMM_32();
@@ -2802,7 +2798,8 @@ M68K_MAKE_OPCODE(MOVEA, 32, EA, AY)
 
 M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
 {
-    M68K_SET_CCR(M68K_IX_16());
+    M68K_SET_CCR(M68K_ADDRESS_HIGH);
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MOVE_SR, 16, DA, 0)
