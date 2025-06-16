@@ -784,8 +784,7 @@ M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
 
 M68K_MAKE_OPCODE(ADDI, 8, IMM, EA)
 {
-    int EA = M68K_ADDRESS_LOW;
-    int DESTINATION = M68K_READ_8(EA);
+    int DESTINATION = M68K_ADDRESS_HIGH;
     int SRC = READ_IMM_8();
     int RESULT = SRC + DESTINATION;
 
@@ -797,14 +796,13 @@ M68K_MAKE_OPCODE(ADDI, 8, IMM, EA)
 
     M68K_CCR_HOOK();
 
-    M68K_WRITE_8(EA, M68K_FLAG_Z);
+    M68K_WRITE_8(M68K_FLAG_Z, RESULT);
     M68K_REG_PC += 6;
 }
 
 M68K_MAKE_OPCODE(ADDI, 16, IMM, EA)
 {
-    int EA = M68K_ADDRESS_LOW;
-    int DESTINATION = M68K_READ_16(EA);
+    int DESTINATION = M68K_ADDRESS_HIGH;
     int SRC = READ_IMM_16();
     int RESULT = SRC + DESTINATION;
 
@@ -816,14 +814,13 @@ M68K_MAKE_OPCODE(ADDI, 16, IMM, EA)
 
     M68K_CCR_HOOK();
 
-    M68K_WRITE_16(EA, M68K_FLAG_Z);
+    M68K_WRITE_16(M68K_FLAG_Z, RESULT);
     M68K_REG_PC += 6;
 }
 
 M68K_MAKE_OPCODE(ADDI, 32, IMM, EA)
 {
-    int EA = M68K_ADDRESS_LOW;
-    int DESTINATION = M68K_READ_32(EA);
+    int DESTINATION = M68K_ADDRESS_HIGH;
     int SRC = READ_IMM_32();
     int RESULT = SRC + DESTINATION;
 
@@ -835,7 +832,7 @@ M68K_MAKE_OPCODE(ADDI, 32, IMM, EA)
 
     M68K_CCR_HOOK();
 
-    M68K_WRITE_32(EA, M68K_FLAG_Z);
+    M68K_WRITE_32(M68K_FLAG_Z, RESULT);
     M68K_REG_PC += 8;
 }
 
@@ -4560,8 +4557,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L Dn,Ay
     {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
-    {MOVEA_16_A_0,              0xFFF8,     0x3048,     20},  // MOVEA.W An,Ay
-    {MOVEA_32_A_0,              0xFFF8,     0x2048,     20},  // MOVEA.l An,Ay
+    {MOVEA_16_A_0,              0xFFF8,     0x3048,     10},  // MOVEA.W An,Ay
+    {MOVEA_32_A_0,              0xFFF8,     0x2048,     20},  // MOVEA.L An,Ay
     {MOVEA_16_AN_AY,            0xF1F8,     0x3050,     16}, // MOVEA.W (An),Ay
     {MOVEA_32_AN_AY,            0xF1F8,     0x2050,     16}, // MOVEA.L (An),Ay
     {MOVEA_16_POST_INC_AY,      0xF1F8,     0x3058,     16}, // MOVEA.W (An)+,Ay
