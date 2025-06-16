@@ -273,6 +273,16 @@ unsigned int M68K_DI_32(void)
 	return M68K_READ_32(EA);
 } 
 
+extern unsigned int M68K_GET_EA_EXT(unsigned BASE)
+{
+	unsigned EXT = READ_IMM_16();
+	unsigned IR = 0;
+
+	IR = M68K_REG_DA[EXT >> 12];
+
+	return BASE + IR + (S16)EXT;
+}
+
 unsigned int M68K_POST_DEC_16(void)
 {
 	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
@@ -284,6 +294,11 @@ unsigned int M68K_POST_DEC_32(void)
 	unsigned EA = M68K_ADDRESS_HIGH + (S16)READ_IMM_16();
 	return M68K_READ_32(EA);
 }
+
+unsigned int M68K_GET_IX_8(void) { unsigned EA = M68K_IX_8(); return M68K_READ_8(EA); }
+unsigned int M68K_GET_IX_16(void) { unsigned EA = M68K_IX_16(); return M68K_READ_16(EA); }
+unsigned int M68K_GET_IX_32(void) { unsigned EA = M68K_IX_32(); return M68K_READ_32(EA); }
+
 
 // LOAD THE BINARY FILE AS PER THE SIMULATOR
 // THE IDEA FOR THIS IS TO DETERMINE THE SIZE OF THE FILE, THE MEMORY THAT NEEDS TO BE
