@@ -197,7 +197,7 @@ void M68K_CLEAR_HALT(void)
 
 unsigned int READ_IMM_8(void)
 {
-	return M68K_READ_8(M68K_REG_PC);
+	return M68K_MASK_OUT_ABOVE_8(READ_IMM_16());
 }
 
 unsigned int READ_IMM_16(void) 
