@@ -165,6 +165,7 @@
 #define         M68K_LEA_AL_16()            M68K_LEA_AL()
 #define         M68K_LEA_AL_32()            M68K_LEA_AL()
 
+#define         M68K_IX_8()                 M68K_GET_EA_EXT(M68K_ADDRESS_LOW)
 #define         M68K_IX_16()                READ_IMM_16()
 #define         M68K_IX_32()                READ_IMM_32()
 
