@@ -1259,13 +1259,12 @@ M68K_MAKE_OPCODE(BCLR, 8, D, EA)
 
 M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 {
-    U8 OFFSET = READ_IMM_8();
-    M68K_BRANCH_8(OFFSET);
+    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
 }
 
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    U16 OFFSET = READ_IMM_16();
+    U16 OFFSET = READ_IMM_8();
     M68K_BRANCH_16(OFFSET);
 }
 
@@ -1275,7 +1274,6 @@ M68K_MAKE_OPCODE(BRA, 32, 0, 0)
     // AND MASK IT AT 32 TO AVOID BAD READS
 
     M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
@@ -1428,8 +1426,6 @@ M68K_MAKE_OPCODE(CLR, 8, EA, 0)
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
-
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CLR, 16, EA, 0)
@@ -1439,8 +1435,6 @@ M68K_MAKE_OPCODE(CLR, 16, EA, 0)
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
-
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CLR, 32, EA, 0)
@@ -1450,8 +1444,6 @@ M68K_MAKE_OPCODE(CLR, 32, EA, 0)
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
-
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CLR, 8, EA, AN)
@@ -2159,7 +2151,7 @@ M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 
 M68K_MAKE_OPCODE(LEA, 32, AI, 0)
 {
-    M68K_ADDRESS_LOW = M68K_LEA_AL_32();
+    M68K_ADDRESS_LOW = M68K_LEA_AL_16();
     M68K_BASE_LEA_HOOK(M68K_REG_A);
 }
 
@@ -3320,17 +3312,17 @@ M68K_MAKE_OPCODE(NEGX, 16, DA, 0)
 
 M68K_MAKE_OPCODE(NEGX, 32, DA, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
     unsigned RESULT = M68K_MASK_OUT_ABOVE_32(*DEST) - (U32)M68K_FLAG_X;
 
-    M68K_FLAG_N = READ_IMM_32();
-    M68K_FLAG_X = M68K_FLAG_C = READ_IMM_32();
-    M68K_FLAG_V = *DEST & RESULT;
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_X = M68K_FLAG_C = ((*DEST + 0 + RESULT) == 0);
+    M68K_FLAG_V = (*DEST & RESULT) >> 24;
 
     RESULT = M68K_MASK_OUT_ABOVE_32(RESULT);
     M68K_FLAG_Z |= RESULT;
 
-    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | RESULT;
+    *DEST = RESULT;
 }
 
 M68K_MAKE_OPCODE(NOT, 8, D, 0)
@@ -4423,8 +4415,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (16-bit displacement)!
-    {BRA_32_0_0,                0xFFC0,     0x6000,     10}, // BRA <label> (32-bit displacement)
+    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)!
+    {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit displacement)
     {BEQ_8_0_0,                 0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
@@ -4437,10 +4429,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CHK_16_EA_0,               0xFFFF,     0x41B9,     10}, // CHK <ea>,Dn
     {CLR_8_D_0,                 0xFFF8,     0x4200,     4},  // CLR.B Dn
     {CLR_16_D_0,                0xFFF8,     0x4240,     4},  // CLR.W Dn
-    {CLR_32_D_0,                0xFFF8,     0x4280,     6},  // CLR.L Dn
-    {CLR_8_EA_0,                0xFFF0,     0x4230,     12},  // CLR.B <ea>
-    {CLR_16_EA_0,               0xFFF0,     0x4270,     12},  // CLR.W <ea>
-    {CLR_32_EA_0,               0xFFF0,     0x42B0,     12},  // CLR.L <ea>
+    {CLR_32_D_0,                0xFFF8,     0x4280,     12},  // CLR.L Dn
+    {CLR_8_EA_0,                0xFFF8,     0x4230,     12},  // CLR.B <ea>
+    {CLR_16_EA_0,               0xFFF8,     0x4270,     12},  // CLR.W <ea>
+    {CLR_32_EA_0,               0xFFF8,     0x42B0,     12},  // CLR.L <ea>
     {CLR_8_EA_AN,               0xFFF0,     0x4210,     12},  // CLR.B (An)
     {CLR_16_EA_AN,              0xFFF0,     0x4250,     12},  // CLR.W (An)
     {CLR_32_EA_AN,              0xFFF0,     0x4290,     12},  // CLR.L (An)
@@ -4573,7 +4565,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {NEG_32_EA_PRE_DEC,         0xFFF8,     0x44A0,     8}, // NEG.L -(An)
     {NEGX_8_DA_0,               0xF1F8,     0x4000,     4},  // NEGX.B <ea>
     {NEGX_16_DA_0,              0xF1F8,     0x4040,     4},  // NEGX.W <ea>
-    {NEGX_32_DA_0,              0xF1F8,     0x4080,     6},  // NEGX.L <ea>
+    {NEGX_32_DA_0,              0xFFF8,     0x4080,     6},  // NEGX.L <ea>
     {NOT_8_D_0,                 0xFFF8,     0x4600,     4},  // NOT.B Dn
     {NOT_16_D_0,                0xFFF8,     0x4640,     4},  // NOT.W Dn
     {NOT_32_D_0,                0xFFF8,     0x4680,     6},  // NOT.L Dn
