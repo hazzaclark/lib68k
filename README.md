@@ -11,7 +11,7 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
 
 ## Features:
 
- - Accurate and detailed CPU Emulation (statically type, not interpretted)
+ - Accurate and detailed CPU Emulation (statically typed, not interpretted)
  - Verbose Execution Model (precomputed Jump Table using Function Pointer)
  - Flexible Memory Mapper Scheme (RAM, ROM, IO and Vectors)
  - auto-disable for options
