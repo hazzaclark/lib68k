@@ -207,7 +207,7 @@ M68K_MAKE_OPCODE(ADD, 16, A, AI)
 M68K_MAKE_OPCODE(ADD, 32, A, AI)
 {
     unsigned* EA = &M68K_DATA_HIGH;
-    unsigned SRC = READ_IMM_32();
+    unsigned SRC = READ_IMM_16();
     unsigned DEST = *EA;
     unsigned RESULT = SRC + DEST;
 
