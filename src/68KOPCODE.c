@@ -164,7 +164,8 @@ M68K_MAKE_OPCODE(ADD, 32, EA, 0)
 
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
-    M68K_REG_PC += 4;
+
+    //M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(ADD, 8, A, AI)
@@ -206,7 +207,7 @@ M68K_MAKE_OPCODE(ADD, 16, A, AI)
 M68K_MAKE_OPCODE(ADD, 32, A, AI)
 {
     unsigned* EA = &M68K_DATA_HIGH;
-    unsigned SRC = READ_IMM_16();
+    unsigned SRC = READ_IMM_32();
     unsigned DEST = *EA;
     unsigned RESULT = SRC + DEST;
 
@@ -739,44 +740,38 @@ M68K_MAKE_OPCODE(ADDI, 8, IMM, 0)
     M68K_FLAG_Z = (RESULT == 0);
 
     M68K_CCR_HOOK();
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
 {
-    int DESTINATION = M68K_DATA_LOW;
-    int SRC = (U16)DESTINATION;
-    int RESULT = SRC + DESTINATION;
-
-    DESTINATION = M68K_MASK_OUT_ABOVE_16(DESTINATION);
-
-    M68K_FLAG_N = (RESULT == 0);
+    unsigned* EA = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_16();
+    unsigned DESTINATION = *EA;
+    unsigned RESULT = SRC + DESTINATION;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_V = ((SRC + DESTINATION + RESULT) == 0);
-
     M68K_FLAG_X = ((M68K_FLAG_C = (RESULT == 0)));
     M68K_FLAG_Z = (RESULT == 0);
 
     M68K_CCR_HOOK();
-    M68K_REG_PC += 2;
+    *EA = M68K_FLAG_Z;
 }
 
 M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
 {
-    int DESTINATION = M68K_DATA_LOW;
-    int SRC = (U32)DESTINATION;
-    int RESULT = SRC + DESTINATION;
-
-    DESTINATION = M68K_MASK_OUT_ABOVE_32(DESTINATION);
-
-    M68K_FLAG_N = (RESULT == 0);
-    M68K_FLAG_V = ((U32)(SRC + DESTINATION + RESULT) == 0);
-
+    unsigned* EA = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_32();
+    unsigned DESTINATION = *EA;
+    unsigned RESULT = SRC + DESTINATION;
+    
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_V = ((SRC + DESTINATION + RESULT) == 0);
     M68K_FLAG_X = ((M68K_FLAG_C = (RESULT == 0)));
     M68K_FLAG_Z = (RESULT == 0);
 
     M68K_CCR_HOOK();
-
-    M68K_REG_PC += 4;
+    *EA = M68K_FLAG_Z;
 }
 
 M68K_MAKE_OPCODE(ADDI, 8, IMM, EA)
@@ -819,7 +814,7 @@ M68K_MAKE_OPCODE(ADDI, 16, IMM, EA)
 M68K_MAKE_OPCODE(ADDI, 32, IMM, EA)
 {
     int SRC = READ_IMM_32();
-    int EA = READ_IMM_16();
+    int EA = READ_IMM_32();
     int DESTINATION = M68K_READ_32(EA);
     int RESULT = SRC + DESTINATION;
 
@@ -4420,12 +4415,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     16},  // ADDA.L -(An), Ay
     {ADDA_16_PI_AY,             0xF1F8,     0xD0D8,     12},  // ADDA.W (An)+, Ay
     {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     16},  // ADDA.L (An)+, Ay
-    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     8},  // ADDI.B #<data>,Dy
-    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     8},  // ADDI.W #<data>,Dy
-    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     16}, // ADDI.L #<data>,Dy
-    {ADDI_8_IMM_EA,             0xFFFF,     0x0639,     16}, // ADDI.B #imm,<ea>
-    {ADDI_16_IMM_EA,            0xFFFF,     0x0679,     16}, // ADDI.W #imm,<ea>
-    {ADDI_32_IMM_EA,            0xFFFF,     0x06B9,     16}, // ADDI.L #imm,<ea>
+    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     10},  // ADDI.B #<data>,Dy
+    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     10},  // ADDI.W #<data>,Dy
+    {ADDI_32_IMM_0,             0xFFF8,     0x0680,     20}, // ADDI.L #<data>,Dy
+    {ADDI_8_IMM_EA,             0xFFF8,     0x0639,     20}, // ADDI.B #imm,<ea>
+    {ADDI_16_IMM_EA,            0xFFF8,     0x0679,     20}, // ADDI.W #imm,<ea>
+    {ADDI_32_IMM_EA,            0xFFF8,     0x06B9,     20}, // ADDI.L #imm,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     8},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     8},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
@@ -4619,9 +4614,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {OR_8_DN_DY,                0xF1F8,     0x8000,     6},  // OR.B Dn,Dy
     {OR_16_DN_DY,               0xF1F8,     0x8040,     6},  // OR.W Dn,Dy
     {OR_32_DN_DY,               0xF1F8,     0x8080,     8},  // OR.l Dn,Dy
-    {ORI_8_D_0,                 0xF1F8,     0x0000,     8},  // ORI.B #<data>,<ea>
-    {ORI_16_D_0,                0xF1F8,     0x0040,     8},  // ORI.W #<data>,<ea>
-    {ORI_32_D_0,                0xF1F8,     0x0080,     16}, // ORI.L #<data>,<ea>
+    {ORI_8_D_0,                 0xFFF8,     0x0000,     8},  // ORI.B #<data>,<ea>
+    {ORI_16_D_0,                0xFFF8,     0x0040,     8},  // ORI.W #<data>,<ea>
+    {ORI_32_D_0,                0xFFF8,     0x0080,     16}, // ORI.L #<data>,<ea>
     {ORI_8_IMM_EA,              0xFFFF,     0x0039,     24}, // ORI.B #imm,<ea>
     {ORI_16_IMM_EA,             0xFFFF,     0x0079,     28}, // ORI.W #imm,<ea>
     {ORI_32_IMM_EA,             0xFFFF,     0x00B9,     34}, // ORI.L #imm,<ea>
