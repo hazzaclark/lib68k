@@ -3544,8 +3544,9 @@ M68K_MAKE_OPCODE(ORI, 32, D, 0)
 
 M68K_MAKE_OPCODE(ORI, 8, IMM, EA)
 {
-    unsigned EA = M68K_EA();
-    unsigned RESULT = READ_IMM_8();
+    unsigned SRC = READ_IMM_8();
+    unsigned EA = READ_IMM_8();
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(SRC | M68K_READ_8(EA));
 
     M68K_WRITE_8(EA, RESULT);
 
@@ -3555,13 +3556,13 @@ M68K_MAKE_OPCODE(ORI, 8, IMM, EA)
     M68K_FLAG_V = 0;
 
     M68K_CCR_HOOK();
-    M68K_REG_PC += 6;
 }
 
 M68K_MAKE_OPCODE(ORI, 16, IMM, EA)
 {
-    unsigned EA = M68K_EA();
-    unsigned RESULT = READ_IMM_16();
+    unsigned SRC = READ_IMM_16();
+    unsigned EA = READ_IMM_16();
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(SRC | M68K_READ_16(EA));
 
     M68K_WRITE_16(EA, RESULT);
 
@@ -3571,13 +3572,14 @@ M68K_MAKE_OPCODE(ORI, 16, IMM, EA)
     M68K_FLAG_V = 0;
 
     M68K_CCR_HOOK();
-    M68K_REG_PC += 6;
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ORI, 32, IMM, EA)
 {
-    unsigned EA = M68K_EA();
-    unsigned RESULT = READ_IMM_32();
+    unsigned SRC = READ_IMM_32();
+    unsigned EA = READ_IMM_16();
+    unsigned RESULT = SRC | M68K_READ_32(EA);
 
     M68K_WRITE_32(EA, RESULT);
 
@@ -3587,7 +3589,7 @@ M68K_MAKE_OPCODE(ORI, 32, IMM, EA)
     M68K_FLAG_V = 0;
 
     M68K_CCR_HOOK();
-    M68K_REG_PC += 8;
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ORI_CCR, 8, 0, 0)
