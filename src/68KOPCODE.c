@@ -803,7 +803,7 @@ M68K_MAKE_OPCODE(ADDI, 16, IMM, EA)
 M68K_MAKE_OPCODE(ADDI, 32, IMM, EA)
 {
     int SRC = READ_IMM_32();
-    int EA = READ_IMM_32();
+    int EA = READ_IMM_16();
     int DESTINATION = M68K_READ_32(EA);
     int RESULT = SRC + DESTINATION;
 
@@ -4410,7 +4410,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     20}, // ADDI.L #<data>,Dy
     {ADDI_8_IMM_EA,             0xFFF8,     0x0639,     20}, // ADDI.B #imm,<ea>
     {ADDI_16_IMM_EA,            0xFFF8,     0x0679,     20}, // ADDI.W #imm,<ea>
-    {ADDI_32_IMM_EA,            0xFFF8,     0x06B9,     20}, // ADDI.L #imm,<ea>
+    {ADDI_32_IMM_EA,            0xFFFF,     0x06B9,     20}, // ADDI.L #imm,<ea>
     {ADDQ_8_D_0,                0xF1C0,     0x5000,     8},  // ADDQ.B #<data>,Dn
     {ADDQ_16_D_0,               0xF1C0,     0x5040,     8},  // ADDQ.W #<data>,Dn
     {ADDQ_32_D_0,               0xF1C0,     0x5080,     8},  // ADDQ.L #<data>,Dn
