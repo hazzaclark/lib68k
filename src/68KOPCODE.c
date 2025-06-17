@@ -1786,7 +1786,7 @@ M68K_MAKE_OPCODE(CMPA, 32, POST_INC, EA)
 
 M68K_MAKE_OPCODE(CMPI, 8, DA, 0)
 {
-    unsigned SRC = M68K_READ_8(M68K_DATA_HIGH);
+    unsigned SRC = READ_IMM_8();
     unsigned DEST = M68K_MASK_OUT_ABOVE_8(M68K_DATA_HIGH);
     unsigned RESULT = DEST - SRC;
 
@@ -1794,21 +1794,17 @@ M68K_MAKE_OPCODE(CMPI, 8, DA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
     M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 7; 
     M68K_FLAG_C = (SRC > DEST);  
-
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(CMPI, 16, DA, 0)
 {
-    unsigned SRC = M68K_READ_16(M68K_DATA_HIGH);
+    unsigned SRC = READ_IMM_16();
     unsigned DEST = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = (U16)RESULT;
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
     M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 15; 
-
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
@@ -1821,8 +1817,6 @@ M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
     M68K_FLAG_V = ((SRC ^ DEST) & (RESULT ^ DEST)) >> 31; 
     M68K_FLAG_C = (SRC > DEST);
-
-    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(CMPM, 8, A, 0)
@@ -2392,8 +2386,8 @@ M68K_MAKE_OPCODE(MOVE, 32, D, EA)
 
 M68K_MAKE_OPCODE(MOVE, 8, D, I)
 {
-    unsigned RESULT = M68K_GET_IX_8();
-    unsigned* EA = &M68K_DATA_HIGH;
+    unsigned RESULT = READ_IMM_8();
+    unsigned* EA = &M68K_DATA_LOW;
 
     *EA = ~M68K_MASK_OUT_ABOVE_8(*EA) | RESULT;
 
@@ -2409,7 +2403,7 @@ M68K_MAKE_OPCODE(MOVE, 8, D, I)
 
 M68K_MAKE_OPCODE(MOVE, 16, D, I)
 {
-    unsigned RESULT = M68K_GET_IX_16();
+    unsigned RESULT = READ_IMM_16();
     unsigned* EA = &M68K_DATA_HIGH;
 
     *EA = ~M68K_MASK_OUT_ABOVE_16(*EA) | RESULT;
@@ -4449,9 +4443,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPA_32_PRE_DEC_EA,        0xF1F8,     0xB1E0,     18},  // CMPA.L -(An),Ay
     {CMPA_16_POST_INC_EA,       0xF1F8,     0xB0D8,     10},  // CMPA.W -(An),Ay
     {CMPA_32_POST_INC_EA,       0xF1F8,     0xB1D8,     10},  // CMPA.l -(An),Ay
-    {CMPI_8_DA_0,               0xFF00,     0x0C00,     8},  // CMPI.B #<data>,<ea>
-    {CMPI_16_DA_0,              0xFF00,     0x0C40,     8},  // CMPI.W #<data>,<ea>
-    {CMPI_32_DA_0,              0xFF00,     0x0C80,     14}, // CMPI.L #<data>,<ea>
+    {CMPI_8_DA_0,               0xFFF8,     0x0C00,     8},  // CMPI.B #<data>,<ea>
+    {CMPI_16_DA_0,              0xFFF8,     0x0C40,     10},  // CMPI.W #<data>,<ea>
+    {CMPI_32_DA_0,              0xFFF8,     0x0C80,     14}, // CMPI.L #<data>,<ea>
     {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
