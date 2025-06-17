@@ -366,8 +366,6 @@ M68K_MAKE_OPCODE(ADD, 16, PRE_DEC, D)
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
-
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(ADD, 32, PRE_DEC, D)
@@ -4397,7 +4395,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_EA_PRE_DEC,        0xF1F8,     0xD120,     8},  // ADD.B Dn, -(Ay)
     {ADD_16_D_EA_PRE_DEC,       0xF1F8,     0xD160,     8},  // ADD.W Dn, -(Ay)
     {ADD_32_D_EA_PRE_DEC,       0xF1F8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
-    {ADD_16_PRE_DEC_D,          0xF1C0,     0xD068,     12}, // ADD.W -(An), Dy 
+    {ADD_16_PRE_DEC_D,          0xF1F8,     0xD060,     12}, // ADD.W -(An), Dy 
     {ADD_32_PRE_DEC_D,          0xF1F8,     0xD0A0,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xF1F8,     0xD028,     8},  // ADD.B $imm(An), Dy
     {ADD_16_A_AI,               0xF1F8,     0xD068,     8},  // ADD.W $imm(An), Dy
