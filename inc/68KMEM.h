@@ -30,8 +30,8 @@ typedef enum
 {
     MEM_READ = 'R',
     MEM_WRITE = 'W',
-    MEM_INVALID_READ = 'r',
-    MEM_INVALID_WRITE = 'w',
+    MEM_INVALID_READ = '!',
+    MEM_INVALID_WRITE = '?',
     MEM_MAP = 'M',
     MEM_UNMAP = 'U',
     MEM_MOVE = 'O', 
@@ -79,11 +79,11 @@ typedef struct
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_OFF
+#if MEM_TRACE_HOOK == M68K_OPT_ON
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c ADDR:0x%04X SIZE:%d VALUE:0x%04X\n", \
+                printf("[TRACE] %c ADDR:0x%08X SIZE:%d VALUE:0x%04X\n", \
                       (char)(OP), (ADDR), (SIZE), (VAL)); \
         } while(0)
 #else
