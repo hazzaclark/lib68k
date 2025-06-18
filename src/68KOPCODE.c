@@ -2918,24 +2918,22 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
 
 M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
 {
-    unsigned EA = M68K_READ_16(M68K_DATA_LOW);
-    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned EA = READ_IMM_16();
+    unsigned SRC = M68K_DATA_HIGH;
 
-    *DEST = M68K_MASK_OUT_ABOVE_16(*DEST) | ((M68K_READ_8(EA) << 8) + M68K_READ_8(EA + 2));
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
-
-    M68K_REG_PC += 2;
+    M68K_WRITE_8(EA, M68K_MASK_OUT_BELOW_8(M68K_BIT_SHIFT_8(SRC)));
+    M68K_WRITE_8(EA += 2, M68K_MASK_OUT_ABOVE_8(SRC));
 }
 
 M68K_MAKE_OPCODE(MOVEP, 32, ER, 0)
 {
-    unsigned EA = M68K_READ_32(M68K_DATA_LOW);
-    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned EA = M68K_ADDRESS_LOW + READ_IMM_16();
+    unsigned SRC = M68K_DATA_HIGH;
 
-    *DEST = M68K_MASK_OUT_ABOVE_32(*DEST) | ((M68K_READ_16(EA) << 8) + M68K_READ_16(EA + 2));
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
-
-    M68K_REG_PC += 2;
+    M68K_WRITE_8(EA, M68K_MASK_OUT_BELOW_8(M68K_BIT_SHIFT_32(SRC)));
+    M68K_WRITE_8(EA += 2, M68K_MASK_OUT_BELOW_8(M68K_BIT_SHIFT_16(SRC)));
+    M68K_WRITE_8(EA += 2, M68K_MASK_OUT_BELOW_8(M68K_BIT_SHIFT_8(SRC)));
+    M68K_WRITE_8(EA += 2, M68K_MASK_OUT_BELOW_8(SRC));
 }
 
 M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
@@ -4539,8 +4537,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_POST_INC_0,       0xFFF0,     0x48E0,     16},  // MOVEM.L <reglist>, (An)+
     {MOVEM_16_POST_INC_A,       0xFFF0,     0x4C90,     12}, // MOVEM.L (An)+, <reglist>
     {MOVEM_32_POST_INC_A,       0xFFF0,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
-    {MOVEP_16_ER_0,             0xFFF8,     0x0188,     16}, // MOVEP.W Dn, disp(An)
-    {MOVEP_32_ER_0,             0xFFF8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
+    {MOVEP_16_ER_0,             0xF1F8,     0x0188,     16}, // MOVEP.W Dn, disp(An)
+    {MOVEP_32_ER_0,             0xF1F8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF100,     0x7000,     4},  // MOVEQ #<data>,Dn
     {MOVE_8_D_IMM,              0xFFFF,     0x13FC,     14}, // MOVE.B #imm, <ea>
     {MOVE_16_D_IMM,             0xFFFF,     0x33FC,     14}, // MOVE.W #imm, <ea>
