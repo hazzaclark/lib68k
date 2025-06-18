@@ -2580,6 +2580,34 @@ M68K_MAKE_OPCODE(MOVE, 8, IMM, POST_DEC)
     M68K_REG_PC -= 2;
 }
 
+M68K_MAKE_OPCODE(MOVE, 16, IMM, POST_DEC)
+{
+    unsigned RESULT = READ_IMM_16();
+    unsigned EA = (M68K_EA() + READ_IMM_16());
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+    M68K_REG_PC -= 2;
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_DEC)
+{
+    unsigned RESULT = READ_IMM_32();
+    unsigned EA = (M68K_EA() + READ_IMM_16());
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_32(EA, RESULT);
+    M68K_REG_PC -= 2;
+}
+
 M68K_MAKE_OPCODE(MOVE, 16, D, POST_DEC)
 {
     unsigned RESULT = M68K_DATA_LOW;
@@ -4541,6 +4569,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
     {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.W #imm, (An)
     {MOVE_8_IMM_POST_DEC,       0xF1FF,     0x113C,     20},  // MOVE.B #imm, -(An)
+    {MOVE_16_IMM_POST_DEC,      0xF1FF,     0x313C,     20},  // MOVE.W #imm, -(An)
+    {MOVE_32_IMM_POST_DEC,      0xF1FF,     0x213C,     30},  // MOVE.L #imm, -(An)
     {MOVE_16_D_POST_DEC,        0xF1F8,     0x3100,     8},   // MOVE.W Dn, (-SP)
     {MOVE_16_D_PRE_DEC,         0xF1F8,     0x3020,     10},  // MOVE.W -(An), Dn
     {MOVE_32_D_PRE_DEC,         0xF1F8,     0x2020,     14},  // MOVE.L -(An), Dn
