@@ -3890,6 +3890,7 @@ M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
 
 M68K_MAKE_OPCODE(STOP, 0, 0, 0)
 {
+    #ifdef M68K_USE_SUPERVISOR
     if(M68K_FLAG_S)
     {
         unsigned STOP_STATUS = READ_IMM_16();
@@ -3897,7 +3898,12 @@ M68K_MAKE_OPCODE(STOP, 0, 0, 0)
         M68K_SET_SR(STOP_STATUS);
     }
 
-    return;
+    #else
+
+    unsigned STOP_STATUS = READ_IMM_16();
+    M68K_CPU_STOPPED |= 1;
+    M68K_SET_SR(STOP_STATUS);
+    #endif
 }
 
 M68K_MAKE_OPCODE(SUB, 8, D, 0)
