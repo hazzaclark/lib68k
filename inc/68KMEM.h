@@ -94,7 +94,7 @@ typedef struct
     #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c ADDR:0x%08X SIZE:%u\n", \
+                printf("[TRACE] %c ADDR:0x%08X SIZE:%1dKB\n", \
                       (char)(OP), (ADDR), (SIZE)); \
         } while(0)
 #else
