@@ -23,7 +23,7 @@ void SHOW_TRACE_STATUS(void)
 {
     printf("\nTRACE CONFIG:\n"); \
     printf("  BASIC:            %s\n", IS_TRACE_ENABLED(M68K_OPT_BASIC) ? "ENABLED" : "DISABLED"); \
-    printf("  VERBOSE:          %s\n", IS_TRACE_ENABLED(M68K_OPT_VERB) ? "ENABLED" : "DISABLED"); \
+    printf("  VERBOSE:          %s\n", (VERBOSE_TRACE_HOOK == M68K_OPT_ON && IS_TRACE_ENABLED(M68K_OPT_VERB)) ? "ENABLED" : "DISABLED"); \
     printf("  DEVICE TRACES:    %s\n", IS_TRACE_ENABLED(M68K_OPT_DEVICE) ? "ENABLED" : "DISABLED"); \
     printf("  T0 FLAG:          %s  (SHIFT: 0x%02X)\n", M68K_FLAG_T0 ? "ON" : "OFF", M68K_T0_SHIFT); \
     printf("  T1 FLAG:          %s (SHIFT: 0x%02X)\n", M68K_FLAG_T1 ? "ON" : "OFF", M68K_T1_SHIFT); \
@@ -235,16 +235,13 @@ void MEMORY_MAP(U32 BASE, U32 SIZE, bool WRITABLE)
     BUF->BASE = BASE;
     BUF->SIZE = SIZE;
     BUF->WRITE = WRITABLE;
-    BUF->BUFFER = calloc(SIZE, 1);
+    BUF->BUFFER = malloc(SIZE);
+    
     memset(BUF->BUFFER, 0, SIZE);
-
     memset(&BUF->USAGE, 0, sizeof(M68K_MEM_USAGE));
     BUF->USAGE.ACCESSED = false;
 
-    printf("MAPPED MEMORY: 0x%08X-0x%08X (%d BYTES)\n", 
-           BASE, BASE + SIZE - 1, SIZE);
-
-    MEM_MAP_TRACE(MEM_MAP, BUF->BASE, BUF->SIZE, BUF->BUFFER);
+    MEM_MAP_TRACE(MEM_MAP, BUF->BASE, BUF->SIZE / 1024, BUF->BUFFER);
 }
 
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS) { return MEMORY_READ(ADDRESS, MEM_SIZE_8); }
