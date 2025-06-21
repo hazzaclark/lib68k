@@ -137,7 +137,9 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
     }
 
 	printf("\nCPU INFORMATION:	\n");
-	printf("  CPU SET TO TYPE: %u\n", CPU_TYPE);
+	printf("  CPU SET TO TYPE: %u -> %s\n", CPU_TYPE, 
+       CPU_TYPE == M68K_CPU_000 ? "68000" : 
+       CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
 }
 
 int M68K_CYCLES_RUN(void)
@@ -204,14 +206,14 @@ unsigned int READ_IMM_16(void)
 {
 	int VALUE = M68K_READ_16(M68K_REG_PC);
 	M68K_REG_PC += 2;
-    return VALUE; 
+	return VALUE; 
 }
 
 unsigned int READ_IMM_32(void) 
 {
-    int VALUE = M68K_READ_32(M68K_REG_PC);
+	int VALUE = M68K_READ_32(M68K_REG_PC);
 	M68K_REG_PC += 4;
-    return VALUE;  
+	return VALUE;  
 }
 
 void M68K_BRANCH_8(unsigned OFFSET)
@@ -298,7 +300,6 @@ unsigned int M68K_POST_DEC_32(void)
 unsigned int M68K_GET_IX_8(void) { unsigned EA = M68K_IX_8(); return M68K_READ_8(EA); }
 unsigned int M68K_GET_IX_16(void) { unsigned EA = M68K_IX_16(); return M68K_READ_16(EA); }
 unsigned int M68K_GET_IX_32(void) { unsigned EA = M68K_IX_32(); return M68K_READ_32(EA); }
-
 
 // LOAD THE BINARY FILE AS PER THE SIMULATOR
 // THE IDEA FOR THIS IS TO DETERMINE THE SIZE OF THE FILE, THE MEMORY THAT NEEDS TO BE
