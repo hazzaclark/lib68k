@@ -2369,7 +2369,7 @@ M68K_MAKE_OPCODE(MOVE, 32, D, EA)
 M68K_MAKE_OPCODE(MOVE, 8, D, I)
 {
     unsigned RESULT = READ_IMM_8();
-    unsigned* EA = &M68K_DATA_LOW;
+    unsigned* EA = &M68K_DATA_HIGH;
 
     *EA = ~M68K_MASK_OUT_ABOVE_8(*EA) | RESULT;
 
