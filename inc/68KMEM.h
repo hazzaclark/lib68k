@@ -75,7 +75,7 @@ typedef struct
 
 #define         MEM_TRACE_HOOK                  M68K_OPT_ON
 #define         MEM_MAP_TRACE_HOOK              M68K_OPT_ON
-#define         VERBOSE_TRACE_HOOK              M68K_OPT_ON
+#define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
@@ -101,15 +101,11 @@ typedef struct
     #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if VERBOSE_TRACE_HOOK == M68K_OPT_OFF
-    #define VERBOSE_TRACE(MSG, ...) \
-        do { \
-            if (IS_TRACE_ENABLED(M68K_OPT_VERB)) \
-                printf("[VERBOSE] " MSG "\n", ##__VA_ARGS__); \
-        } while(0)
-#else
-    #define VERBOSE_TRACE(MSG, ...) ((void)0)
-#endif
+#define VERBOSE_TRACE(MSG, ...) \
+    do { \
+        if (VERBOSE_TRACE_HOOK == M68K_OPT_ON && IS_TRACE_ENABLED(M68K_OPT_VERB) && CHECK_TRACE_CONDITION()) \
+            printf("[VERBOSE] " MSG "\n", ##__VA_ARGS__); \
+    } while(0)
 
 #define SET_TRACE_FLAGS(T0, T1) \
         do {    \
@@ -118,6 +114,7 @@ typedef struct
             (T0) ? ENABLE_TRACE_FLAG(M68K_T0_SHIFT) : DISABLE_TRACE_FLAG(M68K_T0_SHIFT); \
             (T1) ? ENABLE_TRACE_FLAG(M68K_T1_SHIFT) : DISABLE_TRACE_FLAG(M68K_T1_SHIFT); \
     } while(0)
+
 #endif
 
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS);
