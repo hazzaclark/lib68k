@@ -1,7 +1,7 @@
 # lib68k
 Motorola 680x0 Standalone Emulation Library
 
-![image](https://github.com/user-attachments/assets/eaaa891b-b906-4bef-b25e-a1d1c424efc0)
+![image](https://github.com/user-attachments/assets/33aff4c6-3dce-4228-8aae-7ae8bcb37899)
 
 # Motive:
 
@@ -54,11 +54,11 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Motorola 68K-specific Big Endian Reads, accounting for Endianness Swap
 
-![image](https://github.com/user-attachments/assets/2bb2ef5e-c1c6-46c1-9c2c-928b9809aa50)
+![image](https://github.com/user-attachments/assets/8f638290-1495-4cac-84ef-66730544cce8)
 
 ### Running the simulator with imm.bin
 
-![image](https://github.com/user-attachments/assets/f5af2d26-4fc8-4374-a7b7-02f772810269)
+![image](https://github.com/user-attachments/assets/43c38c0a-4d10-4f39-833b-e5cd5e430c25)
 
 ## Auto-disable functionality:
 
