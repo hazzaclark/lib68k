@@ -12,9 +12,9 @@
 
 int main(int argc, char** argv) 
 {
-    printf("====================================================\n");
-    printf("      HARRY CLARK - MOTOROLA 680x0 EMULATOR        \n");
-    printf("====================================================\n");
+    printf("===================================================\n");
+    printf("       HARRY CLARK - MOTOROLA 680x0 EMULATOR       \n");
+    printf("===================================================\n");
 
     if(argc < 2)
     {
@@ -29,14 +29,14 @@ int main(int argc, char** argv)
     M68K_INIT();
     SHOW_MEMORY_MAPS();
 
+    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
+
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
     if(FILE_SIZE < 0)
     {
         printf("FAILED TO LOAD BINARY FILE\n");
         return 1;
     }
-
-    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
 
     printf("SUCCESSFULLY LOADED %d BYTES\n", FILE_SIZE);
 
