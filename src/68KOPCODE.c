@@ -4713,7 +4713,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     OPCODE = M68K_OPCODE_HANDLER_TABLE;
     while (OPCODE->HANDLER != NULL)
     {
-        #if USE_OPCODE_DEBUG == M68K_OPT_OFF
+        #if USE_OPCODE_DEBUG
 
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
                OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
