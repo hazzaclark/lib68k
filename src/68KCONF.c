@@ -140,6 +140,8 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 	printf("  CPU SET TO TYPE: %u -> %s\n", CPU_TYPE, 
        CPU_TYPE == M68K_CPU_000 ? "68000" : 
        CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
+
+    printf("  SUPERVISOR MODE:  %s\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); \
 }
 
 int M68K_CYCLES_RUN(void)
