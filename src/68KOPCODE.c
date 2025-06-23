@@ -10,7 +10,6 @@
 
 #ifdef BUILD_OP_TABLE
 
-OPCODE OPCODE_BASE;
 void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
 
 /* EXCEPTION HANDLER FOR A-LINE INSTRUCTION HANDLERS */
@@ -340,6 +339,26 @@ M68K_MAKE_OPCODE(ADD, 32, EA, DISP)
     M68K_FLAG_Z = (U32)RESULT == 0;
     M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 31 & 1;
     M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 31) & 1;
+
+    M68K_CCR_HOOK();
+    M68K_EA_PRINT_HOOK(M68K_REG_D);
+}
+
+M68K_MAKE_OPCODE(ADD, 8, PRE_DEC, D)
+{
+    U8 SRC_REG = M68K_DATA_LOW;
+    U8 DEST_REG = M68K_DATA_HIGH;
+
+    U32 SRC_VALUE = M68K_REG_D[SRC_REG];
+    U32 DEST_VALUE = M68K_REG_D[DEST_REG];
+    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+
+    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+
+    M68K_FLAG_N = (RESULT >> 7) & 1;
+    M68K_FLAG_Z = (U32)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 7 & 1;
+    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 7) & 1;
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
@@ -2534,10 +2553,11 @@ M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_INC)
 
 M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
 {
-    U16 VALUE = M68K_DATA_HIGH;
+    U16 VALUE = READ_IMM_16();
     U16 EA = M68K_EA();
-    M68K_WRITE_16(EA, VALUE);
+    M68K_WRITE_16(VALUE, EA);
 
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
     M68K_REG_PC += 2;
 }
 
@@ -4396,6 +4416,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_D_EA_PRE_DEC,        0xF1F8,     0xD120,     8},  // ADD.B Dn, -(Ay)
     {ADD_16_D_EA_PRE_DEC,       0xF1F8,     0xD160,     8},  // ADD.W Dn, -(Ay)
     {ADD_32_D_EA_PRE_DEC,       0xF1F8,     0xD1A0,     8},  // ADD.L Dn, -(Ay)
+    {ADD_8_PRE_DEC_D,           0xF1F8,     0xD020,     8},  // ADD.B -(An), Dy
     {ADD_16_PRE_DEC_D,          0xF1F8,     0xD060,     12}, // ADD.W -(An), Dy 
     {ADD_32_PRE_DEC_D,          0xF1F8,     0xD0A0,     12}, // ADD.L -(An), Dy 
     {ADD_8_A_AI,                0xF1F8,     0xD028,     8},  // ADD.B $imm(An), Dy
@@ -4554,7 +4575,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
-    {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.W #imm, (An)
+    {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.L #imm, (An)
     {MOVE_8_IMM_POST_DEC,       0xF1FF,     0x113C,     20},  // MOVE.B #imm, -(An)
     {MOVE_16_IMM_POST_DEC,      0xF1FF,     0x313C,     20},  // MOVE.W #imm, -(An)
     {MOVE_32_IMM_POST_DEC,      0xF1FF,     0x213C,     30},  // MOVE.L #imm, -(An)
@@ -4675,7 +4696,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 void M68K_BUILD_OPCODE_TABLE(void)
 {
     int INDEX;
-    const OPCODE_HANDLER* OSTRUCT;
+    const OPCODE_HANDLER* OPCODE;
 
     for (INDEX = 0; INDEX < 0x10000; INDEX++)
     {
@@ -4683,13 +4704,13 @@ void M68K_BUILD_OPCODE_TABLE(void)
         CYCLE_RANGE[INDEX] = 0;
     }
 
-    OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
-    while (OSTRUCT->HANDLER != NULL)
+    OPCODE = M68K_OPCODE_HANDLER_TABLE;
+    while (OPCODE->HANDLER != NULL)
     {
         #if USE_OPCODE_DEBUG == M68K_OPT_OFF
 
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
-               OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
+               OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
 
         #endif
 
@@ -4711,14 +4732,14 @@ void M68K_BUILD_OPCODE_TABLE(void)
             // AREAS SUCH AS AN IMMEDIATE SECTION DESIGNATED TO DEFINING CONSTANTS
             // WILL ONLY USE 4 CYCLES AS THAT ISNT NEEDING TO MANUALLY ASSERT ANY CHANGES IN MEMORY
 
-            if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
+            if ((INDEX & OPCODE->MASK) == OPCODE->MATCH)
             {
-                M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;               
+                M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE->HANDLER;
+                CYCLE_RANGE[INDEX] = OPCODE->CYCLES;               
             }
         }
 
-        OSTRUCT++;
+        OPCODE++;
     }
 }
 
