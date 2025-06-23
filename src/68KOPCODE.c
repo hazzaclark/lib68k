@@ -7,6 +7,7 @@
 /* NESTED INCLUDES */
 
 #include "68K.h"
+#include "68KCONF.h"
 
 #ifdef BUILD_OP_TABLE
 
@@ -3903,7 +3904,7 @@ M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
 
 M68K_MAKE_OPCODE(STOP, 0, 0, 0)
 {
-    #ifndef M68K_USE_SUPERVISOR
+    #if M68K_USE_SUPERVISOR == M68K_OPT_OFF
     if(M68K_FLAG_S)
     {
         unsigned STOP_STATUS = READ_IMM_16();
