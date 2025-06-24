@@ -25,7 +25,7 @@ git clone https://github.com/hazzaclark/lib68k
 
 cd lib68k
 
-make clean && make && ./lib68k <samples/FILE.bin>
+make clean && make && ./lib68k.exe samples/FILE.bin
 ```
 
 the following output will vary depending on system:
