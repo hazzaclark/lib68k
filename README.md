@@ -21,11 +21,11 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
 ## Usage:
 
 ```
-git clone this repository
+git clone https://github.com/hazzaclark/lib68k
 
-make clean
+cd lib68k
 
-make
+make clean && make && ./lib68k <samples/FILE.bin>
 ```
 
 the following output will vary depending on system:
