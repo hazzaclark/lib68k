@@ -2962,13 +2962,12 @@ M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
 M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
 {
     unsigned INDEX = 0;
-    unsigned LIST = READ_IMM_32();
+    unsigned LIST = M68K_MASK_OUT_ABOVE_32(READ_IMM_16());
     unsigned EA = M68K_ADDRESS_HIGH;
 
     for(; INDEX < 16; INDEX++)
     {
         EA = LIST;
-        EA += 4;
         M68K_WRITE_32(M68K_REG_BASE[INDEX], M68K_MASK_OUT_ABOVE_32(EA));
     }
 
