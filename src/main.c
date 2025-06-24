@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 
     if(argc < 2)
     {
-        printf("USAGE: %s <FILE>\n", argv[0]);
+        printf("USAGE: %s <samples/FILE.bin>\n", argv[0]);
         return 1;
     }
     
