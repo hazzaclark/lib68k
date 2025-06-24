@@ -24,7 +24,7 @@
 #define         M68K_T0_SHIFT                   (1 << 3)
 #define         M68K_T1_SHIFT                   (1 << 4)
 
-#define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB)
+#define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB | M68K_OPT_DEVICE)
 
 typedef enum
 {
