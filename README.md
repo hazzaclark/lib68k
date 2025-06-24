@@ -111,13 +111,13 @@ From there, the pointer encompassing the generation of the Opcode Handler Table 
 The function pointer in question doesn't account for an end-all-be-all design approach in accessing Opcodes. Since everything is mapped by the struct irrespective of the context, at runtime it will mould to suit whichever circumstance is required of the Opcode being fetched in execution, (size, type, EA mode, IMM value, etc).
 
 ```c
-OSTRUCT = M68K_OPCODE_HANDLER_TABLE;
-while (OSTRUCT->HANDLER != NULL)
-{
-        #if USE_OPCODE_DEBUG == M68K_OPT_ON
+OPCODE = M68K_OPCODE_HANDLER_TABLE;
+    while (OPCODE->HANDLER != NULL)
+    {
+        #if USE_OPCODE_DEBUG
 
-        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = %p\n",
-               OSTRUCT->MASK, OSTRUCT->MATCH, (void*)&OSTRUCT->HANDLER);
+        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
+               OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
 
         #endif
 
@@ -126,14 +126,14 @@ while (OSTRUCT->HANDLER != NULL)
             // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
             // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
 
-            if ((INDEX & OSTRUCT->MASK) == OSTRUCT->MATCH)
+            if ((INDEX & OPCODE->MASK) == OPCODE->MATCH)
             {
-                M68K_OPCODE_JUMP_TABLE[INDEX] = OSTRUCT->HANDLER;
-                CYCLE_RANGE[INDEX] = OSTRUCT->CYCLES;               
+                M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE->HANDLER;
+                CYCLE_RANGE[INDEX] = OPCODE->CYCLES;               
             }
         }
 
-        OSTRUCT++;
+        OPCODE++;
     }
 ```
 
