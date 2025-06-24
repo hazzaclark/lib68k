@@ -42,7 +42,7 @@
     #else
     #define BUILD_OP_TABLE
 
-    #define         USE_OPCODE_DEBUG                M68K_OPT_ON
+    #define         USE_OPCODE_DEBUG                M68K_OPT_OFF
 
     #define         OPCODE_ILLEGAL_MASK             (0x00000 << 16)
     #define         OPCODE_DEF_MASK                 (0xFF00 >> 0x0000)
