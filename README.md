@@ -112,16 +112,16 @@ The function pointer in question doesn't account for an end-all-be-all design ap
 
 ```c
 OPCODE = M68K_OPCODE_HANDLER_TABLE;
-    while (OPCODE->HANDLER != NULL)
-    {
-        #if USE_OPCODE_DEBUG
+while (OPCODE->HANDLER != NULL)
+{
+	#if USE_OPCODE_DEBUG
 
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
                OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
 
         #endif
 
-        for (INDEX = 0; INDEX < 0x10000; INDEX++)
+	for (INDEX = 0; INDEX < 0x10000; INDEX++)
         {
             // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
             // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
@@ -134,7 +134,7 @@ OPCODE = M68K_OPCODE_HANDLER_TABLE;
         }
 
         OPCODE++;
-    }
+}
 ```
 
 ```c
