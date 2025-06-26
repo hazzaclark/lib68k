@@ -28,6 +28,7 @@ cd lib68k
 make clean && make && ./lib68k.exe samples/FILE.bin
 ```
 
+This project's makefile is suited to be used with making a relevant library file with all of the bells and whistles for seamless integration into 68K systems developments - 
 the following output will vary depending on system:
 
 ### Windows:
