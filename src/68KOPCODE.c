@@ -2940,7 +2940,7 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, 0)
         M68K_WRITE_32(EA, INDEX);
     }
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
 M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
@@ -2971,7 +2971,7 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
         M68K_WRITE_32(EA, INDEX);
     }
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
 M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
@@ -3685,7 +3685,7 @@ M68K_MAKE_OPCODE(ROL, 8, S, 0)
     unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
-    unsigned RESULT = M68K_READ_8(SRC);
+    unsigned RESULT = READ_IMM_8();
 
     *DEST = M68K_MASK_OUT_ABOVE_8(RESULT);
 
@@ -3703,7 +3703,7 @@ M68K_MAKE_OPCODE(ROL, 16, S, 0)
     unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
-    unsigned RESULT = M68K_READ_16(SRC);
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(READ_IMM_16());
 
     *DEST = M68K_MASK_OUT_ABOVE_16(RESULT);
 
@@ -3721,7 +3721,7 @@ M68K_MAKE_OPCODE(ROL, 32, S, 0)
     unsigned BASE_SHIFT = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
-    unsigned RESULT = M68K_READ_32(SRC);
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(READ_IMM_16());
 
     *DEST = M68K_MASK_OUT_ABOVE_32(RESULT);
 
@@ -4595,7 +4595,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_DA_0,             0xFFF0,     0x48F0,     12}, // MOVEM.L <ea>,Regs
     {MOVEM_16_POST_INC_0,       0xFFF0,     0x48A0,     12},  // MOVEM.W <reglist>, (An)+
     {MOVEM_32_POST_INC_0,       0xFFF0,     0x48E0,     16},  // MOVEM.L <reglist>, (An)+
-    {MOVEM_16_POST_INC_A,       0xFFF0,     0x4C90,     12}, // MOVEM.L (An)+, <reglist>
+    {MOVEM_16_POST_INC_A,       0xFFF0,     0x4C90,     12}, // MOVEM.W (An)+, <reglist>
     {MOVEM_32_POST_INC_A,       0xFFF0,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
     {MOVEP_16_ER_0,             0xF1F8,     0x0188,     20}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xF1F8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
