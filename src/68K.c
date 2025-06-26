@@ -153,7 +153,7 @@ void M68K_SET_CCR(unsigned VALUE)
     // SOURCE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=14
     M68K_FLAG_X = M68K_BIT_4(VALUE) << 4;
     M68K_FLAG_N = M68K_BIT_3(VALUE) << 4;
-    M68K_FLAG_Z = M68K_BIT_2(VALUE);
+    M68K_FLAG_Z = !M68K_BIT_2(VALUE);
     M68K_FLAG_V = M68K_BIT_1(VALUE) << 6;
     M68K_FLAG_C = M68K_BIT_0(VALUE) << 8;
 }
@@ -177,17 +177,17 @@ void M68K_INIT(void)
     // https://www.cpcwiki.eu/imgs/7/7a/MC68000_User%27s_Manual.pdf
     // https://www.cpcwiki.eu/index.php/Motorola_68000
 
-    // 512KB (RAM)
-    MEMORY_MAP(0x000000, 0x80000, true);   
+    // 512KB RAM 
+    MEMORY_MAP(0x000000, 0x7FFFF, true);   
     
-    // 512KB (ROM)
-    MEMORY_MAP(0x400000, 0x80000, false);  
+    // 512KB ROM 
+    MEMORY_MAP(0x400000, 0x47FFFF, false);  
     
-    // 64KB (IO)
-    MEMORY_MAP(0xF00000, 0x10000, true);   
+    // 64KB IO 
+    MEMORY_MAP(0xF00000, 0xF0FFFF, true);   
     
-    // 64KB (VECTORS)
-    MEMORY_MAP(0xFFFF0000, 0x10000, false);
+    // 64KB VECTORS
+    MEMORY_MAP(0xFFFF0000, 0xFFFFFFFF, false);
 
     // TODO: WORK ON THE MEMORY BUS FOR TYPES 68020 ONWARDS
     
@@ -245,7 +245,7 @@ int M68K_EXEC(int CYCLES)
         M68K_REG_PC += 2;
         CPU.MASTER_CYCLES -= CURRENT_CYCLES;
         
-        printf("CYCLE: %d, REMAINING: %d\n", CURRENT_CYCLES, CPU.MASTER_CYCLES);
+        printf("CYCLES: %d, REMAINING: %d\n", CURRENT_CYCLES, CPU.MASTER_CYCLES);
         printf("-------------------------------------------------------------\n");
     }
 
