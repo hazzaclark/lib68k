@@ -91,14 +91,14 @@ typedef struct
 #endif
 
 #if MEM_MAP_TRACE_HOOK == M68K_OPT_ON
-    #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) \
+    #define MEM_MAP_TRACE(OP, ADDR, SIZE, UNIT, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c ADDR:0x%08X SIZE:%1dKB\n", \
-                      (char)(OP), (ADDR), (SIZE)); \
+                printf("[TRACE] %c ADDR:0x%08X SIZE:%d%s\n", \
+                      (char)(OP), (ADDR), (SIZE), (UNIT)); \
         } while(0)
 #else
-    #define MEM_MAP_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
+    #define MEM_MAP_TRACE(OP, ADDR, SIZE, UNIT, VAL) ((void)0)
 #endif
 
 #define VERBOSE_TRACE(MSG, ...) \
