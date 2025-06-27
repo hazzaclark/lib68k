@@ -134,6 +134,4 @@ void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE);
 void SHOW_MEMORY_MAPS(void);
 void SHOW_TRACE_STATUS(void);
 
-void MEM_SET_FC(unsigned int NEW_FUNC_CALL);
-
 extern U8 ENABLED_FLAGS;
