@@ -67,24 +67,24 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
 {
     switch (REGISTER)
     {
-        case M68K_D0: CPU.DATA_REGISTER[0] = VALUE; break;
-        case M68K_D1: CPU.DATA_REGISTER[1] = VALUE; break;
-        case M68K_D2: CPU.DATA_REGISTER[2] = VALUE; break;
-        case M68K_D3: CPU.DATA_REGISTER[3] = VALUE; break;
-        case M68K_D4: CPU.DATA_REGISTER[4] = VALUE; break;
-        case M68K_D5: CPU.DATA_REGISTER[5] = VALUE; break;
-        case M68K_D6: CPU.DATA_REGISTER[6] = VALUE; break;
-        case M68K_D7: CPU.DATA_REGISTER[7] = VALUE; break;
-        case M68K_A0: CPU.ADDRESS_REGISTER[0] = VALUE; break;
-        case M68K_A1: CPU.ADDRESS_REGISTER[1] = VALUE; break;
-        case M68K_A2: CPU.ADDRESS_REGISTER[2] = VALUE; break;
-        case M68K_A3: CPU.ADDRESS_REGISTER[3] = VALUE; break;
-        case M68K_A4: CPU.ADDRESS_REGISTER[4] = VALUE; break;
-        case M68K_A5: CPU.ADDRESS_REGISTER[5] = VALUE; break;
-        case M68K_A6: CPU.ADDRESS_REGISTER[6] = VALUE; break;
-        case M68K_A7: CPU.ADDRESS_REGISTER[7] = VALUE; break;
-        case M68K_PC: CPU.PC = VALUE; break;
-        case M68K_SR: CPU.STATUS_REGISTER = VALUE; break;
+        case M68K_D0: CPU.DATA_REGISTER[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D1: CPU.DATA_REGISTER[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D2: CPU.DATA_REGISTER[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D3: CPU.DATA_REGISTER[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D4: CPU.DATA_REGISTER[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D5: CPU.DATA_REGISTER[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D6: CPU.DATA_REGISTER[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D7: CPU.DATA_REGISTER[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A0: CPU.ADDRESS_REGISTER[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A1: CPU.ADDRESS_REGISTER[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A2: CPU.ADDRESS_REGISTER[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A3: CPU.ADDRESS_REGISTER[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A4: CPU.ADDRESS_REGISTER[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A5: CPU.ADDRESS_REGISTER[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A6: CPU.ADDRESS_REGISTER[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A7: CPU.ADDRESS_REGISTER[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_PC: M68K_JUMP(M68K_MASK_OUT_ABOVE_32(VALUE)); return;
+        case M68K_SR: M68K_SET_SR(VALUE); return;
         default: break;
     }
 }
