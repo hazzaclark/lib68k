@@ -8,8 +8,6 @@
 /* ANY AND ALL OF THE CORRESPONDING DEFINES AND DECLARATIONS CAN BE */
 /* ATTRIBUTED TO THE INFROMATION FOUND HERE: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf  */ 
 
-#ifndef USE_OPCODE_HANDLER_TABLE
-
 /* NESTED INCLUDES */
 
 #include "68K.h"
@@ -17,10 +15,8 @@
 #include "common.h"
 #include "util.h"
 
-#endif
-
-#ifndef USE_68K
-#ifdef BUILD_OP_TABLE
+#undef USE_68K
+#undef BUILD_OP_TABLE
 
 int M68K_INITIAL_CYCLES;
 unsigned char CYCLE_RANGE[0x10000];
@@ -225,6 +221,8 @@ int M68K_EXEC(int CYCLES)
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
 
+        #undef USE_OPCODE_HANDLER_TABLE
+
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
         // COMPLETELY BYPASSES THE NEED FOR M68K_USE_CYCLES AS WE DONT
@@ -258,6 +256,3 @@ int M68K_EXEC(int CYCLES)
 
     return M68K_INITIAL_CYCLES - CPU.MASTER_CYCLES;
 }
-
-#endif
-#endif
