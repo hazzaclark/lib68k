@@ -38,7 +38,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    printf("SUCCESSFULLY LOADED %d BYTES\n", FILE_SIZE);
+    printf("SUCCESSFULLY LOADED: %s -> SIZE: %d BYTES\n", argv[1], FILE_SIZE);
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
