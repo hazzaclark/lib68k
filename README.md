@@ -1,7 +1,7 @@
 # lib68k
 Motorola 680x0 Standalone Emulation Library
 
-![image](https://github.com/user-attachments/assets/33aff4c6-3dce-4228-8aae-7ae8bcb37899)
+![image](https://github.com/user-attachments/assets/d350b284-7c56-45e7-830a-11da2b21806c)
 
 # Motive:
 
