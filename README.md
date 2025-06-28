@@ -109,7 +109,7 @@ This is achieved through the ``M68K_BUILD_OPCODE_TABLE`` function, which generat
 
 From there, the pointer encompassing the generation of the Opcode Handler Table itself is linked to a function pointer.
 
-The function pointer in question doesn't account for an end-all-be-all design approach in accessing Opcodes. Since everything is mapped by the struct irrespective of the context, at runtime it will mould to suit whichever circumstance is required of the Opcode being fetched in execution, (size, type, EA mode, IMM value, etc).
+The function pointer in question will then look inside of the table to validate the Opcode being passed through, as well as the bitmask value, which determines the fixed and unfixed values encompassing the required bits of that Opcode Family. Since everything is mapped by the struct irrespective of the context, at runtime it will mould to suit whichever circumstance is required of the Opcode being fetched in execution, (size, type, EA mode, IMM value, etc).
 
 ```c
 OPCODE = M68K_OPCODE_HANDLER_TABLE;
