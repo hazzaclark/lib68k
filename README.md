@@ -59,7 +59,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Running the simulator with imm.bin
 
-![image](https://github.com/user-attachments/assets/369df8e9-556e-4e5b-bc30-0671a55a0467)
+![image](https://github.com/user-attachments/assets/10a854b5-33cc-4e49-b4d1-122ed697a3b5)
 
 ## Auto-disable functionality:
 
