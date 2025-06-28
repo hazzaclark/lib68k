@@ -55,7 +55,7 @@ Another example is showcasing the Memory Read and Writes in accordance with the 
 
 ### Motorola 68K-specific Big Endian Reads, accounting for Endianness Swap
 
-![image](https://github.com/user-attachments/assets/8f638290-1495-4cac-84ef-66730544cce8)
+![image](https://github.com/user-attachments/assets/aa269801-7986-40ec-a5dd-073f82391230)
 
 ### Running the simulator with imm.bin
 
