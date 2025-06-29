@@ -51,12 +51,6 @@ In my experience, I have found that compiling with [clownassembler](https://gith
 
 Follow the repository's instructions on how to work with that, or alternatively, use a 68K Assembler of your choosing
 
-Another example is showcasing the Memory Read and Writes in accordance with the design of the struct which encompasses said logic
-
-### Motorola 68K-specific Big Endian Reads, accounting for Endianness Swap
-
-![image](https://github.com/user-attachments/assets/aa269801-7986-40ec-a5dd-073f82391230)
-
 ### Running the simulator with imm.bin
 
 ![image](https://github.com/user-attachments/assets/10a854b5-33cc-4e49-b4d1-122ed697a3b5)
