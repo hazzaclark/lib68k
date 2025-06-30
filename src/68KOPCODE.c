@@ -2103,12 +2103,12 @@ M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 {
     unsigned EA = M68K_REG_PC;
-    EA += 4;
-
     M68K_REG_JMP_TARG = EA;
 
     M68K_PUSH_SP(EA);
     M68K_JUMP();
+
+    M68K_REG_PC += 4;
 }
 
 M68K_MAKE_OPCODE(LEA, 32, AI, 0)
