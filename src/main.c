@@ -3,12 +3,13 @@
 
 /* NESTED INCLUDES */
 
-#include "util.h"
 #include "68K.h"
-#include "68KCONF.h"
-#include "68KOPCODE.h"
-#include "68KSTD.h"
-#include "68KMEM.h"
+#include "util.h"
+
+#undef USE_68K
+#undef USE_CONFIG
+#undef USE_OPCODE
+#undef USE_MEM
 
 int main(int argc, char** argv) 
 {
