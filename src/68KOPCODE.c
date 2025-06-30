@@ -483,7 +483,7 @@ M68K_MAKE_OPCODE(ADD, 8, D, EA_POST_INC)
 M68K_MAKE_OPCODE(ADD, 16, D, EA_POST_INC)
 {
     unsigned EA = READ_IMM_16();
-    unsigned SRC = M68K_DATA_LOW;
+    unsigned SRC = M68K_DATA_HIGH;
     unsigned DESTINATION = M68K_READ_16(EA);
     unsigned RESULT = SRC + DESTINATION;
 
