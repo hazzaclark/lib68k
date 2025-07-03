@@ -433,6 +433,7 @@ typedef enum CPU_68K_FLAGS
 
 #define         M68K_MASTER_CYC         CPU.MASTER_CYCLES
 #define         M68K_REFRESH_CYC        CPU.REFRESH_CYCLES
+#define         M68K_END_CYC            CPU.CYCLE_END
 
 #define         M68K_INSTR_MODE         CPU.INSTRUCTION_MODE
 
@@ -460,7 +461,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
-int M68K_EXEC();
+int M68K_EXEC(unsigned CYCLES);
 void M68K_JUMP();
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
