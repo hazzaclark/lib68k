@@ -14,7 +14,7 @@
 int main(int argc, char** argv) 
 {
     printf("===================================================\n");
-    printf("       HARRY CLARK - MOTOROLA 680x0 EMULATOR       \n");
+    printf("      HARRY CLARK - MOTOROLA 680x0 EMULATOR        \n");
     printf("===================================================\n");
 
     if(argc < 2)
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
 
     printf("BEGINNING EXECUTION AT PC: 0x%04X\n", M68K_REG_PC);
-    M68K_EXEC(500);
+    M68K_EXEC();
 
     SHOW_MEMORY_MAPS();
     return 0;
