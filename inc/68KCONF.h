@@ -236,13 +236,15 @@
 
 			#if M68K_STATE_HOOK
 
-			#define	M68K_SAVE_STATE(PARAM, SIZE)				\
-				memcpy(&STATE[BUFFER], PARAM, SIZE);			\
+			#define	M68K_SAVE_STATE(PARAM, SIZE)						\
+				printf("SAVE -> [%u]+%zu ", BUFFER, (UNK)(SIZE));   	\
+				memcpy(&STATE[BUFFER], PARAM, SIZE);					\
 				BUFFER += SIZE;
 
 			
-			#define	M68K_LOAD_STATE(PARAM, SIZE)				\
-				memcpy(PARAM, &STATE[BUFFER], SIZE);			\
+			#define	M68K_LOAD_STATE(PARAM, SIZE)						\
+				printf("LOAD -> [%u]+%zu ", BUFFER, (UNK)(SIZE));		\
+				memcpy(PARAM, &STATE[BUFFER], SIZE);					\
 				BUFFER += SIZE;
 
 			#endif
