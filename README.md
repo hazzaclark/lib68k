@@ -53,7 +53,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 ### Running the simulator with imm.bin
 
-![image](https://github.com/user-attachments/assets/10a854b5-33cc-4e49-b4d1-122ed697a3b5)
+![image](https://github.com/user-attachments/assets/643a2044-53c0-4962-856b-6d21aeda20f0)
 
 ## Auto-disable functionality:
 
