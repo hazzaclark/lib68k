@@ -165,9 +165,11 @@
 #define         M68K_LEA_AL_16()            M68K_LEA_AL()
 #define         M68K_LEA_AL_32()            M68K_LEA_AL()
 
+                // ADDRESS EXTENSION (BITS 12 - 15)
+
 #define         M68K_IX_8()                 M68K_GET_EA_EXT(M68K_ADDRESS_LOW)
-#define         M68K_IX_16()                READ_IMM_16()
-#define         M68K_IX_32()                READ_IMM_32()
+#define         M68K_IX_16()                M68K_IX_8()
+#define         M68K_IX_32()                M68K_IX_8()
 
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
@@ -458,7 +460,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
-int M68K_EXEC(int CYCLES);
+int M68K_EXEC();
 void M68K_JUMP();
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
