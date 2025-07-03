@@ -25,7 +25,7 @@
 	#define M68K_OPT_ON			1
 
 	#ifndef 	USE_M68K_HOOKS
-	#define 	USE_M68K_HOOKS	
+	#define 	USE_M68K_HOOKS
 
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
@@ -100,10 +100,10 @@
     	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
 	#endif
 
-	#if M68K_RESET_HOOK == M68K_OPT_OFF
+	#if M68K_RESET_HOOK == M68K_OPT_ON
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%04X\n", \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: %u\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 	#else
