@@ -223,7 +223,7 @@ int M68K_EXEC()
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
         M68K_REG_PC += 2;
-        M68K_MASTER_CYC += CURRENT_CYCLES;
+        M68K_USE_CYCLES(CYCLE_RANGE[M68K_REG_IR]);
         
         printf("CYCLES: %d, TOTAL ELAPSED: %d\n", CURRENT_CYCLES, M68K_MASTER_CYC);
         printf("-------------------------------------------------------------\n");
