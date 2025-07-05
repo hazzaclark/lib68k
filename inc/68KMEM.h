@@ -18,8 +18,9 @@
 #define         M68K_OPT_VERB                   (1 << 1)
 #define         M68K_OPT_DEVICE                 (1 << 2)
 
-#define         M68K_MAX_ADDR_START             0x00000000
-#define         M68K_MAX_ADDR_END               0xFFFFFFFF
+#define         M68K_MAX_ADDR_START             0x000000
+#define         M68K_MAX_MEMORY_SIZE            0xFFFFFF
+#define         M68K_MAX_ADDR_END               (M68K_MAX_ADDR_START + M68K_MAX_MEMORY_SIZE)
 
 #define         M68K_T0_SHIFT                   (1 << 3)
 #define         M68K_T1_SHIFT                   (1 << 4)
