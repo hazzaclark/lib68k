@@ -34,24 +34,25 @@ void SHOW_TRACE_STATUS(void)
 void SHOW_MEMORY_MAPS(void)
 {
     printf("\n%s MEMORY MAP(S):\n", M68K_CPU_STOPPED ? "AFTER EXEC" : "BEFORE EXEC");
-    printf("--------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------\n");
     printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
-    printf("--------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------\n");
 
-    for(unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
+    for (unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
         M68K_MEM_BUFFER* BUF = &MEM_BUFFERS[INDEX];
-        printf(" 0x%08X 0x%08X %6dKB    %s  %6u  %6u     %s\n",
+        printf("0x%08X 0x%08X  %3d%s     %2s  %6u  %6u      %s\n",
                 BUF->BASE,
                 BUF->BASE + BUF->SIZE - 1,
-                BUF->SIZE / 1024,
+                FORMAT_SIZE(BUF->SIZE), 
+                FORMAT_UNIT(BUF->SIZE),
                 BUF->WRITE ? "RW" : "RO",
                 BUF->USAGE.READ_COUNT,
                 BUF->USAGE.WRITE_COUNT,
                 BUF->USAGE.ACCESSED ? "YES" : "NO");
     }
 
-    printf("--------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------\n");
 }
 
 // FIND THE CURRENTLY EXECUTED MEMORY BUFFER IN CONJUNCTION WITH 
@@ -251,9 +252,7 @@ void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE)
     memset(&BUF->USAGE, 0, sizeof(M68K_MEM_USAGE));
     BUF->USAGE.ACCESSED = false;
 
-    MEM_MAP_TRACE(MEM_MAP, BUF->BASE, BUF->END, SIZE >= 1024*1024 ? SIZE/(1024*1024) 
-    : SIZE >= 1024 ? SIZE/1024 : SIZE, SIZE >= 1024*1024 ? "MB" 
-    : SIZE >= 1024 ? "KB" : "B", BUF->BUFFER);
+    MEM_MAP_TRACE(MEM_MAP, BUF->BASE, BUF->END, BUF->SIZE, BUF->BUFFER);
 }
 
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS) { return MEMORY_READ(ADDRESS, MEM_SIZE_8); }
