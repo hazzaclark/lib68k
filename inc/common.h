@@ -1,6 +1,6 @@
-/* COPYRIHGT (C) HARRY CLARK 2025 */
+/* COPYRIHGT (C) HARRY CLARK 2024 */
 
-/* MOTOROLA 68000 STANDALONE EMULATION LIBRARY */
+/* HARRY CLARK'S COMMON UTILITY LIBRARY */
 
 /* THIS FILE IS ABOUT COMMON DATA TYPES USED THROUGHOUT THE PROJECT */
 /* CREATING TYPE DEFINED METHODS TO INSTANTIATE RAW POINTERS FOR MY */
@@ -56,5 +56,21 @@ typedef volatile double VF64;
 #else
 #define ASM_UNUSED
 #endif
+
+#define     PACKED_ALIGNED      __attribute__((packed, aligned(4)))
+
+#define KB_TO_BYTES      1024
+#define MB_TO_BYTES      (1024 * 1024)
+#define GB_TO_BYTES      (1024 * 1024 * 1024)
+
+#define FORMAT_SIZE(SIZE) \
+    ((SIZE) >= GB_TO_BYTES ? (SIZE)/GB_TO_BYTES : \
+     (SIZE) >= MB_TO_BYTES ? (SIZE)/MB_TO_BYTES : \
+     (SIZE) >= KB_TO_BYTES ? (SIZE)/KB_TO_BYTES : (SIZE))
+
+#define FORMAT_UNIT(SIZE) \
+    ((SIZE) >= GB_TO_BYTES ? "GB" : \
+     (SIZE) >= MB_TO_BYTES ? "MB" : \
+     (SIZE) >= KB_TO_BYTES ? "KB" : "B")
 
 #endif
