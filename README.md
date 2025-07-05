@@ -1,13 +1,13 @@
 # lib68k
 Motorola 680x0 Standalone Emulation Library
 
-![image](https://github.com/user-attachments/assets/d350b284-7c56-45e7-830a-11da2b21806c)
-
 # Motive:
 
 The motive behind this repository is to provide a surrogate means of aiding in [relevant](https://github.com/hazzaclark/mdemu) Motorola 68000 developments.
 
 Created using ANSI C99 standard, this project aims to promote an ease of use means of creating a library that emulates the likeness of these microprocessors while being portable to suit the needs of other systems emulation.
+
+![image](https://github.com/user-attachments/assets/d350b284-7c56-45e7-830a-11da2b21806c)
 
 ## Features:
 
