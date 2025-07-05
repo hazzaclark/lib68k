@@ -18,7 +18,6 @@
 #undef USE_68K
 #undef BUILD_OP_TABLE
 
-int M68K_INITIAL_CYCLES;
 unsigned char CYCLE_RANGE[0x10000];
 
 /*==================================================================================*/
@@ -193,13 +192,9 @@ void M68K_INIT(void)
 // TYPICALLY IN ANY OTHER CONTEXT, THERE WONT BE A HARD-CODED AMOUNT OF 
 // CYCLES TO REACH BEFORE THE PROGRAM HALTS
 
-int M68K_EXEC() 
+int M68K_EXEC(int CYCLES) 
 {
     M68K_MASTER_CYC = 0;
-    
-    printf("------------------------------------------------------------\n");
-    printf("M68K EXECUTION TRACE: \n");
-    printf("------------------------------------------------------------\n");
 
     while(!M68K_CPU_STOPPED)
     {
@@ -214,7 +209,7 @@ int M68K_EXEC()
         // TO PRODUCE A BAD READ - STICK TO READING THE PC INSTEAD
 
         M68K_REG_IR = M68K_READ_16(M68K_REG_PC);
-        int CURRENT_CYCLES = CYCLE_RANGE[M68K_REG_IR];
+        CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
 
@@ -224,7 +219,7 @@ int M68K_EXEC()
         M68K_REG_PC += 2;
         M68K_USE_CYCLES(CYCLE_RANGE[M68K_REG_IR]);
         
-        printf("CYCLES: %d, TOTAL ELAPSED: %d\n", CURRENT_CYCLES, M68K_MASTER_CYC);
+        printf("CYCLES: %d, TOTAL ELAPSED: %d\n", CYCLES, M68K_MASTER_CYC);
         printf("-------------------------------------------------------------\n");
     }
 
@@ -233,6 +228,7 @@ int M68K_EXEC()
 
     printf("EXECUTION STOPPED AT 0x%04X\n", M68K_REG_PC);
     printf("TOTAL CYCLES USED: %d\n", M68K_MASTER_CYC);
+    M68K_CCR_HOOK();
 
     return M68K_MASTER_CYC;
 }
