@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
 
     printf("BEGINNING EXECUTION AT PC: 0x%04X\n\n", M68K_REG_PC);
-    M68K_EXEC();
+    M68K_EXEC(0);
 
     SHOW_MEMORY_MAPS();
     return 0;
