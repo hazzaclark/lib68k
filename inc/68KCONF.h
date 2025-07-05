@@ -51,7 +51,7 @@
 		#define M68K_PRINT_FLAG(COND, FLAG_VAR, NAME) \
 			do { \
 				if (COND == M68K_OPT_ON) \
-					printf(NAME ":%d ", (FLAG_VAR)); \
+					printf(NAME ":%d ", ((FLAG_VAR) & 1)); \
 			} while(0)
 	
 		#define M68K_CCR_HOOK() \
@@ -237,7 +237,7 @@
 			#if M68K_STATE_HOOK
 
 			#define	M68K_SAVE_STATE(PARAM, SIZE)						\
-				printf("SAVE -> [%u]+%zu ", BUFFER, (UNK)(SIZE));   	\
+				printf("SAVE -> [%u]+%zu ", BUFFER, (UNK)(SIZE));		\
 				memcpy(&STATE[BUFFER], PARAM, SIZE);					\
 				BUFFER += SIZE;
 
