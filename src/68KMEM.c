@@ -254,7 +254,7 @@ void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE)
     if(END > M68K_MAX_MEMORY_SIZE)
     {
         VERBOSE_TRACE("WARNING -> END ADDRESS 0x%08X EXCEEDS THE BUS LIMIT", END);
-        return;
+        exit(1);
     }
 
     U32 SIZE = (END - BASE) + 1;
