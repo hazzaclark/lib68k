@@ -62,22 +62,22 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
 {
     switch (REGISTER)
     {
-        case M68K_D0: CPU.DATA_REGISTER[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D1: CPU.DATA_REGISTER[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D2: CPU.DATA_REGISTER[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D3: CPU.DATA_REGISTER[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D4: CPU.DATA_REGISTER[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D5: CPU.DATA_REGISTER[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D6: CPU.DATA_REGISTER[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_D7: CPU.DATA_REGISTER[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A0: CPU.ADDRESS_REGISTER[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A1: CPU.ADDRESS_REGISTER[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A2: CPU.ADDRESS_REGISTER[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A3: CPU.ADDRESS_REGISTER[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A4: CPU.ADDRESS_REGISTER[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A5: CPU.ADDRESS_REGISTER[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A6: CPU.ADDRESS_REGISTER[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
-        case M68K_A7: CPU.ADDRESS_REGISTER[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D0: M68K_REG_D[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D1: M68K_REG_D[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D2: M68K_REG_D[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D3: M68K_REG_D[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D4: M68K_REG_D[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D5: M68K_REG_D[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D6: M68K_REG_D[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_D7: M68K_REG_D[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A0: M68K_REG_A[0] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A1: M68K_REG_A[1] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A2: M68K_REG_A[2] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A3: M68K_REG_A[3] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A4: M68K_REG_A[4] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A5: M68K_REG_A[5] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A6: M68K_REG_A[6] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_A7: M68K_REG_A[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
         case M68K_PC: M68K_JUMP(M68K_MASK_OUT_ABOVE_32(VALUE)); return;
         case M68K_SR: M68K_SET_SR(VALUE); return;
         default: break;
@@ -172,16 +172,16 @@ void M68K_INIT(void)
     // https://www.cpcwiki.eu/index.php/Motorola_68000
 
     // 512KB RAM 
-    MEMORY_MAP(0x000000, 0x7FFFF, true);   
+    MEMORY_MAP(0x000000, 0x7FFFF, true);
     
     // 512KB ROM 
-    MEMORY_MAP(0x400000, 0x47FFFF, false);  
+    MEMORY_MAP(0x000000, 0x07FFFF, false); 
     
     // 64KB IO 
-    MEMORY_MAP(0xF00000, 0xF0FFFF, true);   
+    MEMORY_MAP(0xA00000, 0xA0FFFF, true);
     
-    // 64KB VECTORS
-    MEMORY_MAP(0xFFFF0000, 0xFFFFFFFF, false);
+    // 1KB VECTORS
+    MEMORY_MAP(0xA00000, 0xA0FFFF, false);
 
     // TODO: WORK ON THE MEMORY BUS FOR TYPES 68020 ONWARDS
     
@@ -209,6 +209,8 @@ int M68K_EXEC(int CYCLES)
         // TO PRODUCE A BAD READ - STICK TO READING THE PC INSTEAD
 
         M68K_REG_IR = M68K_READ_16(M68K_REG_PC);
+
+        // CYCLE RANGE IS MORE SO DETERMINED BY THE MAX AMOUNT OF MEMORY ON THE BUS
         CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
@@ -228,7 +230,6 @@ int M68K_EXEC(int CYCLES)
 
     printf("EXECUTION STOPPED AT 0x%04X\n", M68K_REG_PC);
     printf("TOTAL CYCLES USED: %d\n", M68K_MASTER_CYC);
-    M68K_CCR_HOOK();
 
     return M68K_MASTER_CYC;
 }
