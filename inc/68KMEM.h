@@ -13,7 +13,7 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-#define         M68K_MAX_BUFFERS                16
+#define         M68K_MAX_BUFFERS                5
 #define         M68K_OPT_BASIC                  (1 << 0)
 #define         M68K_OPT_VERB                   (1 << 1)
 #define         M68K_OPT_DEVICE                 (1 << 2)
@@ -36,6 +36,7 @@ typedef enum
     MEM_MAP = 'M',
     MEM_UNMAP = 'U',
     MEM_MOVE = 'O', 
+    MEM_ERR = 'E'
 
 } M68K_MEM_OP;
 
@@ -46,6 +47,20 @@ typedef enum
     MEM_SIZE_32 = 32
 
 } M68K_MEM_SIZE;
+
+typedef enum
+{   
+    MEM_OK,
+    MEM_ERR_BOUNDS,
+    MEM_ERR_READONLY,
+    MEM_ERR_UNMAPPED,
+    MEM_ERR_BUS,
+    MEM_ERR_BUFER,
+    MEM_ERR_SIZE,
+    MEM_ERR_RESERVED,
+    MEM_ERR_OVERFLOW
+
+} M68K_MEM_ERROR;
 
 typedef struct
 {
@@ -102,6 +117,14 @@ typedef struct
 #else
     #define MEM_MAP_TRACE(OP, BASE, END, SIZE, UNIT, VAL) ((void)0)
 #endif
+
+#define MEM_ERROR(OP, ERROR_CODE, SIZE, MSG, ...) \
+    do { \
+        if (IS_TRACE_ENABLED(M68K_OPT_VERB) && CHECK_TRACE_CONDITION()) \
+            printf("[ERROR] %c -> %-18s [SIZE: %d]: " MSG "\n", \
+                (char)(OP), M68K_MEM_ERR[ERROR_CODE], \
+                (int)(SIZE), ##__VA_ARGS__); \
+    } while(0)
 
 #define VERBOSE_TRACE(MSG, ...) \
     do { \
