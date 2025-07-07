@@ -12,8 +12,9 @@ Created using ANSI C99 standard, this project aims to promote an ease of use mea
 ## Features:
 
  - Accurate and detailed CPU Emulation (statically typed, not interpretted)
- - Verbose Execution Model (precomputed Jump Table using Function Pointer)
+ - Verbose Execution Model -> O(1) precomputed Jump Table using Function Pointer
  - Flexible Memory Mapper Scheme (RAM, ROM, IO and Vectors)
+ - Sophisticated Error Handlers (for CPU-specifics and Memory Utility)
  - auto-disable for options
  - Specialised Interrupt Handler and Vector Exception Table  
  - Fully expandable Macros definitions (for pre-processing functions at compile time)
