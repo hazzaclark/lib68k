@@ -141,8 +141,7 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
        CPU_TYPE == M68K_CPU_000 ? "68000" : 
        CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
 
-    printf("  SUPERVISOR MODE:  %s\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); \
-	printf("  STACK POINTER VALUE: %u\n", M68K_REG_SP);
+    printf("  SUPERVISOR MODE:  %s\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); 	\
 }
 
 int M68K_CYCLES_RUN(void)
@@ -335,7 +334,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
 
     if(BYTES_READ != (UNK)FILE_SIZE)
     {
-        printf("ERROR: FILE READ INCOMPLETE (%zu/%ld BYTES)\n", BYTES_READ, FILE_SIZE);
+        printf("ERROR: FILE READ INCOMPLETE (%u/%u BYTES)\n", BYTES_READ, FILE_SIZE);
         free(BUFFER);
         return -1;
     }
