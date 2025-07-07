@@ -103,7 +103,7 @@
 	#if M68K_RESET_HOOK == M68K_OPT_ON
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: %u\n", \
+            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%08X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 	#else
@@ -223,9 +223,9 @@
 #define		M68K_USE_ADDRESS_ERROR					M68K_OPT_ON
 #define		M68K_USE_CHECK_PC_ERROR					M68K_OPT_ON
 
-#define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		(((~(SRC) ^ (DEST)) & ((SRC) ^ (RESULT))) >> 7) & 1
-#define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		(((~(SRC) ^ (DEST)) & ((SRC) ^ (RESULT))) >> 15) & 1
-#define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		(((~(SRC) ^ (DEST)) & ((SRC) ^ (RESULT))) >> 31) & 1
+#define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		((SRC ^ RESULT) & (DEST ^ RESULT))
+#define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 8)
+#define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 24)
 
 // SEPERATE HOOK FOR ACCESSING A PRE-SUPPOSED STATE WITHIN
 // THE CONTEXT OF THE EMULATOR
