@@ -153,7 +153,7 @@ void M68K_SET_CCR(unsigned VALUE)
 }
 
 void M68K_INIT(void)
-{    
+{      
     M68K_REG_PC = 0x00001000;
     M68K_REG_PPC = 0x00000000;
     M68K_REG_IR = 0x00000000;
@@ -172,7 +172,7 @@ void M68K_INIT(void)
     // https://www.cpcwiki.eu/index.php/Motorola_68000
 
     // 512KB RAM 
-    MEMORY_MAP(0x000000, 0x7FFFF, true);
+    MEMORY_MAP(0x00000, 0x7FFFF, true);
     
     // 512KB ROM 
     MEMORY_MAP(0x000000, 0x07FFFF, false); 
