@@ -55,16 +55,7 @@
 
 /*===============================================================================*/
 /*							68000 MAIN CPU FUNCTIONALIY							 */
-/*===============================================================================*/
-
-#define         M68K_ADDRESS_WIDTH_8            0xFF
-#define         M68K_ADDRESS_WIDTH_16           0xFFFF
-#define         M68K_ADDRESS_WIDTH_32           0xFFFFFFFF
-#define         M68K_SYMBOL_WIDTH               ' '
-#define         M68K_ADDRESS_IA                 (0x8000000 << 0xDFFFFFF)
-#define         M68K_BASE_BITMASK               256
-
-/*===============================================================================*/
+/*                                                                               */
 /*                          68000 MEMORY UTILITY MACROS                          */
 /*                      FOR READING THE BYTE ORDER OF MEMORY                     */
 /*===============================================================================*/  
@@ -208,25 +199,7 @@
 #define 	    M68K_EXCEPTION_INTERRUPT_AUTOVECTOR          24
 #define 	    M68K_EXCEPTION_TRAP_BASE                     32
 
-#define         M68K_EMULATE_TRACE_MODE                             0
-#define         M68K_EMULATE_TRACE_MODE_OFF                         1
-
 #define         M68K_ALL_FLAGS                  M68K_FLAG_Z | M68K_FLAG_V | M68K_FLAG_C | M68K_FLAG_X | M68K_FLAG_N  
-
-// ENABLE AND DISABLE TRACE FLAG EMULATION
-// THIS WILL PROVE TO BE FRUITFUL TO PROVIDE GREATER CLARITY ON MEMORY READINGS
-
-#if M68K_EMULATE_TRACE_MODE
-    #define     M68K_TRACE_1()          TRACE_MODE = M68K_FLAG_T1
-    #define     M68K_TRACE_0()          TRACE_MODE |= M68K_FLAG_T0
-    #define     M68K_TRACE_CLEAR()      TRACE_MODE = 0
-
-#else
-    #undef      M68K_EMULATE_TRACE_MODE_OFF 
-    #define     M68K_TRACE_1()
-    #define     M68K_TRACE_0()
-    #define     M68K_TRACE_CLEAR()
-#endif
 
 typedef struct CPU_68K
 {
