@@ -319,7 +319,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     }
 
     fseek(FILE_PTR, 0, SEEK_END);
-    UNK FILE_SIZE = ftell(FILE_PTR);
+    unsigned FILE_SIZE = ftell(FILE_PTR);
     fseek(FILE_PTR, 0, SEEK_SET);
 
     U8* BUFFER = malloc(FILE_SIZE);
@@ -330,7 +330,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
         return -1;
     }
 
-    UNK BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
+    unsigned BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
     fclose(FILE_PTR);
 
     if(BYTES_READ != (UNK)FILE_SIZE)
