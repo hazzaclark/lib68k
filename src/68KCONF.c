@@ -188,13 +188,13 @@ void M68K_CLEAR_HALT(void)
 	M68K_CPU_STOPPED &= ~2;
 }
 
-/*===============================================================================*/
-/*							68000 HELPER FUNCTIONS							     */
-/*===============================================================================*/
-/*      THE FOLLOWING FUNCTIONS PERTAIN TOWARDS THE BITWISE WAYS BY WHICH        */
-/* INSTRUCTIONS WILL BE HANDLED - USING THE MEMORY MAP WHICH WILL DYNAMICALLY    */
-/*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION                */
-/*===============================================================================*/
+/*==============================================================================*/
+/*                           68000 HELPER FUNCTIONS                             */
+/*==============================================================================*/
+/*      THE FOLLOWING FUNCTIONS PERTAIN TOWARDS THE BITWISE WAYS BY WHICH       */
+/* INSTRUCTIONS WILL BE HANDLED - USING THE MEMORY MAP WHICH WILL DYNAMICALLY   */
+/*          ALLOCATE THE CORRESPONDING MEMORY FOR THE INSTRUCTION               */
+/*==============================================================================*/
 
 unsigned int READ_IMM_8(void)
 {
@@ -319,7 +319,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     }
 
     fseek(FILE_PTR, 0, SEEK_END);
-    unsigned FILE_SIZE = ftell(FILE_PTR);
+    UNK FILE_SIZE = ftell(FILE_PTR);
     fseek(FILE_PTR, 0, SEEK_SET);
 
     U8* BUFFER = malloc(FILE_SIZE);
@@ -330,7 +330,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
         return -1;
     }
 
-    unsigned BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
+    UNK BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
     fclose(FILE_PTR);
 
     if(BYTES_READ != (UNK)FILE_SIZE)
