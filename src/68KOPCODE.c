@@ -2100,6 +2100,12 @@ M68K_MAKE_OPCODE(LEA, 32, AI, 0)
     M68K_BASE_LEA_HOOK(M68K_REG_A);
 }
 
+M68K_MAKE_OPCODE(LEA, 32, SP, I)
+{
+    M68K_SET_SR(M68K_ADDRESS_HIGH);
+    M68K_BASE_LEA_HOOK(M68K_REG_SP);
+}
+
 M68K_MAKE_OPCODE(LINK, 32, DA, 0)
 {
     unsigned* DEST = &M68K_ADDRESS_HIGH;
@@ -3442,9 +3448,7 @@ M68K_MAKE_OPCODE(NOT, 32, EA, 0)
 
 M68K_MAKE_OPCODE(NOP, 0, 0, 0)
 {
-    // SUPPOSE NOP WOULD SUGGEST THAT NONE OF THE TRACES
-    // GET CHANGED?
-    IS_TRACE_ENABLED(M68K_FLAG_T0);
+    M68K_FLAG_T0 = M68K_FLAG_T1;
 }
 
 M68K_MAKE_OPCODE(OR, 8, D, 0)
@@ -4497,6 +4501,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
     {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
     {LEA_32_AI_0,               0xF1FF,     0x41F9,     10},  // LEA <ea>, An
+    {LEA_32_SP_I,               0xFFFF,     0x4FF9,     10},  // LEA <ea>, SP
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
     {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
     {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
