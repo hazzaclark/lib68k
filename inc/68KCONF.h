@@ -30,7 +30,7 @@
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
 
-	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
+	#define		M68K_USE_SUPERVISOR			M68K_OPT_ON
 	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
 
 	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
@@ -82,7 +82,7 @@
 	#define		M68K_ILLEGAL_HOOK	M68K_OPT_ON
 	#define		M68K_LEA_HOOK		M68K_OPT_ON
 	#define		M68K_ADDR_HOOK		M68K_OPT_ON
-	#define		M68K_EA_HOOK		M68K_OPT_ON			
+	#define		M68K_EA_HOOK		M68K_OPT_ON
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -245,6 +245,7 @@ extern unsigned int M68K_POST_DEC_16(void);
 extern unsigned int M68K_POST_DEC_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
+extern unsigned int M68K_PULL_SR(void);
 extern unsigned int M68K_PULL_SP(void);
 
 extern unsigned int M68K_GET_IX_8(void);
