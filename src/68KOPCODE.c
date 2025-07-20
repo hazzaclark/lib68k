@@ -3830,12 +3830,12 @@ M68K_MAKE_OPCODE(RTE, 32, 0, 0)
     unsigned NEW_PC;
     unsigned NEW_SR;
 
-    NEW_SR = (S16)M68K_PULL_SP();
+    NEW_SR = M68K_PULL_SR();
     NEW_PC = M68K_PULL_SP();
     M68K_JUMP(NEW_PC);
     M68K_SET_SR(NEW_SR);
 
-    printf("NEW PC VALUE %d\n", NEW_SR);
+    return;
 
     #endif
 }
