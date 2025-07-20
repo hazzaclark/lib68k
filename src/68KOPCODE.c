@@ -2558,7 +2558,7 @@ M68K_MAKE_OPCODE(MOVE, 8, IMM, POST_DEC)
 M68K_MAKE_OPCODE(MOVE, 16, IMM, POST_DEC)
 {
     unsigned RESULT = READ_IMM_16();
-    unsigned EA = (M68K_EA() + READ_IMM_16());
+    unsigned EA = READ_IMM_16();
 
     M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
@@ -2573,7 +2573,7 @@ M68K_MAKE_OPCODE(MOVE, 16, IMM, POST_DEC)
 M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_DEC)
 {
     unsigned RESULT = READ_IMM_32();
-    unsigned EA = (M68K_EA() + READ_IMM_16());
+    unsigned EA = READ_IMM_16();
 
     M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
@@ -3825,12 +3825,19 @@ M68K_MAKE_OPCODE(RTS, 0, 0, 0)
 
 M68K_MAKE_OPCODE(RTE, 32, 0, 0)
 {
-    if(M68K_FLAG_S)
-    {
-        unsigned NEW_PC = 0;
-        M68K_JUMP(M68K_MASK_OUT_ABOVE_32(M68K_READ_32(M68K_DATA_HIGH)));
-        M68K_JUMP(NEW_PC);
-    }
+    #if M68K_USE_SUPERVISOR
+
+    unsigned NEW_PC;
+    unsigned NEW_SR;
+
+    NEW_SR = (S16)M68K_PULL_SP();
+    NEW_PC = M68K_PULL_SP();
+    M68K_JUMP(NEW_PC);
+    M68K_SET_SR(NEW_SR);
+
+    printf("NEW PC VALUE %d\n", NEW_PC);
+
+    #endif
 }
 
 M68K_MAKE_OPCODE(RTR, 32, 0, 0)
