@@ -236,6 +236,13 @@ void M68K_PUSH_SP(unsigned VALUE)
 	M68K_WRITE_32(M68K_REG_SP, VALUE);
 }
 
+unsigned int M68K_PULL_SR(void)
+{
+	unsigned SR = M68K_REG_SP;
+	M68K_REG_SP = M68K_MASK_OUT_BELOW_16(M68K_REG_SP + 2);
+	return M68K_READ_16(SR);
+}
+
 unsigned int M68K_PULL_SP(void)
 {
 	unsigned SP = M68K_REG_SP;
