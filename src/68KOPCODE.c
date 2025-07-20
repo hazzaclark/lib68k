@@ -2074,7 +2074,7 @@ M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 {
     READ_IMM_32();
     M68K_REG_JMP_TARG = M68K_REG_PC;
-    M68K_JUMP();
+    M68K_JUMP(M68K_REG_PC);
 }
 
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
@@ -3835,7 +3835,7 @@ M68K_MAKE_OPCODE(RTE, 32, 0, 0)
     M68K_JUMP(NEW_PC);
     M68K_SET_SR(NEW_SR);
 
-    printf("NEW PC VALUE %d\n", NEW_PC);
+    printf("NEW PC VALUE %d\n", NEW_SR);
 
     #endif
 }
