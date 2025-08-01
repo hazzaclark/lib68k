@@ -204,6 +204,7 @@
 
 #define		M68K_BIT_SHIFT_N_8(VALUE)			(VALUE)
 #define		M68K_BIT_SHIFT_N_16(VALUE)			((VALUE) >> 8)
+#define		M68K_BIT_SHIFT_N_24(VALUE)			((VALUE) >> 16)
 #define		M68K_BIT_SHIFT_N_32(VALUE)			((VALUE) >> 24)
 
 #define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		((SRC ^ RESULT) & (DEST ^ RESULT))
