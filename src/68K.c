@@ -50,6 +50,7 @@ unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
         case M68K_PC: return CPU->PC;
         case M68K_SR: return CPU->STATUS_REGISTER;
         case M68K_IR: return CPU->INDEX_REGISTER;
+        case M68K_SP: return CPU->REGISTER_BASE[15];
 
         default: return 0;
     }
@@ -80,6 +81,8 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
         case M68K_A7: M68K_REG_A[7] = M68K_MASK_OUT_ABOVE_32(VALUE); return;
         case M68K_PC: M68K_JUMP(M68K_MASK_OUT_ABOVE_32(VALUE)); return;
         case M68K_SR: M68K_SET_SR(VALUE); return;
+        case M68K_SP: M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(VALUE); return;
+        case M68K_IR: M68K_REG_IR = M68K_MASK_OUT_ABOVE_32(VALUE); return;
         default: break;
     }
 }
@@ -98,15 +101,9 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
 /* GETS THE CURRENT VALUE AT THE PC THAT IS BEING EXECUTED */
 /* HANDLES THE JUMP HOOK BY DETERMINING THE PREVIOUS */
 
-void M68K_JUMP()
+void M68K_JUMP(unsigned NEW_PC)
 {
-    U32 FROM_ADDR = M68K_REG_PPC;
-    M68K_REG_PC = M68K_REG_JMP_TARG;
-
-    M68K_BASE_JUMP_HOOK(M68K_REG_JMP_TARG, FROM_ADDR);
-
-    // RESET FOR NEW COND.
-    M68K_REG_JMP_TARG = 0;
+    M68K_REG_PPC = NEW_PC;
 }
 
 void M68K_JUMP_VECTOR(unsigned VECTOR)
@@ -128,7 +125,6 @@ void M68K_SET_SR_IRQ(unsigned VALUE)
 }
 
 // GET AND SET THE NEW SP TO THE CURRENT S FLAG
-
 void M68K_SET_S_FLAG(unsigned VALUE)
 {
     M68K_FLAG_S = VALUE;
@@ -137,6 +133,7 @@ void M68K_SET_S_FLAG(unsigned VALUE)
 
 void M68K_SET_SR(unsigned VALUE)
 {
+    // https://en.wikibooks.org/wiki/68000_Assembly/Registers
     M68K_FLAG_T1 = M68K_BIT_F(VALUE);
 
     M68K_SET_CCR(VALUE);
@@ -166,16 +163,10 @@ void M68K_INIT(void)
     M68K_BUILD_OPCODE_TABLE();
 
     // 512KB RAM 
-    MEMORY_MAP(0x00000, 0x7FFFF, true);
+    MEMORY_MAP(0x000000, 0x07FFFF, true);
     
     // 512KB ROM 
     MEMORY_MAP(0x000000, 0x07FFFF, false); 
-    
-    // 64KB IO 
-    MEMORY_MAP(0xA00000, 0xA0FFFF, true);
-    
-    // 1KB VECTORS
-    MEMORY_MAP(0xA00000, 0xA0FFFF, false);
 
     // TODO: WORK ON THE MEMORY BUS FOR TYPES 68020 ONWARDS
     
@@ -208,8 +199,7 @@ int M68K_EXEC(int CYCLES)
         CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
-
-        #undef USE_OPCODE_HANDLER_TABLE
+        
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
         M68K_REG_PC += 2;
