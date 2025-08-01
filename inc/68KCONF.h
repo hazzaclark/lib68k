@@ -11,6 +11,7 @@
 /* NESTED INCLUDES */
 
 #include "common.h"
+#include "util.h"
 #include "68K.h"
 #include "68KMEM.h"
 
@@ -30,7 +31,7 @@
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
 
-	#define		M68K_USE_SUPERVISOR			M68K_OPT_ON
+	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
 	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
 
 	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
@@ -83,6 +84,7 @@
 	#define		M68K_LEA_HOOK		M68K_OPT_ON
 	#define		M68K_ADDR_HOOK		M68K_OPT_ON
 	#define		M68K_EA_HOOK		M68K_OPT_ON
+	#define		M68K_DISP_HOOK		M68K_OPT_ON
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -156,6 +158,25 @@
         } while(0)
 	#else
     	#define M68K_EA_PRINT_HOOK(REG_ARRAY) ((void)0)
+	#endif
+
+	// WE CAN LEVERAGE READING BASED ON PC
+	// AS THE WILL USUALLY ADVANCE IN CONJUNCTION WITH DISPLACMENT EITHER WAY
+
+	// NEGATE THE ADVANCE FROM THE IMMEDIATE READ AFTERWARDS
+	
+	#if M68K_DISP_HOOK == M68K_OPT_ON
+    #define M68K_DISP_PRINT_HOOK() \
+        do { \
+            U8 EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
+            U8 EA_REG = M68K_GET_EA_REG(M68K_REG_IR); \
+            S16 DISP = (S16)M68K_GET_DISP(READ_IMM_16()); \
+            printf("EA MODE: %d, EA REGISTER: %d\n", EA_MODE, EA_REG); \
+            printf("DISPLACEMENT: %d (0x%04X)\n", DISP, (U16)DISP); \
+            M68K_REG_PC -= 2; \
+        } while(0)
+	#else
+    	#define M68K_DISP_PRINT_HOOK() ((void)0)
 	#endif
 
 	#endif
