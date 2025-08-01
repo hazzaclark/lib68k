@@ -127,6 +127,7 @@
                 (M68K_BIT_4(IR) ? 2 : 0) | \
                 (M68K_BIT_3(IR) ? 1 : 0))
 
+#define         M68K_GET_DISP(EXT)                  ((S16)((EXT) & 0xFFFF))
 #define         M68K_LOW_NIBBLE(VALUE)
 #define         M68K_HIGH_NIBBLE(VALUE)             ((VALUE & 0x8000) ? 1 : 0)
 
@@ -435,7 +436,7 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 void M68K_INIT(void);
 void M68K_MEM_INIT(void);
 int M68K_EXEC(int CYCLES);
-void M68K_JUMP();
+void M68K_JUMP(unsigned NEW_PC);
 void M68K_JUMP_VECTOR(unsigned VECTOR);
 void M68K_SET_SR_IRQ(unsigned VALUE);
 void M68K_PULSE_RESET(void);
