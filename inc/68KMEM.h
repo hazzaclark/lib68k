@@ -13,6 +13,7 @@
 #include "68K.h"
 #include "68KCONF.h"
 
+#define         M68K_LSB_MASK                   0xFF
 #define         M68K_MAX_BUFFERS                5
 #define         M68K_OPT_BASIC                  (1 << 0)
 #define         M68K_OPT_VERB                   (1 << 1)
@@ -98,11 +99,11 @@ typedef struct
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK == M68K_OPT_OFF
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c -> ADDR:0x%08X SIZE:%d VALUE:0x%04X\n", \
+                printf("[TRACE] %c -> ADDR:0x%0X SIZE:%d VALUE:0x%04X\n", \
                       (char)(OP), (ADDR), (SIZE), (VAL)); \
         } while(0)
 #else
