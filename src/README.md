@@ -1,4 +1,4 @@
-## lib68k - Opcode Handler Table structure
+## lib68k - [Opcode Handler Table](https://github.com/hazzaclark/lib68k/blob/main/src/68KOPCODE.c#L4685-L4733) structure
 
 ### How does it all work?
 
