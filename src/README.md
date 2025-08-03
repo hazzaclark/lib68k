@@ -35,7 +35,10 @@ STEP 1: STATIC HANDLER TABLE
 STEP 2: ITERATION
 ┌────────────────────────────────────────────────────────────────────┐
 │         // FUNCTION POINTER                                        │
-|         void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);              │
+|         void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);              |
+|                                                                    |
+|        // MAP THE OPCODE TO THE STATIC TABLE                       |
+│        OPCODE = M68K_OPCODE_HANDLER_TABLE;                         |
 │                                                                    │ 
 |        // 0x10000 IS THE MAX 16 BIT VALUE                          │ 
 │        for(INDEX = 0; INDEX < 0x10000; INDEX++                     │ 
