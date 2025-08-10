@@ -7,7 +7,7 @@ The motive behind this repository is to provide a surrogate means of aiding in [
 
 Created using ANSI C99 standard, this project aims to promote an ease of use means of creating a library that emulates the likeness of these microprocessors while being portable to suit the needs of other systems emulation.
 
-![image](https://github.com/user-attachments/assets/d350b284-7c56-45e7-830a-11da2b21806c)
+<img width="853" height="745" alt="image" src="https://github.com/user-attachments/assets/a8ab511d-604b-4605-a90d-4a8c0381100d" />
 
 ## Features:
 
@@ -54,7 +54,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 ### Running the simulator with imm.bin
 
-![image](https://github.com/user-attachments/assets/643a2044-53c0-4962-856b-6d21aeda20f0)
+<img width="1097" height="983" alt="image" src="https://github.com/user-attachments/assets/2a337178-5ef4-4fcb-8cae-40ded99c9670" />
 
 ## Auto-disable functionality:
 
