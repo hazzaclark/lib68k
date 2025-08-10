@@ -326,7 +326,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     }
 
     fseek(FILE_PTR, 0, SEEK_END);
-    UNK FILE_SIZE = ftell(FILE_PTR);
+    long FILE_SIZE = ftell(FILE_PTR);
     fseek(FILE_PTR, 0, SEEK_SET);
 
     U8* BUFFER = malloc(FILE_SIZE);
@@ -337,17 +337,17 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
         return -1;
     }
 
-    UNK BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
+    long BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
     fclose(FILE_PTR);
 
-    if(BYTES_READ != (UNK)FILE_SIZE)
+    if(BYTES_READ != (long)FILE_SIZE)
     {
-        printf("ERROR: FILE READ INCOMPLETE (%d/%d BYTES)\n", BYTES_READ, FILE_SIZE);
+        printf("ERROR: FILE READ INCOMPLETE (%ld/%ld BYTES)\n", BYTES_READ, FILE_SIZE);
         free(BUFFER);
         return -1;
     }
 
-    for(UNK i = 0; i < FILE_SIZE; i++) { M68K_WRITE_8(LOAD_ADDR + i, BUFFER[i]); }
+    for(long i = 0; i < FILE_SIZE; i++) { M68K_WRITE_8(LOAD_ADDR + i, BUFFER[i]); }
 
     free(BUFFER);
     return FILE_SIZE;
