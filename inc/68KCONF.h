@@ -31,7 +31,7 @@
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
 
-	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
+	#define		M68K_USE_SUPERVISOR			M68K_OPT_ON
 	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
 
 	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
@@ -93,7 +93,7 @@
         } while(0)
 	#endif
 
-	#if M68K_RTS_HOOK == M68K_OPT_ON
+	#if M68K_RTS_HOOK
     #define M68K_BASE_RTS_HOOK(FROM_ADDR) \
         do { \
             printf("[RTS] 0x%04X\n", (FROM_ADDR)); \
@@ -102,7 +102,7 @@
     	#define M68K_BASE_RTS_HOOK(FROM_ADDR) ((void)0)
 	#endif
 
-	#if M68K_RESET_HOOK == M68K_OPT_ON
+	#if M68K_RESET_HOOK
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
             printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%08X\n", \
@@ -112,7 +112,7 @@
     	#define M68K_BASE_RES_HOOK(T0, T1, PC, SP) ((void)0)
 	#endif
 
-	#if M68K_ILLEGAL_HOOK == M68K_OPT_ON
+	#if M68K_ILLEGAL_HOOK
     #define M68K_BASE_ILL_HOOK(PC, IR) \
         do { \
             printf("ILLEGAL INSTRUCTION FOUND AT PC -> (0x%04X) -> CURRENT OPCODE: (0x%04X)\n", \
@@ -125,7 +125,7 @@
 	// FOR THE PRINTING OF THE EA OF LEA
 	// IT SKIPS THE OPCODE TO READ THE NEXT 4 BYTES
 
-	#if M68K_LEA_HOOK == M68K_OPT_ON
+	#if M68K_LEA_HOOK
 	#define M68K_BASE_LEA_HOOK(REG_ARRAY) \
 		do { \
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
@@ -138,7 +138,7 @@
 		#define M68K_BASE_LEA_HOOK(REG_ARRAY) ((void)0)
 	#endif
 
-	#if M68K_ADDR_HOOK == M68K_OPT_ON
+	#if M68K_ADDR_HOOK
 	#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) \
 		do { \
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
@@ -149,7 +149,7 @@
 		#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) ((void)0)
 	#endif
 
-	#if M68K_EA_HOOK == M68K_OPT_ON
+	#if M68K_EA_HOOK
     #define M68K_EA_PRINT_HOOK(REG_ARRAY) \
         do { \
             int EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
@@ -165,7 +165,7 @@
 
 	// NEGATE THE ADVANCE FROM THE IMMEDIATE READ AFTERWARDS
 	
-	#if M68K_DISP_HOOK == M68K_OPT_ON
+	#if M68K_DISP_HOOK
     #define M68K_DISP_PRINT_HOOK() \
         do { \
             U8 EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
