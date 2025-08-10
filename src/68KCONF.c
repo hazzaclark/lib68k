@@ -340,13 +340,6 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     UNK BYTES_READ = fread(BUFFER, 1, FILE_SIZE, FILE_PTR);
     fclose(FILE_PTR);
 
-    if(BYTES_READ != (UNK)FILE_SIZE)
-    {
-        printf("ERROR: FILE READ INCOMPLETE (%u/%u BYTES)\n", BYTES_READ, FILE_SIZE);
-        free(BUFFER);
-        return -1;
-    }
-
     for(UNK i = 0; i < FILE_SIZE; i++) { M68K_WRITE_8(LOAD_ADDR + i, BUFFER[i]); }
 
     free(BUFFER);
