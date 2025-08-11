@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     M68K_INIT();
     SHOW_MEMORY_MAPS();
 
-    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
+    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], 0x0000);
 
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
     if(FILE_SIZE < 0)
@@ -39,7 +39,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    printf("SUCCESSFULLY LOADED: %s -> SIZE: %d BYTES\n", argv[1], FILE_SIZE);
+    printf("SUCCESSFULLY LOADED: %s -> SIZE: %d%s\n", argv[1], 
+        FORMAT_SIZE(FILE_SIZE), FORMAT_UNIT(FILE_SIZE));
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
