@@ -419,12 +419,6 @@ typedef enum CPU_68K_FLAGS
 #define         M68K_COND_FLAG_M()      M68K_FLAG_M
 #define         M68K_COND_FLAG_S()      M68K_FLAG_S
 
-#define M68K_SR_S_MASK                      0x2000  
-
-#define M68K_IS_SUPERVISOR()                (M68K_REG_SR & M68K_SR_S_MASK)
-#define M68K_SET_SUPERVISOR()               (M68K_REG_SR |= M68K_SR_S_MASK)
-#define M68K_SET_USER()                     (M68K_REG_SR &= ~M68K_SR_S_MASK)
-
 /*==============================================================================*/
 /*                          68000 MAIN CPU FUNCTIONALIY                         */
 /*==============================================================================*/
