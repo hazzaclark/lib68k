@@ -113,10 +113,10 @@ while (OPCODE->HANDLER != NULL)
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
                OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
 
-        #endif
+	#endif
 
 	for (INDEX = 0; INDEX < 0x10000; INDEX++)
-        {
+	{
             // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
             // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
 
@@ -125,9 +125,9 @@ while (OPCODE->HANDLER != NULL)
                 M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE->HANDLER;
                 CYCLE_RANGE[INDEX] = OPCODE->CYCLES;               
             }
-        }
+	}
 
-        OPCODE++;
+	OPCODE++;
 }
 ```
 
