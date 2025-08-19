@@ -161,8 +161,8 @@ void M68K_INIT(void)
     MEMORY_MAP(0x000000, 0x07FFFF, true);
     
     // 512KB ROM 
-    MEMORY_MAP(0x080000, 0x0FFFFF, false);     
-    
+    MEMORY_MAP(0x080000, 0x0FFFFF, false);    
+        
     M68K_SET_CPU_TYPE(CPU_TYPE);
 }
 
