@@ -137,7 +137,7 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
     }
 
 	printf("\nCPU INFORMATION:	\n");
-	printf("  CPU SET TO TYPE: %u -> %s\n", CPU_TYPE, 
+	printf("  CPU SET TO TYPE:  %u -> %s\n", CPU_TYPE, 
        CPU_TYPE == M68K_CPU_000 ? "68000" : 
        CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
 
@@ -165,6 +165,11 @@ void M68K_PULSE_RESET(void)
 {
 	M68K_CPU_STOPPED = 0;
 	M68K_FLAG_INT_LVL = 0;
+	M68K_SET_CYCLES(0);
+
+	M68K_REG_SP = READ_IMM_32();
+	M68K_REG_PC = READ_IMM_32();
+	M68K_JUMP(M68K_REG_PC);
 
 	// DEFAULT TO SUPERVISOR MODE ONCE RESET PIN HAS BEEN INIT
 	// SETS THE DEFAULT IRQ VALUE - WHICH DEFAULTS TO 4 AS ANY CONDITION
@@ -315,6 +320,13 @@ unsigned int M68K_GET_IX_32(void) { unsigned EA = M68K_IX_32(); return M68K_READ
 
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
 {
+    const char* EXT = strrchr(FILE_PATH, '.');
+    if(!EXT || strcmp(EXT, ".bin") != 0)
+    {
+        printf("ERROR: FILE MUST HAVE .bin EXTENSION\n");
+        return -1;
+    }
+
     FILE* FILE_PTR = fopen(FILE_PATH, "rb");
     if(!FILE_PTR)
     {
