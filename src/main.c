@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     M68K_INIT();
     SHOW_MEMORY_MAPS();
 
-    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], 0x0000);
+    printf("LOADING BINARY FILE: %s AT 0x%04X\n", argv[1], M68K_REG_PC);
 
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
     if(FILE_SIZE < 0)
@@ -38,6 +38,8 @@ int main(int argc, char** argv)
         printf("FAILED TO LOAD BINARY FILE\n");
         return 1;
     }
+
+    M68K_PULSE_RESET();
 
     printf("SUCCESSFULLY LOADED: %s -> SIZE: %d%s\n", argv[1], 
         FORMAT_SIZE(FILE_SIZE), FORMAT_UNIT(FILE_SIZE));
