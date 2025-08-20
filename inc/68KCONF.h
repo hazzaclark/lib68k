@@ -131,7 +131,7 @@
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
 			int EA = READ_IMM_16(); \
 			M68K_REG_PC -= 2;		\
-			printf("LEA FOUND: $0x%0X -> REGISTER A%d\n", \
+			printf("LEA FOUND: $%x -> REGISTER A%d\n", \
 				EA, REG_NUM); \
 		} while(0)
 	#else
