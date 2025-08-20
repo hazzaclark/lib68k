@@ -339,6 +339,8 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     long FILE_SIZE = ftell(FILE_PTR);
     fseek(FILE_PTR, 0, SEEK_SET);
 
+    printf("LOADING BINARY FILE: %s AT 0x%04X\n", FILE_PATH, M68K_REG_PC);
+
     U8* BUFFER = malloc(FILE_SIZE);
     if(!BUFFER)
     {
