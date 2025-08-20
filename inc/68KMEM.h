@@ -93,8 +93,8 @@ typedef struct
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
 
-#define         MEM_TRACE_HOOK                  M68K_OPT_ON
-#define         MEM_MAP_TRACE_HOOK              M68K_OPT_ON
+#define         MEM_TRACE_HOOK                  M68K_OPT_OFF
+#define         MEM_MAP_TRACE_HOOK              M68K_OPT_OFF
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
@@ -118,7 +118,7 @@ typedef struct
                   (char)(OP), (BASE), (END), FORMAT_SIZE(SIZE), FORMAT_UNIT(SIZE)); \
     } while(0)
 #else
-    #define MEM_MAP_TRACE(OP, BASE, END, SIZE, UNIT, VAL) ((void)0)
+    #define MEM_MAP_TRACE(OP, BASE, END, SIZE, VAL) ((void)0)
 #endif
 
 #define MEM_ERROR(OP, ERROR_CODE, SIZE, MSG, ...) \
