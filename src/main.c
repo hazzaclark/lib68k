@@ -4,12 +4,6 @@
 /* NESTED INCLUDES */
 
 #include "68K.h"
-#include "util.h"
-
-#undef USE_68K
-#undef USE_CONFIG
-#undef USE_OPCODE
-#undef USE_MEM
 
 int main(int argc, char** argv) 
 {
