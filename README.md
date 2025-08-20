@@ -55,7 +55,7 @@ Follow the repository's instructions on how to work with that, or alternatively,
 
 ### Running the simulator with imm.bin
 
-<img width="1097" height="983" alt="image" src="https://github.com/user-attachments/assets/2a337178-5ef4-4fcb-8cae-40ded99c9670" />
+<img width="1111" height="975" alt="image" src="https://github.com/user-attachments/assets/0b6935dc-289a-4a28-83ec-b3372c1bea56" />
 
 ## Auto-disable functionality:
 
