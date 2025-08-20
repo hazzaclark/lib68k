@@ -31,7 +31,7 @@
 // DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
 // CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
 
-	#define		M68K_USE_SUPERVISOR			M68K_OPT_ON
+	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
 	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
 
 	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
@@ -131,7 +131,7 @@
 			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
 			int EA = READ_IMM_16(); \
 			M68K_REG_PC -= 2;		\
-			printf("LEA FOUND: $%X -> REGISTER A%d\n", \
+			printf("LEA FOUND: $0x%0X -> REGISTER A%d\n", \
 				EA, REG_NUM); \
 		} while(0)
 	#else
