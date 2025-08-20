@@ -105,7 +105,7 @@
 	#if M68K_RESET_HOOK
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RETURNED WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%08X\n", \
+            printf("RESET WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%08X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 	#else
