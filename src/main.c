@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
     M68K_PULSE_RESET();
 
-    printf("SUCCESSFULLY LOADED -> %s WITH SIZE: %d%s AT PC VALUE -> 0x%04X\n", argv[1], 
+    printf("SUCCESSFULLY LOADED -> %s WITH SIZE: %d%s AT PC VALUE -> 0x%04X\n\n", argv[1], 
         FORMAT_SIZE(FILE_SIZE), FORMAT_UNIT(FILE_SIZE), M68K_REG_PC);
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
