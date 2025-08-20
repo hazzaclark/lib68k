@@ -7,7 +7,7 @@ The motive behind this repository is to provide a surrogate means of aiding in [
 
 Created using ANSI C99 standard, this project aims to promote an ease of use means of creating a library that emulates the likeness of these microprocessors while being portable to suit the needs of other systems emulation.
 
-<img width="1056" height="629" alt="image" src="https://github.com/user-attachments/assets/4f0d6ffd-f561-42f3-ad99-2fc993da5c23" />
+<img width="1021" height="953" alt="image" src="https://github.com/user-attachments/assets/6057f82b-444a-44b0-8a10-08e3aef027fd" />
 
 ## Features:
 
