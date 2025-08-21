@@ -218,21 +218,6 @@ unsigned int READ_IMM_32(void)
 	return VALUE;  
 }
 
-void M68K_BRANCH_8(unsigned OFFSET)
-{
-	M68K_REG_PC += (S8)OFFSET;
-}
-
-void M68K_BRANCH_16(unsigned OFFSET)
-{
-	M68K_REG_PC += (S16)OFFSET;
-}
-
-void M68K_BRANCH_32(unsigned OFFSET)
-{
-	M68K_REG_PC += OFFSET;
-}
-
 void M68K_PUSH_SP(unsigned VALUE)
 {
 	M68K_REG_SP = READ_IMM_16();
@@ -309,10 +294,6 @@ unsigned int M68K_POST_DEC_32(void)
 	return M68K_READ_32(EA);
 }
 
-unsigned int M68K_GET_IX_8(void) { unsigned EA = M68K_IX_8(); return M68K_READ_8(EA); }
-unsigned int M68K_GET_IX_16(void) { unsigned EA = M68K_IX_16(); return M68K_READ_16(EA); }
-unsigned int M68K_GET_IX_32(void) { unsigned EA = M68K_IX_32(); return M68K_READ_32(EA); }
-
 // LOAD THE BINARY FILE AS PER THE SIMULATOR
 // THE IDEA FOR THIS IS TO DETERMINE THE SIZE OF THE FILE, THE MEMORY THAT NEEDS TO BE
 // ALLOCATED AS SUCH
@@ -321,13 +302,6 @@ unsigned int M68K_GET_IX_32(void) { unsigned EA = M68K_IX_32(); return M68K_READ
 
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
 {
-    const char* EXT = strrchr(FILE_PATH, '.');
-    if(!EXT || strcmp(EXT, ".bin") != 0)
-    {
-        printf("ERROR: FILE MUST HAVE .bin EXTENSION\n");
-        return -1;
-    }
-
     FILE* FILE_PTR = fopen(FILE_PATH, "rb");
     if(!FILE_PTR)
     {
