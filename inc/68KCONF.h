@@ -270,10 +270,6 @@ extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SR(void);
 extern unsigned int M68K_PULL_SP(void);
 
-extern unsigned int M68K_GET_IX_8(void);
-extern unsigned int M68K_GET_IX_16(void);
-extern unsigned int M68K_GET_IX_32(void);
-
 extern U8 M68K_VECTOR_TABLE[5][256];
 
 #endif
