@@ -163,6 +163,14 @@
 #define         M68K_IX_16()                M68K_IX_8()
 #define         M68K_IX_32()                M68K_IX_8()
 
+#define         M68K_GET_IX_8()             M68K_READ_8(M68K_IX_8())
+#define         M68K_GET_IX_16()            M68K_READ_16(M68K_IX_16())
+#define         M68K_GET_IX_32()            M68K_READ_32(M68K_IX_32())
+
+#define         M68K_BRANCH_8(OFFSET)       (M68K_REG_PC += (S8)(OFFSET))
+#define         M68K_BRANCH_16(OFFSET)      (M68K_REG_PC += (S16)(OFFSET))
+#define         M68K_BRANCH_32(OFFSET)      (M68K_REG_PC += (OFFSET))
+
 #define         M68K_CPU_000                0
 #define         M68K_CPU_010                1
 #define         M68K_CPU_020                2
@@ -442,10 +450,6 @@ void M68K_SET_CCR(unsigned VALUE);
 void M68K_SET_SR(unsigned VALUE);
 
 void M68K_BUILD_OPCODE_TABLE(void);
-
-void M68K_BRANCH_8(unsigned OFFSET);
-void M68K_BRANCH_16(unsigned OFFSET);
-void M68K_BRANCH_32(unsigned OFFSET);
 
 /*==============================================================================*/
 /*                                  68000 MISC.                                 */
