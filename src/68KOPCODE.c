@@ -1201,15 +1201,15 @@ M68K_MAKE_OPCODE(BCHG, 32, D, EA)
 
 M68K_MAKE_OPCODE(BCLR, 8, D, EA)
 {
-    unsigned EA = (U8)M68K_EA_INCR_BYTE();
-    unsigned* DESTINATION = &M68K_DATA_LOW;
+    unsigned EA = READ_IMM_16();
+    unsigned SRC = M68K_READ_8(EA);
+    unsigned OFFSET = M68K_DATA_LOW & 7;
+    unsigned MASK = 1 << OFFSET;
 
-    int SRC = M68K_READ_8(EA);
+    M68K_FLAG_Z = (SRC & MASK) ? 0 : 1;
+    M68K_WRITE_8(EA, SRC & ~MASK);
 
-    int MASK = (OPCODE_BIT_MASK && M68K_DATA_HIGH);
-
-    M68K_FLAG_Z = SRC & MASK & *DESTINATION;
-    M68K_WRITE_8(EA, SRC & MASK);
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(BRA, 8, 0, 0)
@@ -4489,6 +4489,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
     {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
+    {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)!
     {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit displacement)
