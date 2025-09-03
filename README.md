@@ -1,5 +1,5 @@
 # lib68k
-Motorola 680x0 Standalone Emulation Library
+Motorola 68000 Standalone Emulation Library
 
 # Motive:
 
