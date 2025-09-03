@@ -2658,23 +2658,6 @@ M68K_MAKE_OPCODE(MOVE, 32, PI, A)
     M68K_WRITE_32(EA, RESULT);
 }
 
-M68K_MAKE_OPCODE(MOVEA, 16, DA, 0)
-{
-    M68K_DATA_LOW = M68K_READ_16(M68K_DATA_HIGH);
-    M68K_ADDRESS_LOW = M68K_READ_16(M68K_ADDRESS_HIGH);
-
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
-    M68K_EA_PRINT_HOOK(M68K_REG_A);
-}
-
-M68K_MAKE_OPCODE(MOVEA, 32, DA, 0)
-{
-    M68K_DATA_LOW = M68K_READ_32(M68K_DATA_HIGH);
-    M68K_ADDRESS_LOW = M68K_READ_32(M68K_ADDRESS_HIGH);
-
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
-}
-
 M68K_MAKE_OPCODE(MOVEA, 16, D, 0)
 {
     M68K_ADDRESS_HIGH = M68K_DATA_LOW;
@@ -3065,6 +3048,16 @@ M68K_MAKE_OPCODE(MOVE, 16, I, SR)
     }
 
     M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(MOVEA, 16, I, AY)
+{
+    M68K_ADDRESS_HIGH = READ_IMM_16();
+}
+
+M68K_MAKE_OPCODE(MOVEA, 32, I, AY)
+{
+    M68K_ADDRESS_HIGH = READ_IMM_32();
 }
 
 M68K_MAKE_OPCODE(MULS, 16, D, 0)
@@ -4571,8 +4564,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PI_A,               0xF1F8,     0x10D8,     12},  // MOVE.B (An)+, (Ay)+
     {MOVE_16_PI_A,              0xF1F8,     0x30D8,     12},  // MOVE.W (An)+, (Ay)+
     {MOVE_32_PI_A,              0xF1F8,     0x20D8,     12},  // MOVE.L (An)+, (Ay)+
-    {MOVEA_16_DA_0,             0xF1F0,     0x303C,     4},  // MOVEA.W Dn,Ay
-    {MOVEA_32_DA_0,             0xF1C0,     0x203C,     4},  // MOVEA.L Dn,Ay
     {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
     {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
     {MOVEA_16_A_0,              0xF1C0,     0x3048,     10},  // MOVEA.W An,Ay
@@ -4619,6 +4610,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_D_IMM,             0xFFFF,     0x33FC,     14}, // MOVE.W #imm, <ea>
     {MOVE_32_D_IMM,             0xFFFF,     0x23FC,     20}, // MOVE.L #imm, <ea>
     {MOVE_16_I_SR,              0xFFFF,     0x46FC,     12}, // MOVE.W #imm, SR
+    {MOVEA_16_I_AY,             0xF1FF,     0x307C,     12}, // MOVEA.L #imm, Ay
+    {MOVEA_32_I_AY,             0xF1FF,     0x207C,     12}, // MOVEA.L #imm, Ay
     {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
     {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
     {NBCD_8_D_0,                0xFFFF,     0x4839,     6},  // NBCD <ea>
