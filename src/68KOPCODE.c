@@ -1217,9 +1217,24 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
     M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
 }
 
+// 03/09/25 -
+// REWORKED SLIGHTLY TO HANDLE BETTER SIGNEDNESS
+// FOR SKIP CONDITIONS
+
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    U16 OFFSET = READ_IMM_8();
+    // MANUALLY SAVE THE SIGNED OFFSET
+    // GIVE A MANUAL ADVANCE TO PREVENT LEAK 
+    U16 SAVED_OFF = M68K_REG_PC;
+    M68K_REG_PC += 2;
+
+    // ASSIGN NEW OFFSET TO THE BRANCH
+    // SAVED OFFSET WAS THE ORIGINAL PC OFFSET BEING
+    // COMPARED AGAINST
+    U16 OFFSET = READ_IMM_16();
+    M68K_REG_PC = SAVED_OFF;
+    
+    // FINALLY BRANCH (WITH PROPER SIZE)
     M68K_BRANCH_16(OFFSET);
 }
 
@@ -3058,6 +3073,8 @@ M68K_MAKE_OPCODE(MOVE, 16, I, SR)
         M68K_SET_SR(NEW_SR);
         return;
     }
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(MULS, 16, D, 0)
@@ -4608,7 +4625,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEQ_32_D_0,              0xF100,     0x7000,     4},  // MOVEQ #<data>,Dn
     {MOVE_8_D_IMM,              0xFFFF,     0x13FC,     14}, // MOVE.B #imm, <ea>
     {MOVE_16_D_IMM,             0xFFFF,     0x33FC,     14}, // MOVE.W #imm, <ea>
-    {MOVE_32_D_IMM,             0xFFFF,     0x23FC,     14}, // MOVE.L #imm, <ea>
+    {MOVE_32_D_IMM,             0xFFFF,     0x23FC,     20}, // MOVE.L #imm, <ea>
     {MOVE_16_I_SR,              0xFFFF,     0x46FC,     12}, // MOVE.W #imm, SR
     {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
     {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
