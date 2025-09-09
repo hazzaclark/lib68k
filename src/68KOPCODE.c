@@ -4429,17 +4429,17 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_PRE_DEC_D,           0xF1F8,     0xD020,     10},  // ADD.B -(An), Dy
     {ADD_16_PRE_DEC_D,          0xF1F8,     0xD060,     10}, // ADD.W -(An), Dy 
     {ADD_32_PRE_DEC_D,          0xF1F8,     0xD0A0,     22}, // ADD.L -(An), Dy 
-    {ADD_8_A_AI,                0xF1F8,     0xD028,     8},  // ADD.B $imm(An), Dy
-    {ADD_16_A_AI,               0xF1F8,     0xD068,     8},  // ADD.W $imm(An), Dy
-    {ADD_32_A_AI,               0xF1F8,     0xD0A8,     20},  // ADD.L $imm(An), Dy
+    {ADD_8_A_AI,                0xF1F8,     0xD028,     12},  // ADD.B $imm(An), Dy
+    {ADD_16_A_AI,               0xF1F8,     0xD068,     12},  // ADD.W $imm(An), Dy
+    {ADD_32_A_AI,               0xF1F8,     0xD0A8,     24},  // ADD.L $imm(An), Dy
     {ADDA_16_EA_0,              0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
     {ADDA_32_EA_0,              0xF1C0,     0xD1C0,     12},  // ADDA.L <ea>,An
     {ADDA_16_AN_AY,             0xF1F8,     0xD0C8,     8},  // ADDA.W An, Ay
-    {ADDA_32_AN_AY,             0xF1F8,     0xD1C8,     8},  // ADDA.W An, Ay
+    {ADDA_32_AN_AY,             0xF1F8,     0xD1C8,     12},  // ADDA.L An, Ay
     {ADDA_16_PD_AY,             0xF1F8,     0xD0E0,     14},  // ADDA.W -(An), Ay
-    {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     16},  // ADDA.L -(An), Ay
+    {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     22},  // ADDA.L -(An), Ay
     {ADDA_16_PI_AY,             0xF1F8,     0xD0D8,     12},  // ADDA.W (An)+, Ay
-    {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     16},  // ADDA.L (An)+, Ay
+    {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     20},  // ADDA.L (An)+, Ay
     {ADDI_8_IMM_0,              0xFFF8,     0x0600,     10},  // ADDI.B #<data>,Dy
     {ADDI_16_IMM_0,             0xFFF8,     0x0640,     10},  // ADDI.W #<data>,Dy
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     20}, // ADDI.L #<data>,Dy
