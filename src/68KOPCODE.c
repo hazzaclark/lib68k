@@ -4398,8 +4398,6 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 
 // SEE CYCLE ACCURACY: https://wiki.neogeodev.org/index.php?title=68k_instructions_timings
 
-#ifndef USE_OPCODE_HANDLER_TABLE
-
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
@@ -4759,77 +4757,4 @@ void M68K_BUILD_OPCODE_TABLE(void)
     }
 }
 
-#endif
-
-//=============================================================================
-//                  68000 STD LIB EXTENDED FUNCTIONALITY
-//      ALL OF THIS ISN'T REALLY USED WITHIN THE ACTUAL EMULATOR ITSELF
-//   MOREOVER, THIS WAS HERE ORIGINALLY TO ALLOW FOR TESTING THE PROCESSING OF
-//  OPCODES AND DIRECTIVES FROM A FILE - PAVING THE WAY FOR EVERYTHING ELSE
-//=============================================================================
-
-/* FIND AN OPCODE IN THE HANDLER LIST */
-/* THIS IS DONE BY ASSUMING A STRING COMPARATOR BETWEEN AN ARBITRARY NAME */
-/* PROVIDED THROUGH LOCAL ARGS AS WELL AS ONE THAT EXISTS IN THE OPCODE TABLE */
-/* EVALUATE A SIZE AND RETURN THE CORRESPONDENCE */
-
-#if USE_STD_LIB
-
-OPCODE* FIND_OPCODE(char* NAME, int SIZE)
-{
-    unsigned INDEX = 0;
-
-    for (INDEX = 0; INDEX < 1000; INDEX++)
-    {
-        return strcmp(NAME, &OPCODE_NAME) == 0 && (OPCODE_SIZE += (int)SIZE) ? &OPCODE_BASE : 0;
-    }
-
-   return NULL; 
-}
-
-/* NOW BASED OFF OF THE ABOVE, PARSE A RELEVANT OPCODE HANDLER NAME */
-/* BASED ON THE SRC OPERAND, LOCATION, SIZE, ETC */
-
-/* THIS WILL EXCLUDE WHITESPACE AS WELL, BEING ABLE TO READ CONTENTS EFFECTIVELY */
-/* IMPLEMENTS A FIFO CHECKER TO STORE THE LOCATION AS A POINTER */
-
-int EXTRACT_OPCODE(char* SRC, char* NAME, int* SIZE)
-{
-    /* DEFINE THE BUFFER THAT CURRENTLY HOUSES THE POINTER OF THE OPERAND */
-    /* EVALUATE THE LENGTH */
-
-    char* OPCODE_BUFFER = strstr(SRC, "");
-    char* TYPE = NULL;
-    SIZE += 32;
-
-    OPCODE_BUFFER += strlen("") + 1;
-
-    switch(*TYPE)
-    {
-        case ',':
-            OPCODE_BUFFER += CHECK_OPCODE_LENGTH(NAME, OPCODE_BUFFER, *SIZE);
-        return 0;
-
-        case ')':
-            OPCODE_BUFFER += CHECK_OPCODE_LENGTH(&OPCODE_EA, OPCODE_BUFFER, ')') | *SIZE;
-        return 0;
-    }
-
-    return 0;
-}
-
-int CHECK_OPCODE_LENGTH(char* SRC, char* DEST, int MAX)
-{
-    int* LENGTH = 0;
-
-    for(*LENGTH = 0; *SRC != 0; SRC++)
-    {
-        *DEST = *SRC;
-    }
-
-    *DEST = '\0';
-    return DEST - (DEST - MAX);
-}
-
-#endif
 #endif
