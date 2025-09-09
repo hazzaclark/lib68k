@@ -4396,16 +4396,18 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 /* THIS IS WHAT THE EMULATION WILL USE IN ORDER TO EVOKE THE MASK TYPE, LENGTH */
 /* MATCH AND CYCLE COUNTS PER INSTRUCTION */
 
+// SEE CYCLE ACCURACY: https://wiki.neogeodev.org/index.php?title=68k_instructions_timings
+
 #ifndef USE_OPCODE_HANDLER_TABLE
 
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
     {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
-    {ABCD_8_PD_AY,              0xFFF8,     0xCF08,     6},  // ABCD -(An), -(Ay)
+    {ABCD_8_PD_AY,              0xFFF8,     0xCF08,     18},  // ABCD -(An), -(Ay)
     {ADD_8_EA_0,                0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
-    {ADD_16_EA_0,               0xF1FF,     0xD079,     8},  // ADD.W <ea>,Dn
-    {ADD_32_EA_0,               0xF1FF,     0xD0B9,     12},  // ADD.L <ea>,Dn
+    {ADD_16_EA_0,               0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
+    {ADD_32_EA_0,               0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
     {ADD_8_D_0,                 0xF1F8,     0xD000,     8},  // ADD.B Dn, Dm
     {ADD_16_D_0,                0xF1F8,     0xD040,     8},  // ADD.W Dn, Dm
     {ADD_32_D_0,                0xF1F8,     0xD080,     8},  // ADD.L Dn, Dm
