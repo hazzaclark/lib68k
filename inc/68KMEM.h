@@ -55,7 +55,7 @@ typedef enum
     MEM_ERR_READONLY,
     MEM_ERR_UNMAPPED,
     MEM_ERR_BUS,
-    MEM_ERR_BUFER,
+    MEM_ERR_BUFFER,
     MEM_ERR_SIZE,
     MEM_ERR_RESERVED,
     MEM_ERR_OVERFLOW,
@@ -92,7 +92,7 @@ typedef struct
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
 
-#define         MEM_TRACE_HOOK                  M68K_OPT_OFF
+#define         MEM_TRACE_HOOK                  M68K_OPT_ON
 #define         MEM_MAP_TRACE_HOOK              M68K_OPT_OFF
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
 #define         JUMP_HOOK                       M68K_OPT_ON
