@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     printf("      HARRY CLARK - MOTOROLA 680x0 EMULATOR        \n");
     printf("===================================================\n");
 
-    if(argc < 2)
+    if(argc != 2)
     {
         printf("USAGE: %s <samples/FILE.bin>\n", argv[0]);
         return 1;
@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
 
+
     M68K_PULSE_RESET();
 
     printf("SUCCESSFULLY LOADED -> %s WITH SIZE: %d%s AT PC VALUE -> 0x%04X\n\n", argv[1], 
@@ -35,7 +36,6 @@ int main(int argc, char** argv)
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
 
     M68K_EXEC(0);
-
     SHOW_MEMORY_MAPS();
     return 0;
 }
