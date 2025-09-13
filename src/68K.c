@@ -131,25 +131,26 @@ void M68K_SET_S_FLAG(unsigned VALUE)
     M68K_REG_SP = M68K_FLAG_S;
 }
 
-void M68K_SET_SR(unsigned VALUE)
-{
-    // https://en.wikibooks.org/wiki/68000_Assembly/Registers
-    M68K_FLAG_T1 = M68K_BIT_F(VALUE);
-
-    M68K_SET_CCR(VALUE);
-    M68K_SET_S_FLAG(M68K_BIT_SHIFT_16(VALUE));
-}
-
 // SET THE CCR WITH THE APPROPRIATE BIT MASKS VALUES
 // WHICH ARE INDICATIVE OF THE RANGE THEY ENCOMPASS
 void M68K_SET_CCR(unsigned VALUE)
 {
-    // https://stackoverflow.com/questions/48826709/motorola-68k-understanding-the-status-registrer-flag-states
+    // https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=22
     M68K_FLAG_X = M68K_BIT_4(VALUE) << 4;
     M68K_FLAG_N = M68K_BIT_3(VALUE) << 3;
-    M68K_FLAG_Z = !M68K_BIT_2(VALUE) << 2;
+    M68K_FLAG_Z = M68K_BIT_2(VALUE) << 2;
     M68K_FLAG_V = M68K_BIT_1(VALUE) << 1;
     M68K_FLAG_C = M68K_BIT_0(VALUE);
+}
+
+void M68K_SET_SR(unsigned VALUE)
+{
+    // https://en.wikibooks.org/wiki/68000_Assembly/Registers
+    M68K_FLAG_T1 = M68K_BIT_F(VALUE);
+    M68K_FLAG_T0 = M68K_BIT_E(VALUE);
+
+    M68K_SET_CCR(VALUE);
+    M68K_SET_S_FLAG(M68K_BIT_SHIFT_16(VALUE));
 }
 
 // MAP ALL OF THE CORRESPONDING ADDRESSABLE SPACE ACCORDINGLY
@@ -161,7 +162,7 @@ void M68K_INIT(void)
     MEMORY_MAP(0x000000, 0x07FFFF, true);
     
     // 512KB ROM 
-    MEMORY_MAP(0x080000, 0x0FFFFF, false);            
+    MEMORY_MAP(0x080000, 0x0FFFFF, false);     
 }
 
 // EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
