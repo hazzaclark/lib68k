@@ -4297,8 +4297,10 @@ M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
     // GET THE CURRENT SR VALUE - WHICH WILL ALLOW THE SYSCALL
     // TO CLEAR THE TRACE LEVEL TEMPORARILY BEFORE APPLYING THE APPROPRIATE CALL
 
+    #if M68K_USE_SUPERVISOR
     M68K_SET_S_FLAG(4);
     M68K_CCR_HOOK();
+    #endif
 }
 
 M68K_MAKE_OPCODE(TAS, 8, D, 0)
@@ -4471,12 +4473,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
     {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
-    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit displalrement)
+    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit DISP)
     {BCHG_8_D_EA,               0xF1FF,     0x0179,     10},  // BCHG.B <ea>, Dy
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit displacement)!
-    {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit displacement)
+    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit DISP)
+    {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit DISP)
     {BEQ_8_0_0,                 0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
