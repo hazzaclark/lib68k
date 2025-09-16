@@ -13,13 +13,8 @@
 #include "68K.h"
 #include "68KCONF.h"
 
-#define         M68K_LSB_MASK                   0xFF                // LOWEST SIGNIFICANT BYTE FOR HANDLING BIG ENDIAN MEM OPS
-#define         M68K_MAX_BUFFERS                5                   // ARBITARY COUNT FOR HOW MANY MEMORY REGIONS CAN BE CREATED
-
-// OPTION FLAGS FOR THE MEMORY BUS
-// MOST COMMONLY USED WITH TRACE LEVEL OPERATIONS
-// T0/T1 REPRESENT THE "MAGIC NUMBERS" WHICH PRESUPPOSE THE
-// BIT VALUES FOR EACH TRACE BIT IN THE MEMORY BUS ITSELF
+#define         M68K_LSB_MASK                   0xFF                
+#define         M68K_MAX_BUFFERS                5                   
 
 #define         M68K_OPT_BASIC                  (1 << 0)            
 #define         M68K_OPT_VERB                   (1 << 1)
@@ -27,11 +22,11 @@
 #define         M68K_T0_SHIFT                   (1 << 3)
 #define         M68K_T1_SHIFT                   (1 << 4)
 
-#define         M68K_MAX_ADDR_START             0x0000000                                               // "MINIMUM" VALUE FOR THE START OF THE BUS
-#define         M68K_MAX_MEMORY_SIZE            0x1000000                                               // MAXIMUM VALUE FOR THE 16MB BUS (68000-SPECIFIC)
+#define         M68K_MAX_ADDR_START             0x0000000                                               
+#define         M68K_MAX_MEMORY_SIZE            0x1000000                                               
 
-#define         M68K_MAX_ADDR_END               (M68K_MAX_ADDR_START + M68K_MAX_MEMORY_SIZE - 1)        // DETERMINES THE END OF THE MEMORY BUS
-#define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB | M68K_OPT_DEVICE)      // USE ALL COMMON TRACE LEVEL FLAGS
+#define         M68K_MAX_ADDR_END               (M68K_MAX_ADDR_START + M68K_MAX_MEMORY_SIZE - 1)        
+#define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB | M68K_OPT_DEVICE) 
 
 typedef enum
 {
