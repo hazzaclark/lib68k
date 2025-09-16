@@ -141,8 +141,8 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
        CPU_TYPE == M68K_CPU_000 ? "68000" : 
        CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
 
-    printf("  SUPERVISOR MODE:  %s\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); 	\
-	printf("  STACK POINTER:    %d\n\n", M68K_REG_SP);
+	printf("  STACK POINTER:    %d\n", M68K_REG_SP);
+	printf("  SUPERVISOR MODE: %s\n\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED");
 }
 
 int M68K_CYCLES_RUN(void)
@@ -272,7 +272,7 @@ unsigned int M68K_DI_32(void)
 // OPCODE DEF (VARIANCE INCLUDED), TO DETERMINE THIS VALUE
 // FROM THERE, RETURN THE SIGNED VALUE FROM THE READ
 
-extern unsigned int M68K_GET_EA_EXT(unsigned BASE)
+unsigned int M68K_GET_EA_EXT(unsigned BASE)
 {
 	unsigned EXT = READ_IMM_16();
 	unsigned IR = 0;
