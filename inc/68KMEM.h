@@ -143,8 +143,6 @@ typedef struct
             (T1) ? ENABLE_TRACE_FLAG(M68K_T1_SHIFT) : DISABLE_TRACE_FLAG(M68K_T1_SHIFT); \
     } while(0)
 
-#endif
-
 unsigned int M68K_READ_MEMORY_8(unsigned int ADDRESS);
 unsigned int M68K_READ_MEMORY_16(unsigned int ADDRESS);
 unsigned int M68K_READ_MEMORY_32(unsigned int ADDRESS);
@@ -162,3 +160,5 @@ void SHOW_MEMORY_MAPS(void);
 void SHOW_TRACE_STATUS(void);
 
 extern U8 ENABLED_FLAGS;
+
+#endif
