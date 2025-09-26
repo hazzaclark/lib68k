@@ -24,8 +24,13 @@ int main(int argc, char** argv)
     M68K_INIT();
     SHOW_MEMORY_MAPS();
 
+    // PARAMETISES THE FILE EXTENSION TO MEET THE ARG REQ.
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
-
+    if(FILE_SIZE < 0)
+    {
+        printf("ERROR: FAILED TO LOAD BINARY FILE\n");
+        return 1;
+    }
 
     M68K_PULSE_RESET();
 
