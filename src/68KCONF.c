@@ -302,6 +302,17 @@ unsigned int M68K_POST_DEC_32(void)
 
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
 {
+	const char* DOT = strrchr(FILE_PATH, '.');
+	const char* EXT = ".bin";
+
+	// DO WE HAVE A VALID EXTENSION?!
+	// THIS IS A VERY RUDIMENTARY CHECKER
+	if(!DOT || strcmp(DOT, ".bin") != 0)
+	{
+		printf("ERROR: FILE MUST HAVE EXTENSION: %s %s\n", EXT, FILE_PATH);
+		return -1;
+	}
+
     FILE* FILE_PTR = fopen(FILE_PATH, "rb");
     if(!FILE_PTR)
     {
