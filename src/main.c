@@ -26,11 +26,7 @@ int main(int argc, char** argv)
 
     // PARAMETISES THE FILE EXTENSION TO MEET THE ARG REQ.
     int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
-    if(FILE_SIZE < 0)
-    {
-        printf("ERROR: FAILED TO LOAD BINARY FILE\n");
-        return 1;
-    }
+    if(FILE_SIZE < 0) return 1;
 
     M68K_PULSE_RESET();
 
@@ -39,7 +35,6 @@ int main(int argc, char** argv)
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
-
     M68K_EXEC(0);
     SHOW_MEMORY_MAPS();
     return 0;
