@@ -432,7 +432,7 @@ typedef enum CPU_68K_FLAGS
 /*==============================================================================*/
 
 void INITIALISE_68K_CYCLES();
-unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER);
+unsigned int M68K_GET_REGISTERS(int REGISTER);
 void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE);
 
 void M68K_INIT(void);
