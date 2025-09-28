@@ -1,5 +1,4 @@
 /* COPYRIHGT (C) HARRY CLARK 2025 */
-
 /* MOTOROLA 68000 STANDALONE EMULATION LIBRARY */
 
 /* THIS FILE PERTAINS TOWARDSS THE MAIN FUNCTIONALITY SURROUNDING THE UTILITY */
@@ -27,30 +26,30 @@ unsigned char CYCLE_RANGE[0x10000];
 /* ACCESS EACH RESPECTIVE REGISTER FROM THE ENUMERATION */
 /* RETURN THE CORRESPONDENCE IN RELATION TO THE SIZE */
 
-unsigned int M68K_GET_REGISTERS(struct CPU_68K* CPU, int REGISTER)
+unsigned int M68K_GET_REGISTERS(int REGISTER)
 {
     switch (REGISTER)
     {
-        case M68K_D0: return CPU->DATA_REGISTER[0];
-        case M68K_D1: return CPU->DATA_REGISTER[1];
-        case M68K_D2: return CPU->DATA_REGISTER[2];
-        case M68K_D3: return CPU->DATA_REGISTER[3];
-        case M68K_D4: return CPU->DATA_REGISTER[4];
-        case M68K_D5: return CPU->DATA_REGISTER[5];
-        case M68K_D6: return CPU->DATA_REGISTER[6];
-        case M68K_D7: return CPU->DATA_REGISTER[7];
-        case M68K_A0: return CPU->ADDRESS_REGISTER[0];
-        case M68K_A1: return CPU->ADDRESS_REGISTER[1];
-        case M68K_A2: return CPU->ADDRESS_REGISTER[2];
-        case M68K_A3: return CPU->ADDRESS_REGISTER[3];
-        case M68K_A4: return CPU->ADDRESS_REGISTER[4];
-        case M68K_A5: return CPU->ADDRESS_REGISTER[5];
-        case M68K_A6: return CPU->ADDRESS_REGISTER[6];
-        case M68K_A7: return CPU->ADDRESS_REGISTER[7];
-        case M68K_PC: return CPU->PC;
-        case M68K_SR: return CPU->STATUS_REGISTER;
-        case M68K_IR: return CPU->INDEX_REGISTER;
-        case M68K_SP: return CPU->REGISTER_BASE[15];
+        case M68K_D0: return M68K_REG_D[0];
+        case M68K_D1: return M68K_REG_D[1];
+        case M68K_D2: return M68K_REG_D[2];
+        case M68K_D3: return M68K_REG_D[3];
+        case M68K_D4: return M68K_REG_D[4];
+        case M68K_D5: return M68K_REG_D[5];
+        case M68K_D6: return M68K_REG_D[6];
+        case M68K_D7: return M68K_REG_D[7];
+        case M68K_A0: return M68K_REG_A[0];
+        case M68K_A1: return M68K_REG_A[1];
+        case M68K_A2: return M68K_REG_A[2];
+        case M68K_A3: return M68K_REG_A[3];
+        case M68K_A4: return M68K_REG_A[4];
+        case M68K_A5: return M68K_REG_A[5];
+        case M68K_A6: return M68K_REG_A[6];
+        case M68K_A7: return M68K_REG_A[7];
+        case M68K_PC: return M68K_REG_PC;
+        case M68K_SR: return M68K_REG_SR;
+        case M68K_IR: return M68K_REG_IR;
+        case M68K_SP: return M68K_REG_SP;
 
         default: return 0;
     }
@@ -108,6 +107,8 @@ void M68K_JUMP(unsigned NEW_PC)
 
 void M68K_JUMP_VECTOR(unsigned VECTOR)
 {
+    // JUMP BACK BASED ON MANUAL PC ADVANCE
+    // VECTOR WILL PRESUPPOSE A CHANGE IN STATE IN THE VECTOR TABLE
     M68K_REG_PC = M68K_READ_32(VECTOR << 2);
     M68K_BASE_JUMP_HOOK(M68K_REG_PC, M68K_REG_PPC);
 }
