@@ -16,20 +16,19 @@ int main(int argc, char** argv)
         printf("USAGE: %s <samples/FILE.bin>\n", argv[0]);
         return 1;
     }
-
     
     ENABLED_FLAGS = M68K_OPT_FLAGS;
     SET_TRACE_FLAGS(1, 0);
     SHOW_TRACE_STATUS();
-
-    // PARAMETISES THE FILE EXTENSION TO MEET THE ARG REQ.
-    int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
-    if(FILE_SIZE < 0) return 1;
     
     M68K_INIT();
     SHOW_MEMORY_MAPS();
 
     M68K_PULSE_RESET();
+
+    // PARAMETISES THE FILE EXTENSION TO MEET THE ARG REQ.
+    int FILE_SIZE = LOAD_BINARY_FILE(argv[1], M68K_REG_PC);
+    if(FILE_SIZE < 0) return 1;
 
     printf("SUCCESSFULLY LOADED -> %s WITH SIZE: %d%s AT PC VALUE -> 0x%04X\n\n", argv[1], 
         FORMAT_SIZE(FILE_SIZE), FORMAT_UNIT(FILE_SIZE), M68K_REG_PC);
