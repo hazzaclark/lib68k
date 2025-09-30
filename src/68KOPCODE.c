@@ -4612,8 +4612,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_I_SR,              0xFFFF,     0x46FC,     12}, // MOVE.W #imm, SR
     {MOVEA_16_I_AY,             0xF1FF,     0x307C,     12}, // MOVEA.L #imm, Ay
     {MOVEA_32_I_AY,             0xF1FF,     0x207C,     12}, // MOVEA.L #imm, Ay
-    {MULS_16_D_0,               0xF1C0,     0xC1C0,     70}, // MULS.W <ea>,Dn
-    {MULU_16_D_0,               0xF1C0,     0xC0C0,     70}, // MULU.W <ea>,Dn
+    {MULS_16_D_0,               0xF1F8,     0xC1C0,     70}, // MULS.W <ea>,Dn
+    {MULU_16_D_0,               0xF1F8,     0xC0C0,     70}, // MULU.W <ea>,Dn
     {NBCD_8_D_0,                0xFFFF,     0x4839,     6},  // NBCD <ea>
     {NEG_8_EA_0,                0xFFFF,     0x4439,     4},  // NEG.B <ea>
     {NEG_16_EA_0,               0xFFFF,     0x4479,     8},  // NEG.W <ea>
