@@ -248,10 +248,6 @@ extern unsigned int READ_IMM_16(void);
 extern unsigned int READ_IMM_32(void);
 
 void M68K_SET_CPU_TYPE(unsigned TYPE);
-int M68K_CYCLES_RUN(void);
-int M68K_CYCLES_REMAINING(void);
-void INITIALIZE_MEMORY();
-
 int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR);
 
 extern unsigned int M68K_DI_8(void);
