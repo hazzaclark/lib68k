@@ -211,6 +211,8 @@
 #define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 8)
 #define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 24)
 
+#define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
+
 // SEPERATE HOOK FOR ACCESSING A PRE-SUPPOSED STATE WITHIN
 // THE CONTEXT OF THE EMULATOR
 
@@ -260,6 +262,6 @@ extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SR(void);
 extern unsigned int M68K_PULL_SP(void);
 
-extern U8 M68K_VECTOR_TABLE[5][256];
+U8 M68K_VECTOR_TABLE[5][256];
 
 #endif
