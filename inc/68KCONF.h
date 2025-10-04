@@ -105,7 +105,7 @@
 	#if M68K_RESET_HOOK
     #define M68K_BASE_RES_HOOK(T0, T1, PC, SP) \
         do { \
-            printf("RESET WITH TRACE LEVEL (T0: %d, T1: %d) -> CURRENT PC: 0x%04X -> CURRENT SP: 0x%04X\n", \
+            printf("[RESET] -> [T0]: %d, [T1]: %d -> [PC]: 0x%04X, [SP]: 0x%04X\n", \
                   (T0), (T1), (PC), (SP)); \
         } while(0)
 	#else
@@ -245,11 +245,6 @@ extern unsigned int READ_IMM_8(void);
 extern unsigned int READ_IMM_16(void);
 extern unsigned int READ_IMM_32(void);
 
-unsigned int CTRL_READ_BYTE(unsigned int ADDRESS);
-unsigned int CTRL_READ_WORD(unsigned int ADDRESS);
-void CTRL_WRITE_BYTE(unsigned int ADDRESS, unsigned int DATA);
-void CTRL_WRITE_WORD(unsigned int ADDRESS, unsigned int DATA);
-
 void M68K_SET_CPU_TYPE(unsigned TYPE);
 int M68K_CYCLES_RUN(void);
 int M68K_CYCLES_REMAINING(void);
@@ -259,12 +254,7 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR);
 
 extern unsigned int M68K_DI_8(void);
 extern unsigned int M68K_DI_16(void);
-extern unsigned int M68K_DI_32(void); 
-
-extern unsigned int M68K_GET_EA_EXT(unsigned BASE);
-
-extern unsigned int M68K_POST_DEC_16(void);
-extern unsigned int M68K_POST_DEC_32(void);
+extern unsigned int M68K_DI_32(void);
 
 extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SR(void);
