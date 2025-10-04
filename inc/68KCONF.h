@@ -213,32 +213,6 @@
 
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
 
-// SEPERATE HOOK FOR ACCESSING A PRE-SUPPOSED STATE WITHIN
-// THE CONTEXT OF THE EMULATOR
-
-// THIS CAN VARY BASED ON PRE-DEFINED BEHAVIOURS WITHIN
-// THE CONDITIONS BY WHICH WE ARE ABLE TO HOOK AND ACCESS THESE CONDITIONS
-
-// ERGO, WHEN THE CPU IS HALTED/PAUSED, OR IF IT IS RESET AND NEEDS TO
-// JUMP BACK TO AN INITIAL COUROUTINE
-
-			#define		M68K_STATE_HOOK		M68K_OPT_ON
-
-			#if M68K_STATE_HOOK
-
-			#define	M68K_SAVE_STATE(PARAM, SIZE)						\
-				printf("SAVE -> [%u]+%zu ", BUFFER, (UNK)(SIZE));		\
-				memcpy(&STATE[BUFFER], PARAM, SIZE);					\
-				BUFFER += SIZE;
-
-			
-			#define	M68K_LOAD_STATE(PARAM, SIZE)						\
-				printf("LOAD -> [%u]+%zu ", BUFFER, (UNK)(SIZE));		\
-				memcpy(PARAM, &STATE[BUFFER], SIZE);					\
-				BUFFER += SIZE;
-
-			#endif
-
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
 /*===============================================================================*/
