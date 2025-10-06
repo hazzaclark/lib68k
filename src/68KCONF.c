@@ -142,8 +142,6 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 }
 
 /* THIS FUNCTION DISCERNS THE FUNCTIONALITY BASED ON PROVIDING PULSE TO THE RESET LINE */
-/* ON THE CPU BASED ON EACH RESPECTIVE REGISTER */
-
 /* SEE: RESET OPERATION - https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=75 */
 /* https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=537 */
 
@@ -206,7 +204,7 @@ unsigned int READ_IMM_32(void)
 
 void M68K_PUSH_SP(unsigned VALUE)
 {
-	M68K_REG_SP = READ_IMM_16();
+	M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(M68K_REG_SP - 4);
 	M68K_WRITE_32(M68K_REG_SP, VALUE);
 }
 
@@ -226,9 +224,9 @@ unsigned int M68K_PULL_SR(void)
 
 unsigned int M68K_PULL_SP(void)
 {
-	unsigned SP = M68K_REG_SP;
-	M68K_REG_SP = M68K_MASK_OUT_BELOW_32(M68K_REG_SP + 4);
-    return M68K_READ_32(SP);
+	unsigned SP = M68K_READ_32(M68K_REG_SP);
+	M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(M68K_REG_SP + 4);
+    return SP;
 }
 
 // HELPER FUNCTIONS TO BE ABLE TO READ THE IMMEDIATE ADDRESSING VARIABLE
