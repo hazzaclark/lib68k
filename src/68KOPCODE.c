@@ -3122,6 +3122,23 @@ M68K_MAKE_OPCODE(MULU, 16, I, 0)
     M68K_CCR_HOOK();
 }
 
+M68K_MAKE_OPCODE(MULU, 16, EA, DY)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned SRC = READ_IMM_32();
+
+    unsigned EA = M68K_DATA_HIGH;
+    unsigned RESULT = SRC * M68K_MASK_OUT_ABOVE_16(*DEST) & EA;
+
+    *DEST = RESULT;
+    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_CCR_HOOK();
+}
+
 M68K_MAKE_OPCODE(NBCD, 8, D, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
@@ -4646,6 +4663,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MULU_16_D_0,               0xF1F8,     0xC0C0,     8}, // MULU.W <ea>,Dn
     {MULS_16_I_0,               0xF1FF,     0xC1FC,     4}, // MULS.W #imm, Dn
     {MULU_16_I_0,               0xF1FF,     0xC0FC,     4}, // MULU.W #imm, Dn
+    {MULU_16_EA_DY,             0xF1FF,     0xC0F9,     4},  // MULU.W <ea>, Dy
     {NBCD_8_D_0,                0xFFFF,     0x4839,     6},  // NBCD <ea>
     {NEG_8_EA_0,                0xFFFF,     0x4439,     4},  // NEG.B <ea>
     {NEG_16_EA_0,               0xFFFF,     0x4479,     8},  // NEG.W <ea>
