@@ -2085,11 +2085,11 @@ M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 {
-   unsigned EA = M68K_ADDRESS_LOW;
+   unsigned EA = READ_IMM_32();
    M68K_PUSH_SP(M68K_REG_PC);
    M68K_JUMP(EA);
 
-   M68K_REG_PC += 2;
+   M68K_REG_PC -= 2;
 }
 
 M68K_MAKE_OPCODE(LEA, 32, AI, 0)
@@ -2811,7 +2811,7 @@ M68K_MAKE_OPCODE(MOVE_SR, 16, DA, 0)
     if(M68K_FLAG_S)
     {
         unsigned SR = M68K_READ_16(M68K_DATA_HIGH);
-        M68K_SET_SR_IRQ(SR);
+        M68K_SET_SR(SR);
         return;
     }
 
@@ -3916,8 +3916,7 @@ M68K_MAKE_OPCODE(ROXL, 32, S, 0)
 
 M68K_MAKE_OPCODE(RTS, 0, 0, 0)
 {
-    U32 NEW_SP = M68K_PULL_SP();
-    NEW_SP += 4;
+    M68K_JUMP(M68K_PULL_SP());
 }
 
 M68K_MAKE_OPCODE(RTE, 32, 0, 0)
@@ -4598,7 +4597,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {EXT_32_0_0,                0xFFFF,     0x48C0,     4},  // EXT.L Dn
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFC0,     0x4EC0,     8},  // JMP <ea>
-    {JSR_32_0_PC,               0xFFC0,     0x4E80,     16}, // JSR <ea>
+    {JSR_32_0_PC,               0xFFFF,     0x4EB9,     16}, // JSR <ea>
     {LEA_32_AI_0,               0xF1FF,     0x41F9,     10},  // LEA <ea>, An
     {LEA_32_SP_I,               0xFFFF,     0x4FF9,     10},  // LEA <ea>, SP
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
