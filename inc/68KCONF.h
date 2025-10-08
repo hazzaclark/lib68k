@@ -170,10 +170,9 @@
         do { \
             U8 EA_MODE = M68K_GET_EA_MODE(M68K_REG_IR); \
             U8 EA_REG = M68K_GET_EA_REG(M68K_REG_IR); \
-            S16 DISP = (S16)M68K_GET_DISP(READ_IMM_16()); \
+            S16 DISP = (S16)M68K_READ_16(M68K_REG_PC - 2); \
             printf("EA MODE: %d, EA REGISTER: %d\n", EA_MODE, EA_REG); \
             printf("DISPLACEMENT: %d (0x%04X)\n", DISP, (U16)DISP); \
-            M68K_REG_PC -= 2; \
         } while(0)
 	#else
     	#define M68K_DISP_PRINT_HOOK() ((void)0)
