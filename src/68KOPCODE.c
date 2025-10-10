@@ -2792,9 +2792,16 @@ M68K_MAKE_OPCODE(MOVEA, 32, D, AY)
     M68K_DISP_PRINT_HOOK();
 }
 
+M68K_MAKE_OPCODE(MOVEA, 16, PC, AY)
+{
+    unsigned EA = M68K_PCDI();
+    M68K_ADDRESS_HIGH = (S16)M68K_READ_16(EA);
+}
+
 M68K_MAKE_OPCODE(MOVEA, 32, PC, AY)
 {
-    M68K_ADDRESS_HIGH = M68K_PCDI();
+    unsigned EA = M68K_PCDI();
+    M68K_ADDRESS_HIGH = M68K_READ_32(EA);
 }
 
 M68K_MAKE_OPCODE(MOVE_CCR, 16, DA, 0)
@@ -4643,6 +4650,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_EA_AY,            0xF1F8,     0x2079,     20},  // MOVEA.L <ea>,Ay 
     {MOVEA_16_D_AY,             0xF1F8,     0x3068,     16},  // MOVEA.W d(An), Ay
     {MOVEA_32_D_AY,             0xF1F8,     0x2068,     20},  // MOVEA.L d(An), Ay
+    {MOVEA_16_PC_AY,            0xF1FF,     0x307A,     16},  // MOVEA.W d(PC), Ay
     {MOVEA_32_PC_AY,            0xF1FF,     0x207A,     20},  // MOVEA.L d(PC), Ay
     {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     10},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     20},  // MOVE.L (An)+,Dn
