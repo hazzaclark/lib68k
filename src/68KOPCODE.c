@@ -2101,6 +2101,12 @@ M68K_MAKE_OPCODE(LEA, 32, SP, I)
     M68K_BASE_LEA_HOOK(M68K_REG_SP);
 }
 
+M68K_MAKE_OPCODE(LEA, 32, PC, DISP)
+{
+    unsigned EA = M68K_PCDI();
+    M68K_ADDRESS_HIGH = M68K_READ_32(EA);
+}
+
 M68K_MAKE_OPCODE(LINK, 32, DA, 0)
 {
     unsigned* DEST = &M68K_ADDRESS_HIGH;
@@ -4614,6 +4620,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {JSR_32_0_PC,               0xFFFF,     0x4EB9,     16}, // JSR <ea>
     {LEA_32_AI_0,               0xF1FF,     0x41F9,     10},  // LEA <ea>, An
     {LEA_32_SP_I,               0xFFFF,     0x4FF9,     10},  // LEA <ea>, SP
+    {LEA_32_PC_DISP,            0xF1FF,     0x41FA,     20},  // LEA d(PC), Ay
     {LINK_32_DA_0,              0xFFF8,     0x4E50,     16}, // LINK An,#<data>
     {LSL_8_S_0,                 0xF1F8,     0xE108,     6},  // LSL.B, Dn, Dy
     {LSL_16_S_0,                0xF1F8,     0xE148,     6},  // LSL.W, Dn, Dy
