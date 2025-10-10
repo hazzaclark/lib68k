@@ -1166,16 +1166,24 @@ M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
 
 M68K_MAKE_OPCODE(BCC, 16, 0, 0)
 {
-    unsigned OFFSET = 0; 
-    OFFSET = M68K_MASK_OUT_ABOVE_16(OFFSET);
-    M68K_REG_PC += 2;
+    if(!M68K_FLAG_C)
+    {
+        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+        M68K_REG_PC += 2;
+        return;
+    }
 }
 
 M68K_MAKE_OPCODE(BCC, 32, 0, 0)
 {
-    unsigned OFFSET = 0; 
-    OFFSET = M68K_MASK_OUT_ABOVE_32(OFFSET);
-    M68K_REG_PC += 4;
+    if(!M68K_FLAG_C)
+    {
+        unsigned OFFSET = READ_IMM_16();
+        M68K_REG_PC -= 2;
+        M68K_BRANCH_16(OFFSET);
+    }
+
+    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(BCHG, 8, D, EA)
@@ -1216,7 +1224,7 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
     S16 OFFSET = (S16)(READ_IMM_16());
-    M68K_REG_PC += OFFSET;
+    M68K_BRANCH_16(OFFSET);
 }
 
 M68K_MAKE_OPCODE(BRA, 32, 0, 0)
@@ -1825,6 +1833,22 @@ M68K_MAKE_OPCODE(DBCC, 16, 0, 0)
         unsigned OFFSET = M68K_READ_16(M68K_DATA_HIGH);
         M68K_READ_16(OFFSET);
         return;
+    }
+
+    M68K_REG_PC += 2;
+}
+
+M68K_MAKE_OPCODE(DBRA, 16, 0, 0)
+{
+    unsigned* DEST = &M68K_DATA_LOW;
+    unsigned RESULT = (*DEST - 1);
+    *DEST = M68K_MASK_OUT_BELOW_16(*DEST) | RESULT;
+
+    if(!RESULT)
+    {
+        S16 OFFSET = READ_IMM_16();
+        M68K_REG_PC -= 2;
+        M68K_BRANCH_16(OFFSET);
     }
 
     M68K_REG_PC += 2;
@@ -4609,7 +4633,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
-    {DBCC_16_0_0,               0xF0F8,     0x50C8,     10}, // DBCC Dn,<label>
+    {DBCC_16_0_0,               0xFFF8,     0x50C8,     10}, // DBCC Dn,<label>
+    {DBRA_16_0_0,               0xFFF8,     0x51C8,     12},  // DBRA Dn, <label>
     {DIVS_16_D_0,               0xF1F8,     0x81C0,     4},  // DIVS.W Dn,Dy
     {DIVS_16_IMM_0,             0xF1FF,     0x81FC,     4},  // DIVS.W #imm, Dy
     {DIVU_16_D_0,               0xF1F8,     0x80C0,     4},  // DIVU.W <ea>, Dy
