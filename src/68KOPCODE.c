@@ -1215,19 +1215,8 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    // MANUALLY SAVE THE SIGNED OFFSET
-    // GIVE A MANUAL ADVANCE TO PREVENT LEAK 
-    U16 SAVED_OFF = M68K_REG_PC;
-    M68K_REG_PC += 2;
-
-    // ASSIGN NEW OFFSET TO THE BRANCH
-    // SAVED OFFSET WAS THE ORIGINAL PC OFFSET BEING
-    // COMPARED AGAINST
-    U16 OFFSET = READ_IMM_16();
-    M68K_REG_PC = SAVED_OFF;
-    
-    // FINALLY BRANCH (WITH PROPER SIZE)
-    M68K_BRANCH_16(OFFSET);
+    S16 OFFSET = (S16)(READ_IMM_16());
+    M68K_REG_PC += OFFSET;
 }
 
 M68K_MAKE_OPCODE(BRA, 32, 0, 0)
@@ -1298,6 +1287,17 @@ M68K_MAKE_OPCODE(BEQ, 32, 0, 0)
     return;
 }
 
+M68K_MAKE_OPCODE(BLT, 16, 0, 0)
+{
+    S16 OFFSET = (S16)(READ_IMM_16());
+    
+    if(M68K_FLAG_N ^ M68K_FLAG_V)
+    {
+        M68K_REG_PC -= 2;
+        M68K_BRANCH_16(OFFSET);
+    }
+}
+
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
 {
     unsigned MASK = 1 << M68K_READ_8(0) & 7;
@@ -1319,8 +1319,11 @@ M68K_MAKE_OPCODE(BSET, 32, R, D)
 }
 
 M68K_MAKE_OPCODE(BSR, 16, 0, 0)
-{    
-    M68K_BRANCH_16(READ_IMM_8());
+{
+    unsigned OFFSET = READ_IMM_16();
+    M68K_PUSH_SP(M68K_REG_PC);
+    M68K_REG_PC -= 2;    
+    M68K_BRANCH_16(OFFSET);
 }
 
 M68K_MAKE_OPCODE(BTST, 8, D, 0)
@@ -1573,15 +1576,16 @@ M68K_MAKE_OPCODE(CMP, 16, D, 0)
 
 M68K_MAKE_OPCODE(CMP, 32, D, 0)
 {
-    unsigned SRC = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
-    unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW);
-
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned DEST = M68K_DATA_HIGH;
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
     M68K_FLAG_V = ((SRC ^ (DEST & RESULT)) ^ DEST);
     M68K_FLAG_C = (RESULT == 0);
+
+    M68K_CCR_HOOK();
 }
 
 M68K_MAKE_OPCODE(CMPA, 16, DA, 0)
@@ -2999,7 +3003,7 @@ M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
 {
     unsigned RESULT = M68K_DATA_HIGH = (S8)M68K_MASK_OUT_ABOVE_8(M68K_REG_IR);
     
-    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = (RESULT == 0);
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -4558,6 +4562,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BEQ_8_0_0,                 0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x67FF,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
+    {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BNE_16_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
     {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
