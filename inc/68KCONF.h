@@ -227,6 +227,8 @@ extern unsigned int M68K_DI_8(void);
 extern unsigned int M68K_DI_16(void);
 extern unsigned int M68K_DI_32(void);
 
+extern unsigned int M68K_PCDI(void);
+
 extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SR(void);
 extern unsigned int M68K_PULL_SP(void);
