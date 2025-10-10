@@ -1787,6 +1787,42 @@ M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
     M68K_FLAG_C = (SRC > DEST);
 }
 
+M68K_MAKE_OPCODE(CMPI, 8, IMM, AY)
+{
+    unsigned SRC = READ_IMM_8();
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_8(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(CMPI, 16, IMM, AY)
+{
+    unsigned SRC = READ_IMM_16();
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_16(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(CMPI, 32, IMM, AY)
+{
+    unsigned SRC = READ_IMM_32();
+    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned RESULT = DEST - SRC;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(RESULT);
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
 M68K_MAKE_OPCODE(CMPM, 8, A, 0)
 {
     unsigned SRC = M68K_READ_8(M68K_ADDRESS_LOW);
@@ -2525,6 +2561,19 @@ M68K_MAKE_OPCODE(MOVE, 32, POST_INC, D)
     M68K_WRITE_32(READ_IMM_16(), VALUE);
 
     M68K_REG_PC -= 2;
+}
+
+M68K_MAKE_OPCODE(MOVE, 8, PRE_DEC, D)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
+    unsigned EA = M68K_EA();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_8(EA, RESULT);
 }
 
 // SUBTRACT AFTER THE MANUAL ADVANCE OF THE PC
@@ -4630,6 +4679,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPI_8_DA_0,               0xFFF8,     0x0C00,     8},  // CMPI.B #<data>,<ea>
     {CMPI_16_DA_0,              0xFFF8,     0x0C40,     10},  // CMPI.W #<data>,<ea>
     {CMPI_32_DA_0,              0xFFF8,     0x0C80,     14}, // CMPI.L #<data>,<ea>
+    {CMPI_8_IMM_AY,             0xFFF8,     0x0C10,     12},  // CMPI.B #imm, (Ay)
+    {CMPI_16_IMM_AY,            0xFFF8,     0x0C50,     12},  // CMPI.B #imm, (Ay)
+    {CMPI_32_IMM_AY,            0xFFF8,     0x0C90,     12},  // CMPI.B #imm, (Ay)
     {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
@@ -4698,6 +4750,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_POST_INC_D,         0xF1F8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
     {MOVE_16_POST_INC_D,        0xF1F8,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
     {MOVE_32_POST_INC_D,        0xF1F8,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
+    {MOVE_8_PRE_DEC_D,          0xFFF8,     0x1F00,     20},  // MOVE.B Dn, -(Ay)
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
