@@ -1296,6 +1296,10 @@ M68K_MAKE_OPCODE(BLT, 16, 0, 0)
         M68K_REG_PC -= 2;
         M68K_BRANCH_16(OFFSET);
     }
+    else
+    {
+        M68K_REG_PC += 2;
+    }
 }
 
 M68K_MAKE_OPCODE(BSET, 8, S, AI)
