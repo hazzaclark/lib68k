@@ -2136,7 +2136,7 @@ M68K_MAKE_OPCODE(LEA, 32, SP, I)
 M68K_MAKE_OPCODE(LEA, 32, PC, DISP)
 {
     unsigned EA = M68K_PCDI();
-    M68K_ADDRESS_HIGH = M68K_READ_32(EA);
+    M68K_ADDRESS_HIGH = EA;
 }
 
 M68K_MAKE_OPCODE(LINK, 32, DA, 0)
@@ -2657,7 +2657,7 @@ M68K_MAKE_OPCODE(MOVE, 32, D, POST_DEC)
 M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 {
     unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned EA = M68K_ADDRESS_HIGH += 4;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
     M68K_FLAG_Z = RESULT;
@@ -2670,7 +2670,7 @@ M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 {
     unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned EA = M68K_ADDRESS_HIGH += 4;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
     M68K_FLAG_Z = RESULT;
@@ -2683,7 +2683,7 @@ M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 M68K_MAKE_OPCODE(MOVE, 32, PI, A)
 {
     unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned EA = M68K_ADDRESS_HIGH += 4;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = RESULT;
@@ -4695,9 +4695,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_PC_AY,            0xF1FF,     0x207A,     20},  // MOVEA.L d(PC), Ay
     {MOVE_16_D_POST_INC,        0xF1F8,     0x3018,     10},   // MOVE.W (An)+,Dn
     {MOVE_32_POST_INC_0,        0xF1F8,     0x2018,     20},  // MOVE.L (An)+,Dn
-    {MOVE_8_POST_INC_D,         0xFFF8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
-    {MOVE_16_POST_INC_D,        0xF1C0,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
-    {MOVE_32_POST_INC_D,        0xF1C0,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
+    {MOVE_8_POST_INC_D,         0xF1F8,     0x10C0,     10},  // MOVE.B Dn, (Ay)+
+    {MOVE_16_POST_INC_D,        0xF1F8,     0x30C0,     10},  // MOVE.W Dn, (Ay)+
+    {MOVE_32_POST_INC_D,        0xF1F8,     0x20C0,     20},  // MOVE.L Dn, (Ay)+
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
