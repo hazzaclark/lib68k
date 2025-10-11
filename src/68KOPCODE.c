@@ -2993,29 +2993,43 @@ M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, 0)
 {
     unsigned INDEX = 0;
     unsigned LIST = READ_IMM_16();
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned EA = M68K_ADDRESS_LOW;
+    unsigned COUNT = 0;
 
-    for(; INDEX < 16; INDEX++)
+    for(; INDEX < 16; INDEX--)  
     {
-        EA = LIST;
-        M68K_WRITE_16(EA, INDEX);
+        if(LIST & (1 << INDEX))  
+        {
+            EA -= 2; 
+            unsigned int REG_VALUE = M68K_GET_REGISTERS(INDEX); 
+            M68K_WRITE_16(EA, M68K_REG_BASE[REG_VALUE]);
+            COUNT++;  
+        }
     }
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
+    *M68K_REG_BASE = EA;  
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
 M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, 0)
 {
     unsigned INDEX = 0;
-    unsigned LIST = M68K_MASK_OUT_ABOVE_32(READ_IMM_16());
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned LIST = READ_IMM_16();
+    unsigned EA = M68K_ADDRESS_LOW;
+    unsigned COUNT = 0;
 
-    for(; INDEX < 16; INDEX++)
+    for(; INDEX < 16; INDEX--)  
     {
-        EA = LIST;
-        M68K_WRITE_32(EA, INDEX);
+        if(LIST & (1 << INDEX))  
+        {
+            EA -= 4; 
+            unsigned int REG_VALUE = M68K_GET_REGISTERS(INDEX); 
+            M68K_WRITE_32(EA, M68K_REG_BASE[REG_VALUE]);
+            COUNT++;  
+        }
     }
 
+    *M68K_REG_BASE = EA;  
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
