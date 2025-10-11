@@ -126,16 +126,14 @@
 	// IT SKIPS THE OPCODE TO READ THE NEXT 4 BYTES
 
 	#if M68K_LEA_HOOK
-	#define M68K_BASE_LEA_HOOK(REG_ARRAY) \
+	#define M68K_BASE_LEA_HOOK(REG_ARRAY, EA_VALUE) \
 		do { \
-			int REG_NUM = (M68K_REG_IR >> 9) & 7; \
-			int EA = READ_IMM_16(); \
-			M68K_REG_PC -= 2;		\
+			int REG_NUM = M68K_DATA_HIGH; \
 			printf("LEA FOUND: $%x -> REGISTER A%d\n", \
-				EA, REG_NUM); \
+				EA_VALUE, REG_NUM); \
 		} while(0)
 	#else
-		#define M68K_BASE_LEA_HOOK(REG_ARRAY) ((void)0)
+		#define M68K_BASE_LEA_HOOK(REG_ARRAY, EA_VALUE) ((void)0)
 	#endif
 
 	#if M68K_ADDR_HOOK
