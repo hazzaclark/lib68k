@@ -141,10 +141,10 @@ void M68K_SET_S_FLAG(unsigned VALUE)
 void M68K_SET_CCR(unsigned VALUE)
 {
     // https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=22
-    M68K_FLAG_X = M68K_BIT_4(VALUE) << 4;
-    M68K_FLAG_N = M68K_BIT_3(VALUE) << 3;
-    M68K_FLAG_Z = M68K_BIT_2(VALUE) << 2;
-    M68K_FLAG_V = M68K_BIT_1(VALUE) << 1;
+    M68K_FLAG_X = M68K_BIT_4(VALUE);
+    M68K_FLAG_N = M68K_BIT_3(VALUE);
+    M68K_FLAG_Z = M68K_BIT_2(VALUE);
+    M68K_FLAG_V = M68K_BIT_1(VALUE);
     M68K_FLAG_C = M68K_BIT_0(VALUE);
 }
 
