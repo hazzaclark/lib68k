@@ -1777,7 +1777,7 @@ M68K_MAKE_OPCODE(CMPI, 16, DA, 0)
 
 M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
 {
-    unsigned SRC = M68K_READ_32(M68K_DATA_HIGH);
+    unsigned SRC = READ_IMM_32();
     unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
     unsigned RESULT = DEST - SRC;
 
@@ -1790,7 +1790,7 @@ M68K_MAKE_OPCODE(CMPI, 32, DA, 0)
 M68K_MAKE_OPCODE(CMPI, 8, IMM, AY)
 {
     unsigned SRC = READ_IMM_8();
-    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned DEST = M68K_READ_8(M68K_ADDRESS_LOW);
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
@@ -1802,7 +1802,7 @@ M68K_MAKE_OPCODE(CMPI, 8, IMM, AY)
 M68K_MAKE_OPCODE(CMPI, 16, IMM, AY)
 {
     unsigned SRC = READ_IMM_16();
-    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned DEST = M68K_READ_16(M68K_ADDRESS_LOW);
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
@@ -1814,7 +1814,7 @@ M68K_MAKE_OPCODE(CMPI, 16, IMM, AY)
 M68K_MAKE_OPCODE(CMPI, 32, IMM, AY)
 {
     unsigned SRC = READ_IMM_32();
-    unsigned DEST = M68K_ADDRESS_LOW;
+    unsigned DEST = M68K_READ_32(M68K_ADDRESS_LOW);
     unsigned RESULT = DEST - SRC;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
@@ -2188,14 +2188,14 @@ M68K_MAKE_OPCODE(LSL, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
 
-    // CITED FROM M68000PRM - ON BEHALF OF NXP
-
-    /* SHIFTS THE BITS OF THE OPERAND IN THE DIRECTION SPECIFIED (L OR R). 
+    /*
+    SHIFTS THE BITS OF THE OPERAND IN THE DIRECTION SPECIFIED (L OR R). 
     THE CARRY BIT RECEIVES THE LAST BIT SHIFTED OUT OF THE OPERAND. 
     
     THE SHIFT COUNT FOR THE SHIFTING OF A REGISTER IS SPECIFIED IN TWO DIFFERENT WAYS:
     1. IMMEDIATE - THE SHIFT COUNT (1 – 8) IS SPECIFIED IN THE INSTRUCTION.
-    2. REGISTER - THE SHIFT COUNT IS THE VALUE IN THE DATA REGISTER SPECIFIED IN THE INSTRUCTION MODULO 64. */    
+    2. REGISTER - THE SHIFT COUNT IS THE VALUE IN THE DATA REGISTER SPECIFIED IN THE INSTRUCTION MODULO 64. 
+    */    
 
     unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
 
@@ -4680,8 +4680,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMPI_16_DA_0,              0xFFF8,     0x0C40,     10},  // CMPI.W #<data>,<ea>
     {CMPI_32_DA_0,              0xFFF8,     0x0C80,     14}, // CMPI.L #<data>,<ea>
     {CMPI_8_IMM_AY,             0xFFF8,     0x0C10,     12},  // CMPI.B #imm, (Ay)
-    {CMPI_16_IMM_AY,            0xFFF8,     0x0C50,     12},  // CMPI.B #imm, (Ay)
-    {CMPI_32_IMM_AY,            0xFFF8,     0x0C90,     12},  // CMPI.B #imm, (Ay)
+    {CMPI_16_IMM_AY,            0xFFF8,     0x0C50,     12},  // CMPI.W #imm, (Ay)
+    {CMPI_32_IMM_AY,            0xFFF8,     0x0C90,     12},  // CMPI.L #imm, (Ay)
     {CMPM_8_A_0,                0xF1F8,     0xB108,     12}, // CMPM.B (Ay)+,(Ax)+
     {CMPM_16_A_0,               0xF1F8,     0xB148,     12}, // CMPM.W (Ay)+,(Ax)+
     {CMPM_32_A_0,               0xF1F8,     0xB188,     20}, // CMPM.L (Ay)+,(Ax)+
