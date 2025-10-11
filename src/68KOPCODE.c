@@ -3023,16 +3023,20 @@ M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
 {
     unsigned INDEX = 0;
     unsigned LIST = READ_IMM_16();
-    unsigned EA = M68K_ADDRESS_HIGH;
+    unsigned EA = M68K_ADDRESS_LOW;
 
     for(; INDEX < 16; INDEX++)
     {
-        EA = LIST;
-        EA += 2;
-        M68K_WRITE_16(EA, INDEX);
+        if(LIST & (1 << INDEX))  
+        {
+            unsigned int REG_VALUE = M68K_READ_16(EA);  
+            M68K_SET_REGISTERS(INDEX, REG_VALUE);        
+            EA += 2;
+        }
     }
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_DA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+    *M68K_REG_BASE = EA;
 }
 
 M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
@@ -3051,6 +3055,7 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
         }
     }
 
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     *M68K_REG_BASE = EA;
 }
 
