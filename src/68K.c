@@ -122,7 +122,7 @@ void M68K_JUMP_VECTOR(unsigned VECTOR)
 void M68K_SET_SR_IRQ(unsigned VALUE)
 {
 	VALUE &= M68K_SR_MASK;
-	M68K_FLAG_T1 += ((S8)VALUE);
+	M68K_FLAG_T1 = VALUE;
     M68K_FLAG_T0 = VALUE;
 }
 
@@ -133,7 +133,6 @@ void M68K_SET_S_FLAG(unsigned VALUE)
     {
         M68K_REG_BASE[M68K_FLAG_S] = M68K_REG_SP;
         M68K_FLAG_S = VALUE;
-        M68K_REG_SP = M68K_REG_BASE[M68K_FLAG_S];
     }
 }
 
