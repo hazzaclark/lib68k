@@ -231,7 +231,7 @@ unsigned int M68K_PULL_SP(void)
 
 unsigned int M68K_PULL_CCR(void)
 {
-	unsigned CCR = M68K_READ_16(M68K_REG_SP);
+	unsigned CCR = M68K_READ_32(M68K_REG_SP);
 	M68K_REG_SP = M68K_MASK_OUT_ABOVE_32(M68K_REG_SP + 2);
 	return CCR;
 }
