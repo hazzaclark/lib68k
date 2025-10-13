@@ -4079,9 +4079,6 @@ M68K_MAKE_OPCODE(RTR, 32, 0, 0)
     M68K_FLAG_Z = (CCR >> 2) & 1;
     M68K_FLAG_N = (CCR >> 3) & 1;
     M68K_FLAG_X = (CCR >> 4) & 1;
-
-    M68K_REG_PC = M68K_READ_32(M68K_REG_SP);
-    M68K_REG_SP += 4;
 }
 
 M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
