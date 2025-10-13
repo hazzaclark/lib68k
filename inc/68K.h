@@ -51,7 +51,6 @@
             #define USE_MEM
             #include "68KMEM.h"
             #endif
-#endif
 
         /*===============================================================================*/
         /*							68000 MAIN CPU FUNCTIONALIY							 */
@@ -128,8 +127,9 @@
                         (M68K_BIT_3(IR) ? 1 : 0))
 
         #define         M68K_GET_DISP(EXT)                  ((S16)((EXT) & 0xFFFF))
-        #define         M68K_LOW_NIBBLE(VALUE)
-        #define         M68K_HIGH_NIBBLE(VALUE)             ((VALUE & 0x8000) ? 1 : 0)
+        
+        #define         M68K_LOW_NIBBLE(VALUE)              ((VALUE) & 0x0F)
+        #define         M68K_HIGH_NIBBLE(VALUE)             (((VALUE) >> 12) & 0x0F)
 
         #define         M68K_IMM_NIBBLE()                   \
                     ((U32)READ_IMM_32() << 31) | READ_IMM_32()
@@ -459,4 +459,5 @@ extern unsigned char CYCLE_RANGE[0x10000];
 extern unsigned CPU_TYPE;
 CPU_68K CPU;
 
+#endif
 #endif
