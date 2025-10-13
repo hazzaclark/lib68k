@@ -72,7 +72,6 @@
 		#endif
 
 	// EXTRA #ELSE CLAUSE SO THAT THE COMPILER WILL SHUT UP
-
 	#else
 	#define M68K_CCR_HOOK() ((void)0)
 	#endif
@@ -230,6 +229,8 @@ extern unsigned int M68K_PCDI(void);
 extern void M68K_PUSH_SP(unsigned VALUE);
 extern unsigned int M68K_PULL_SR(void);
 extern unsigned int M68K_PULL_SP(void);
+
+extern unsigned int M68K_PULL_CCR(void);
 
 U8 M68K_VECTOR_TABLE[5][256];
 
