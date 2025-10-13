@@ -103,8 +103,8 @@ typedef struct
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
-                printf("[TRACE] %c -> ADDR:0x%08X SIZE:%d VALUE:0x%08X\n", \
-                      (char)(OP), (ADDR), (SIZE), (VAL)); \
+                printf("[TRACE] -> %s -> ADDRESS:0x%08X | SIZE:%d VALUE:0x%08X\n", \
+                      (OP), (ADDR), (SIZE), (VAL)); \
         } while(0)
 #else
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
