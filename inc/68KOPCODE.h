@@ -21,11 +21,11 @@
 
         #undef USE_68K
 
-        #define     M68K_DATA_HIGH          (CPU.DATA_REGISTER[(M68K_REG_IR >> 9) & 7])
-        #define     M68K_DATA_LOW           (CPU.DATA_REGISTER[(M68K_REG_IR) & 7])
+        #define     M68K_DATA_HIGH          (M68K_REG_D[(M68K_REG_IR >> 9) & 7])
+        #define     M68K_DATA_LOW           (M68K_REG_D[(M68K_REG_IR) & 7])
 
-        #define     M68K_ADDRESS_HIGH       (CPU.ADDRESS_REGISTER[(M68K_REG_IR >> 9) & 7])
-        #define     M68K_ADDRESS_LOW        (CPU.ADDRESS_REGISTER[(M68K_REG_IR) & 7])
+        #define     M68K_ADDRESS_HIGH       (M68K_REG_A[(M68K_REG_IR >> 9) & 7])
+        #define     M68K_ADDRESS_LOW        (M68K_REG_A[(M68K_REG_IR) & 7])
 
 #endif
 
@@ -35,8 +35,6 @@
     #define BUILD_OP_TABLE
 
     #define         USE_OPCODE_DEBUG                M68K_OPT_ON
-
-    #define         OPCODE_BIT_MASK                 0xFF
     #define         OPCODE_MAX                      0x10000
 
     typedef struct OPCODE_HANDLER
