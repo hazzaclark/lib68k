@@ -52,7 +52,7 @@
 		#define M68K_PRINT_FLAG(COND, FLAG_VAR, NAME) \
 			do { \
 				if (COND == M68K_OPT_ON) \
-					printf(NAME ":%d ", ((FLAG_VAR) & 1)); \
+					printf(NAME ":%d ", (FLAG_VAR)); \
 			} while(0)
 	
 		#define M68K_CCR_HOOK() \
