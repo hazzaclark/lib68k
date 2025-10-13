@@ -4592,7 +4592,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // OPCODE                   MASK        MATCH       CYCLES
     {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
-    {ABCD_8_PD_AY,              0xFFF8,     0xC308,     18},  // ABCD -(An), -(Ay)
+    {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(An), -(Ay)
     {ADD_8_EA_0,                0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_0,               0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
     {ADD_32_EA_0,               0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
