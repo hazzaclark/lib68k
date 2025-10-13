@@ -4049,6 +4049,7 @@ M68K_MAKE_OPCODE(ROXL, 32, S, 0)
 M68K_MAKE_OPCODE(RTS, 0, 0, 0)
 {
     M68K_JUMP(M68K_PULL_SP());
+    M68K_BASE_RTS_HOOK(M68K_PULL_SP());
 }
 
 M68K_MAKE_OPCODE(RTE, 32, 0, 0)
@@ -4925,10 +4926,8 @@ void M68K_BUILD_OPCODE_TABLE(void)
     while (OPCODE->HANDLER != NULL)
     {
         #if USE_OPCODE_DEBUG
-
         printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER ADDRESS = 0x%p\n",
                OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
-
         #endif
 
         for (INDEX = 0; INDEX < 0x10000; INDEX++)
