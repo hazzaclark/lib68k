@@ -12,7 +12,6 @@
 static M68K_MEM_BUFFER MEM_BUFFERS[M68K_MAX_BUFFERS];
 static unsigned MEM_NUM_BUFFERS = 0;
 U8 ENABLED_FLAGS = M68K_OPT_FLAGS;
-bool TRACE_ENABLED;
 
 const char* M68K_MEM_ERR[] = 
 {
@@ -173,7 +172,7 @@ static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
                 break;
         }
 
-        MEM_TRACE(MEM_READ, ADDRESS, SIZE, MEM_RETURN);
+        MEM_TRACE("[READ]", ADDRESS, SIZE, MEM_RETURN);
         return MEM_RETURN;
     }
 
@@ -228,7 +227,7 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
         MEM_BASE->USAGE.ACCESSED = true;
 
         U8* MEM_PTR = MEM_BASE->BUFFER + OFFSET;
-        MEM_TRACE(MEM_WRITE, ADDRESS, SIZE, VALUE);
+        MEM_TRACE("[WRITE]", ADDRESS, SIZE, VALUE);
 
         switch (SIZE)
         {
