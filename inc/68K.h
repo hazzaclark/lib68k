@@ -70,8 +70,8 @@
 
         #define         M68K_EA()                                   M68K_ADDRESS_HIGH
         #define         M68K_EA_INCR_BYTE()                         (M68K_ADDRESS_HIGH++)
-        #define         M68K_EA_INCR_WORD()                         ((M68K_ADDRESS_HIGH += 2) - 2)
-        #define         M68K_EA_INCR_WORD_LONG()                    ((M68K_ADDRESS_HIGH += 4) - 4)
+        #define         M68K_EA_INCR_WORD()                         (M68K_ADDRESS_HIGH += 2)
+        #define         M68K_EA_INCR_WORD_LONG()                    (M68K_ADDRESS_HIGH += 4)
         #define         M68K_EA_DECR_BYTE()                         (M68K_ADDRESS_HIGH--)
         #define         M68K_EA_DECR_WORD()                         (M68K_ADDRESS_HIGH -= 2)
         #define         M68K_EA_DECR_WORD_LONG()                    (M68K_ADDRESS_HIGH -= 4)
