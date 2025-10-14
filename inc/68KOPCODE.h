@@ -34,7 +34,7 @@
     #else
     #define BUILD_OP_TABLE
 
-    #define         USE_OPCODE_DEBUG                M68K_OPT_ON
+    #define         USE_OPCODE_DEBUG                M68K_OPT_OFF
     #define         OPCODE_MAX                      0x10000
 
     typedef struct OPCODE_HANDLER
@@ -43,6 +43,7 @@
         unsigned MASK;
         unsigned MATCH;
         unsigned CYCLES;
+        char* NAME;
 
     } OPCODE_HANDLER;
 
