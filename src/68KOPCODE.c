@@ -4591,8 +4591,8 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
-    // OPCODE                   MASK        MATCH       CYCLES
-    {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},  // ABCD Dy,Dx
+    // HANDLER                  MASK        MATCH       CYCLES
+    {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},   // ABCD Dn, Dy
     {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(An), -(Ay)
     {ADD_8_EA_0,                0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_0,               0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
@@ -4929,7 +4929,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     while (OPCODE->HANDLER != NULL)
     {
         #if USE_OPCODE_DEBUG
-        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER ADDRESS = 0x%p\n",
+        printf("PROCESSING OPCODE: MASK = 0x%04X, MATCH = 0x%04X, HANDLER = 0x%p\n",
                OPCODE->MASK, OPCODE->MATCH, (void*)&OPCODE->HANDLER);
         #endif
 
