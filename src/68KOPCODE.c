@@ -19,7 +19,7 @@ M68K_EXCEPTION(_1010_)
 {
     M68K_JUMP_VECTOR(M68K_EXCEPTION_1010);
 
-    /* USE THE INTEGREAL POINTER NOTATION TO ACCESS THE EXCEPTION FROM THE CURRENT A-LINE INSTRUCTION */
+    /* ACCESS THE EXCEPTION FROM THE CURRENT A-LINE INSTRUCTION */
     /* PROVIDE ACCESS TO THE INDEX REGISTER */
 
     M68K_USE_CYCLES(M68K_CYCLE[M68K_EXEC_VECTOR_TABLE[0][10]]);
@@ -2615,6 +2615,19 @@ M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_INC)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
 }
 
+M68K_MAKE_OPCODE(MOVE, 8, IMM, EA)
+{
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(READ_IMM_8());
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_8(EA, RESULT);
+}
+
 M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
 {
     unsigned RESULT = READ_IMM_16();
@@ -2804,6 +2817,45 @@ M68K_MAKE_OPCODE(MOVEA, 32, AN, AY)
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
+}
+
+M68K_MAKE_OPCODE(MOVE, 8, AI, AI)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_8(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, AI, AI)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, AI, AI)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    unsigned EA = M68K_ADDRESS_HIGH;
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_32(EA, RESULT);
 }
 
 M68K_MAKE_OPCODE(MOVEA, 16, POST_INC, AY)
@@ -4483,7 +4535,7 @@ M68K_MAKE_OPCODE(SWAP, 16, D, 0)
     M68K_FLAG_V = 0;
 }
 
-M68K_MAKE_OPCODE(TRAP, 0, 0, 0)
+M68K_MAKE_OPCODE(TRAP, 32, SP, EA)
 {
     // GET THE CURRENT SR VALUE - WHICH WILL ALLOW THE SYSCALL
     // TO CLEAR THE TRACE LEVEL TEMPORARILY BEFORE APPLYING THE APPROPRIATE CALL
@@ -4767,6 +4819,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEA_32_A_0,              0xF1C0,     0x2048,     20},  // MOVEA.L An,Ay
     {MOVEA_16_AN_AY,            0xF1F8,     0x3050,     16}, // MOVEA.W (An),Ay
     {MOVEA_32_AN_AY,            0xF1F8,     0x2050,     16}, // MOVEA.L (An),Ay
+    {MOVE_8_AI_AI,              0xF1F8,     0x1090,     10},  // MOVE.B (An), (Ay)
+    {MOVE_16_AI_AI,             0xF1F8,     0x3090,     10},  // MOVE.W (An), (Ay)
+    {MOVE_32_AI_AI,             0xF1F8,     0x2090,     20},  // MOVE.L (An), (Ay)
     {MOVEA_16_POST_INC_AY,      0xF1F8,     0x3058,     16}, // MOVEA.W (An)+,Ay
     {MOVEA_16_PRE_DEC_AY,       0xF1F8,     0x3060,     20}, // MOVEA.W -(An),Ay
     {MOVEA_32_POST_INC_AY,      0xF1F8,     0x2058,     20}, // MOVEA.L (An)+,Ay
@@ -4785,6 +4840,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PRE_DEC_D,          0xFFF8,     0x1F00,     20},  // MOVE.B Dn, -(Ay)
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
+    {MOVE_8_IMM_EA,             0xF1FF,     0x10BC,     10},  // MOVE.B #imm, (An)
     {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
     {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.L #imm, (An)
     {MOVE_8_IMM_POST_DEC,       0xF1FF,     0x113C,     20},  // MOVE.B #imm, -(An)
@@ -4895,7 +4951,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {SUBX_16_RR_0,              0xF1F8,     0x9140,     4},  // SUBX.W Dy,Dx
     {SUBX_32_RR_0,              0xF1F8,     0x9180,     8},  // SUBX.L Dy,Dx
     {SWAP_16_D_0,               0xFFF8,     0x4840,     4},  // SWAP Dn
-    {TRAP_0_0_0,                0xFFFF,     0x4E4F,     4},  // TRAP #<ea>
+    {TRAP_32_SP_EA,             0xFFFF,     0x4E4F,     4},  // TRAP #<ea>
     {TAS_8_D_0,                 0xFFC0,     0x4AC0,     4},  // TAS <ea>
     {TST_8_D_0,                 0xFFF0,     0x4A00,     4},  // TST.B Dn
     {TST_16_D_0,                0xFFF0,     0x4A40,     4},  // TST.W Dn
