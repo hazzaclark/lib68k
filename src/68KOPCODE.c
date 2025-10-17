@@ -62,7 +62,7 @@ void M68K_OP_ILLEGAL_EX(void)
 
 /* SEE INTEGER INSTRUCTIONS: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#PAGE=105 */
 
-M68K_MAKE_OPCODE(ABCD, 8, RR, 0)
+M68K_MAKE_OPCODE(ABCD, 8, DN, DY)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = M68K_DATA_LOW;
@@ -126,7 +126,7 @@ M68K_MAKE_OPCODE(ABCD, 8, PD, AY)
     M68K_CCR_HOOK();
 }   
 
-M68K_MAKE_OPCODE(ADD, 8, EA, 0)
+M68K_MAKE_OPCODE(ADD, 8, EA, DN)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = M68K_MASK_OUT_ABOVE_8(M68K_DATA_LOW);
@@ -146,7 +146,7 @@ M68K_MAKE_OPCODE(ADD, 8, EA, 0)
     M68K_REG_PC += 4;
 }
 
-M68K_MAKE_OPCODE(ADD, 16, EA, 0)
+M68K_MAKE_OPCODE(ADD, 16, EA, DN)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
@@ -166,7 +166,7 @@ M68K_MAKE_OPCODE(ADD, 16, EA, 0)
     M68K_REG_PC += 4;
 }
 
-M68K_MAKE_OPCODE(ADD, 32, EA, 0)
+M68K_MAKE_OPCODE(ADD, 32, EA, DN)
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW);
@@ -4592,11 +4592,11 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // HANDLER                  MASK        MATCH       CYCLES
-    {ABCD_8_RR_0,               0xF1F8,     0xC100,     6},   // ABCD Dn, Dy
+    {ABCD_8_DN_DY,              0xF1F8,     0xC100,     6},   // ABCD Dn, Dy
     {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(An), -(Ay)
-    {ADD_8_EA_0,                0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
-    {ADD_16_EA_0,               0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
-    {ADD_32_EA_0,               0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
+    {ADD_8_EA_DN,               0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
+    {ADD_16_EA_DN,              0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
+    {ADD_32_EA_DN,              0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
     {ADD_8_D_0,                 0xF1F8,     0xD000,     8},  // ADD.B Dn, Dm
     {ADD_16_D_0,                0xF1F8,     0xD040,     8},  // ADD.W Dn, Dm
     {ADD_32_D_0,                0xF1F8,     0xD080,     12},  // ADD.L Dn, Dm
