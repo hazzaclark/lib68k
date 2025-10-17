@@ -108,7 +108,7 @@ typedef struct
     #define MEM_MAP_TRACE(OP, BASE, END, SIZE, VAL) ((void)0)
 #endif
 
-#define MEM_ERROR(OP, ERROR_CODE, SIZE, MSG, ...) \
+#define MEM_ERROR(ERROR_CODE, SIZE, MSG, ...) \
     do { \
         if (IS_TRACE_ENABLED(M68K_OPT_VERB) && CHECK_TRACE_CONDITION()) \
             printf("[ERROR] -> %-18s [SIZE: %d]: " MSG "\n", \
