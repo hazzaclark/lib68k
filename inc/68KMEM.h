@@ -30,19 +30,6 @@
 
 typedef enum
 {
-    MEM_READ = 'R',
-    MEM_WRITE = 'W',
-    MEM_INVALID_READ = '!',
-    MEM_INVALID_WRITE = '?',
-    MEM_MAP = 'M',
-    MEM_UNMAP = 'U',
-    MEM_MOVE = 'O', 
-    MEM_ERR = 'E'
-
-} M68K_MEM_OP;
-
-typedef enum
-{
     MEM_SIZE_8 = 8,
     MEM_SIZE_16 = 16,
     MEM_SIZE_32 = 32
@@ -124,8 +111,8 @@ typedef struct
 #define MEM_ERROR(OP, ERROR_CODE, SIZE, MSG, ...) \
     do { \
         if (IS_TRACE_ENABLED(M68K_OPT_VERB) && CHECK_TRACE_CONDITION()) \
-            printf("[ERROR] %c -> %-18s [SIZE: %d]: " MSG "\n", \
-                (char)(OP), M68K_MEM_ERR[ERROR_CODE], \
+            printf("[ERROR] -> %-18s [SIZE: %d]: " MSG "\n", \
+                M68K_MEM_ERR[ERROR_CODE], \
                 (int)(SIZE), ##__VA_ARGS__); \
     } while(0)
 
