@@ -56,8 +56,11 @@ typedef struct
 {
     U32 READ_COUNT;
     U32 WRITE_COUNT;
+    U32 MOVE_COUNT;
     U32 LAST_READ;
     U32 LAST_WRITE;
+    U32 LAST_MOVE_SRC;
+    U32 LAST_MOVE_DEST;
     U32 VIOLATION;
     bool ACCESSED;
 
@@ -95,6 +98,17 @@ typedef struct
         } while(0)
 #else
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
+#endif
+
+#if MEM_TRACE_HOOK == M68K_OPT_ON
+    #define MEM_MOVE_TRACE(SRC, DST, SIZE, COUNT) \
+        do { \
+            if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
+                printf("[TRACE] -> [MOVE] -> SRC:0x%08X -> DEST:0x%08X | SIZE:%d BYTES | COUNT:%u\n", \
+                      (SRC), (DST), (SIZE)/8, (COUNT)); \
+        } while(0)
+#else
+    #define MEM_MOVE_TRACE(SRC, DST, SIZE, COUNT) ((void)0)
 #endif
 
 #if MEM_MAP_TRACE_HOOK == M68K_OPT_ON
@@ -137,6 +151,10 @@ unsigned int M68K_READ_MEMORY_32(unsigned int ADDRESS);
 void M68K_WRITE_MEMORY_8(unsigned int ADDRESS, U8 VALUE);
 void M68K_WRITE_MEMORY_16(unsigned int ADDRESS, U16 VALUE);
 void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, U32 VALUE);
+
+void M68K_MOVE_MEMORY_8(unsigned SRC, unsigned DEST, unsigned COUNT);
+void M68K_MOVE_MEMORY_16(unsigned SRC, unsigned DEST, unsigned COUNT);
+void M68K_MOVE_MEMORY_32(unsigned SRC, unsigned DEST, unsigned COUNT);
 
 void ENABLE_TRACE_FLAG(U8 FLAG);
 void DISABLE_TRACE_FLAG(U8 FLAG);
