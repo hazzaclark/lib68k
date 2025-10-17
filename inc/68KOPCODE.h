@@ -57,12 +57,11 @@
     // HAVE RIDICULOUS VAR NAMES FOR CONCATENATION
     // ADDED VA_ARGS TO MITIGATE THIS  
 
-    #define M68K_MAKE_OPCODE(OP, SIZE, MODE, ...) \
+    #define     M68K_MAKE_OPCODE(OP, SIZE, MODE, ...) \
     void OP##_##SIZE##_##MODE##_##__VA_ARGS__(void)
-
-void M68K_OP_1010(void);
-void M68K_OP_1111(void);
-void M68K_OP_ILLEGAL_EX(void);
+    
+    #define     M68K_EXCEPTION(HANDLER, ...) \
+    void HANDLER##__VA_ARGS__(void) 
 
 extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[OPCODE_MAX];
 extern void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
