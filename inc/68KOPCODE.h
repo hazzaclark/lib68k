@@ -34,7 +34,7 @@
     #else
     #define BUILD_OP_TABLE
 
-    #define         USE_OPCODE_DEBUG                M68K_OPT_ON
+    #define         USE_OPCODE_DEBUG                M68K_OPT_OFF
     #define         OPCODE_MAX                      0x10000
 
     typedef struct OPCODE_HANDLER
@@ -60,8 +60,8 @@
     #define     M68K_MAKE_OPCODE(OP, SIZE, MODE, ...) \
     void OP##_##SIZE##_##MODE##_##__VA_ARGS__(void)
     
-    #define     M68K_EXCEPTION(HANDLER, ...) \
-    void HANDLER##__VA_ARGS__(void) 
+    #define     M68K_EXCEPTION(...) \
+    void __VA_ARGS__(void) 
 
 extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[OPCODE_MAX];
 extern void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
