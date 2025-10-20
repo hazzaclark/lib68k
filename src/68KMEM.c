@@ -47,15 +47,15 @@ void SHOW_TRACE_STATUS(void)
 
 void SHOW_MEMORY_MAPS(void)
 {
-    printf("\n%s MEMORY MAP(S):\n", M68K_CPU_STOPPED ? "AFTER EXEC" : "BEFORE EXEC");
-    printf("---------------------------------------------------------------\n");
-    printf("START        END         SIZE    STATE  READS   WRITES  ACCESS\n");
-    printf("---------------------------------------------------------------\n");
+    printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "AFTER" : "BEFORE");
+    printf("----------------------------------------------------------------------------------------------\n");
+    printf("START        END         SIZE    STATE      READS   WRITES   MOVES      ACCESS      VIOLATIONS  \n");
+    printf("----------------------------------------------------------------------------------------------\n");
 
     for (unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
         M68K_MEM_BUFFER* BUF = &MEM_BUFFERS[INDEX];
-        printf("0x%08X 0x%08X  %3d%s     %2s  %6u  %6u      %s\n",
+        printf("0x%08X 0x%08X    %3d%s    %2s     %6u  %6u   %6u          %s            %1u\n",
                 BUF->BASE,
                 BUF->BASE + BUF->SIZE - 1,
                 FORMAT_SIZE(BUF->SIZE), 
@@ -63,10 +63,12 @@ void SHOW_MEMORY_MAPS(void)
                 BUF->WRITE ? "RW" : "RO",
                 BUF->USAGE.READ_COUNT,
                 BUF->USAGE.WRITE_COUNT,
-                BUF->USAGE.ACCESSED ? "YES" : "NO");
+                BUF->USAGE.MOVE_COUNT,
+                BUF->USAGE.ACCESSED ? "YES" : "NO",
+                BUF->USAGE.VIOLATION);
     }
 
-    printf("---------------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------------\n");
 }
 
 // FIND THE CURRENTLY EXECUTED MEMORY BUFFER IN CONJUNCTION WITH 
@@ -256,6 +258,68 @@ MALFORMED_WRITE:
     MEM_ERROR(MEM_ERR_BAD_WRITE, SIZE, "VALUE: 0x%0X, ADDRESS: 0x%08X", VALUE, ADDRESS);
 }
 
+// MEMORY MOVE OPERATIONS - HANDLES THE SPECIFICS BETWEEN SOURCE
+// AND DESTINATION OPERATIONS
+//
+// LOOKS TO FIND THE SOURCE AND DESTINATION OPERANDS TO PROPERLY
+// VALIDATE THEIR EXECUTION
+static void MEMORY_MOVE(uint32_t SRC, uint32_t DEST, uint32_t SIZE, uint32_t COUNT)
+{
+    VERBOSE_TRACE("MOVING %u BYTES FROM 0x%08X TO 0x%08X\n", COUNT, SRC, DEST);
+
+    // FIND BOTH OF THE CURRENT OPERANDS WITHIN THE OPERATION
+
+    M68K_MEM_BUFFER* SRC_BUFFER = MEM_FIND(SRC);
+    M68K_MEM_BUFFER* DEST_BUFFER = MEM_FIND(DEST);
+
+    if(SRC_BUFFER == NULL)
+    {
+        MEM_ERROR(MEM_ERR_UNMAPPED, SIZE, "NO SOURCE BUFFER FOUND FOR ADDRESS: 0x%08X", SRC);
+        return;
+    }
+
+    if(DEST_BUFFER == NULL)
+    {
+        MEM_ERROR(MEM_ERR_UNMAPPED, SIZE, "NO DESTINATION BUFFER FOUND FOR ADDRESS: 0x%08X", DEST);
+        return;
+    }
+
+    // CAN WE WRITE TO SAID DESTINATION?!
+    // ASSUME THAT WE HAVE THE PROPER CONDITIONS FOR THE HIGH BOUND OF THE EA
+    // THAT OF WHICH ENCOMPASSESS THE WRITE CONDITION
+
+    if(!DEST_BUFFER->WRITE)
+    {
+        DEST_BUFFER->USAGE.VIOLATION++;
+        MEM_ERROR(MEM_ERR_READONLY, SIZE, "MOVE ATTEMPT TO READ-ONLY MEMORY: 0x%08X, VIOLATION: #%u", DEST, DEST_BUFFER->USAGE.VIOLATION);
+    }
+
+    // GET THE ALL ENCOMPASSING SIZE OF THE OPERATION
+    U32 TRANSFER_SIZE = SIZE / 8;
+
+    // DETERMINE THE CONCURRENT BYTES IS REQUIRED PER EACH OPERATION
+    // SIZE IS ALL VARIABLE BASED ON THE DISTANCE BETWEEN INDIRECT AND EA
+    for(U32 INDEX = 0; INDEX < COUNT; INDEX += TRANSFER_SIZE)
+    {
+        U32 CURRENT_SRC = SRC + INDEX;
+        U32 CURRENT_DEST = DEST + INDEX;
+
+        // READ FROM THE CURRENT SORUCE AGAINST THE SIZE
+        // OF THE OPERATION
+        U32 SRC_READ = MEMORY_READ(CURRENT_SRC, SIZE);
+
+        // WRITE TO DESTINATION
+        MEMORY_WRITE(CURRENT_DEST, SIZE, SRC_READ);
+    }
+
+    SRC_BUFFER->USAGE.MOVE_COUNT++;
+    SRC_BUFFER->USAGE.LAST_MOVE_SRC = SRC;
+    DEST_BUFFER->USAGE.MOVE_COUNT++;
+    DEST_BUFFER->USAGE.LAST_MOVE_DEST = DEST;
+
+    MEM_MOVE_TRACE(SRC, DEST, SIZE, COUNT);
+} 
+
 void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE) 
 {
     U32 SIZE = (END - BASE) + 1;
@@ -278,6 +342,7 @@ void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE)
     BUF->END = END;
     BUF->SIZE = SIZE;
     BUF->WRITE = WRITABLE;
+    BUF->USAGE.MOVE_COUNT = 0;
     BUF->BUFFER = malloc(SIZE);
     memset(BUF->BUFFER, 0, SIZE);
 
@@ -297,3 +362,6 @@ unsigned int M68K_READ_MEMORY_32(unsigned int ADDRESS) { return MEMORY_READ(ADDR
 void M68K_WRITE_MEMORY_8(unsigned int ADDRESS, uint8_t VALUE) { MEMORY_WRITE(ADDRESS, MEM_SIZE_8, VALUE); }
 void M68K_WRITE_MEMORY_16(unsigned int ADDRESS, uint16_t VALUE) { MEMORY_WRITE(ADDRESS, MEM_SIZE_16, VALUE); }
 void M68K_WRITE_MEMORY_32(unsigned int ADDRESS, uint32_t VALUE) { MEMORY_WRITE(ADDRESS, MEM_SIZE_32, VALUE); }
+void M68K_MOVE_MEMORY_8(unsigned SRC, unsigned DEST, unsigned COUNT)    { MEMORY_MOVE(SRC, DEST, MEM_SIZE_8, COUNT); }
+void M68K_MOVE_MEMORY_16(unsigned SRC, unsigned DEST, unsigned COUNT)   { MEMORY_MOVE(SRC, DEST, MEM_SIZE_16, COUNT); }
+void M68K_MOVE_MEMORY_32(unsigned SRC, unsigned DEST, unsigned COUNT)   { MEMORY_MOVE(SRC, DEST, MEM_SIZE_32, COUNT); }
