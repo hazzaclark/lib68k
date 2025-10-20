@@ -65,8 +65,10 @@
         #define     M68K_WRITE_8(ADDRESS, VALUE)                    M68K_WRITE_MEMORY_8(ADDRESS, VALUE)
         #define     M68K_WRITE_16(ADDRESS, VALUE)                   M68K_WRITE_MEMORY_16(ADDRESS, VALUE)
         #define     M68K_WRITE_32(ADDRESS, VALUE)                   M68K_WRITE_MEMORY_32(ADDRESS, VALUE)
+        #define     M68K_MOVE_8(SRC, DEST, COUNT)                   M68K_MOVE_MEMORY_8(SRC, DEST, COUNT)
+        #define     M68K_MOVE_16(SRC, DEST, COUNT)                  M68K_MOVE_MEMORY_16(SRC, DEST, COUNT)
+        #define     M68K_MOVE_32(SRC, DEST, COUNT)                  M68K_MOVE_MEMORY_32(SRC, DEST, COUNT)
                                                             
-
         #define         M68K_EA()                                   M68K_ADDRESS_HIGH
         #define         M68K_EA_INCR_BYTE()                         (M68K_ADDRESS_HIGH++)
         #define         M68K_EA_INCR_WORD()                         (M68K_ADDRESS_HIGH += 2)
