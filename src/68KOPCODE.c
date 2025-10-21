@@ -1250,7 +1250,6 @@ M68K_MAKE_OPCODE(BNE, 8, 0, 0)
         M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
     }
 
-    M68K_REG_PC += 2;
     M68K_USE_CYCLES(8);
 }
 
@@ -1258,7 +1257,7 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
 {
     if(M68K_COND_FLAG_Z())
     {
-        unsigned OFFSET = READ_IMM_8();
+        unsigned OFFSET = READ_IMM_16();
         M68K_REG_PC -= 2;
         M68K_BRANCH_16(OFFSET);
         return;
@@ -4572,13 +4571,13 @@ M68K_MAKE_OPCODE(SUBX, 32, RR, 0)
 
 M68K_MAKE_OPCODE(SWAP, 16, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned* DEST = &M68K_DATA_LOW;
 
     M68K_FLAG_Z = M68K_MASK_OUT_ABOVE_32(*DEST << 16);
-    *DEST = (*DEST >> 16) | M68K_FLAG_Z;
+    *DEST = M68K_BIT_SHIFT_N_24(*DEST) | M68K_FLAG_Z;
 
     M68K_FLAG_Z = *DEST;
-    M68K_FLAG_N = (U32)*DEST;
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(*DEST);
     M68K_FLAG_C = 0;
     M68K_FLAG_V = 0;
 }
@@ -4768,12 +4767,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
     {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit DISP)
     {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit DISP)
-    {BEQ_8_0_0,                 0xFFFF,     0x6700,     10}, // BEQ <label>
+    {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
-    {BNE_16_0_0,                0xFFFF,     0x66FF,     10},  // BNE <ea>
+    {BNE_16_0_0,                0xFFFF,     0x6600,     10},  // BNE <ea>
     {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
