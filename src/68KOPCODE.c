@@ -2905,6 +2905,45 @@ M68K_MAKE_OPCODE(MOVE, 32, AI, AI)
     M68K_FLAG_C = 0;
 }
 
+M68K_MAKE_OPCODE(MOVE, 8, PD, AI)
+{
+    unsigned SRC = M68K_LEA_PI_8();    
+    unsigned DEST = M68K_ADDRESS_HIGH;  
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(SRC);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_8(SRC, DEST);
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, PD, AI)
+{
+    unsigned SRC = M68K_LEA_PI_16();    
+    unsigned DEST = M68K_ADDRESS_HIGH;  
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_16(SRC);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(SRC, DEST);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, PD, AI)
+{
+    unsigned SRC = M68K_LEA_PI_32();    
+    unsigned DEST = M68K_ADDRESS_HIGH;  
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(SRC);
+    M68K_FLAG_Z = SRC;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_32(SRC, DEST);
+}
+
 M68K_MAKE_OPCODE(MOVEA, 16, POST_INC, AY)
 {
     unsigned VALUE = READ_IMM_16();
@@ -4964,6 +5003,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_AI_AI,              0xF1F8,     0x1090,     10},  // MOVE.B (An), (Ay)
     {MOVE_16_AI_AI,             0xF1F8,     0x3090,     10},  // MOVE.W (An), (Ay)
     {MOVE_32_AI_AI,             0xF1F8,     0x2090,     20},  // MOVE.L (An), (Ay)
+    {MOVE_8_PD_AI,              0xF1F8,     0x1098,     10},  // MOVE.B (An)+, (Ay)
+    {MOVE_16_PD_AI,             0xF1F8,     0x3098,     10},  // MOVE.W (An)+, (Ay)
+    {MOVE_32_PD_AI,             0xF1F8,     0x2098,     20},  // MOVE.L (An)+, (Ay)
     {MOVEA_16_POST_INC_AY,      0xF1F8,     0x3058,     16}, // MOVEA.W (An)+,Ay
     {MOVEA_16_PRE_DEC_AY,       0xF1F8,     0x3060,     20}, // MOVEA.W -(An),Ay
     {MOVEA_32_POST_INC_AY,      0xF1F8,     0x2058,     20}, // MOVEA.L (An)+,Ay
