@@ -1354,8 +1354,13 @@ M68K_MAKE_OPCODE(BTST, 8, D, 0)
 M68K_MAKE_OPCODE(BTST, 8, IMM, D)
 {
     unsigned BIT = READ_IMM_8() & 7;
-
     M68K_FLAG_Z = M68K_DI_8() & ( 1 << BIT);
+}
+
+M68K_MAKE_OPCODE(BTST, 8, D, AI)
+{
+    unsigned BIT = READ_IMM_8() & 7;
+    M68K_FLAG_Z = M68K_ADDRESS_LOW & (1 << BIT);
 }
 
 M68K_MAKE_OPCODE(CHK, 16, EA, 0)
@@ -2731,10 +2736,10 @@ M68K_MAKE_OPCODE(MOVE, 32, D, POST_DEC)
 
 M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 {
-    unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_EA_INCR_WORD_LONG();
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_ADDRESS_LOW++);
+    unsigned EA = M68K_MASK_OUT_ABOVE_8(M68K_EA_INCR_BYTE());
 
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_8(RESULT);
+    M68K_FLAG_N = M68K_MASK_OUT_ABOVE_8(M68K_BIT_SHIFT_N_8(RESULT));
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -2744,10 +2749,10 @@ M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 
 M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 {
-    unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_EA_INCR_WORD_LONG();
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_ADDRESS_LOW++);
+    unsigned EA = M68K_MASK_OUT_ABOVE_16(M68K_EA_INCR_WORD());
 
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
+    M68K_FLAG_N = M68K_MASK_OUT_ABOVE_16(M68K_BIT_SHIFT_N_16(RESULT));
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -2757,10 +2762,10 @@ M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 
 M68K_MAKE_OPCODE(MOVE, 32, PI, A)
 {
-    unsigned RESULT = M68K_ADDRESS_LOW;
-    unsigned EA = M68K_EA_INCR_WORD_LONG();
+    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_ADDRESS_LOW++);
+    unsigned EA = M68K_MASK_OUT_ABOVE_32(M68K_EA_INCR_WORD_LONG());
 
-    M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
+    M68K_FLAG_N = M68K_MASK_OUT_ABOVE_32(M68K_BIT_SHIFT_N_32(RESULT));
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
@@ -4908,6 +4913,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
+    {BTST_8_D_AI,               0xF1F8,     0x0110,     10},  // BTST Dn, (Ay)
     {CHK_16_EA_0,               0xFFFF,     0x41B9,     10}, // CHK <ea>,Dn
     {CLR_8_D_0,                 0xFFF8,     0x4200,     4},  // CLR.B Dn
     {CLR_16_D_0,                0xFFF8,     0x4240,     4},  // CLR.W Dn
