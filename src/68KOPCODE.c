@@ -1221,17 +1221,13 @@ M68K_MAKE_OPCODE(BCLR, 8, D, EA)
 
 M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 {
-    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_32(M68K_REG_IR));
+    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
 }
 
-// 03/09/25 -
-// REWORKED SLIGHTLY TO HANDLE BETTER SIGNEDNESS
-// FOR SKIP CONDITIONS
-
+// I HATE YOU SO MUCH, BRA
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
-    S16 OFFSET = (S16)(READ_IMM_16());
-    M68K_REG_PC -= 2;
+    S16 OFFSET = READ_IMM_16();
     M68K_BRANCH_16(OFFSET);
 }
 
@@ -1523,6 +1519,17 @@ M68K_MAKE_OPCODE(CLR, 32, PD, 0)
     M68K_FLAG_C = 0;
     M68K_FLAG_Z = 0;
 }
+
+M68K_MAKE_OPCODE(CLR, 32, IMM, EA)
+{
+    M68K_WRITE_32(READ_IMM_16(), 0);
+
+    M68K_FLAG_N = 0;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_Z = 0;
+}
+
 
 M68K_MAKE_OPCODE(CMP, 8, EA, 0)
 {
@@ -2824,7 +2831,7 @@ M68K_MAKE_OPCODE(MOVE, 32, PI, D)
     unsigned RESULT = M68K_LEA_PI_32();
     unsigned* DEST = &M68K_DATA_HIGH;
 
-    *DEST = (S32)M68K_MASK_OUT_BELOW_32(*DEST) | RESULT;
+    *DEST = *DEST | RESULT;
 
     M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
     M68K_FLAG_Z = RESULT;
@@ -2851,8 +2858,7 @@ M68K_MAKE_OPCODE(MOVEA, 32, D, 0)
 
 M68K_MAKE_OPCODE(MOVEA, 16, A, 0)
 {
-    unsigned VALUE = READ_IMM_16();
-    M68K_ADDRESS_LOW = (S16)VALUE;
+    M68K_ADDRESS_HIGH = M68K_ADDRESS_LOW;
 
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
     M68K_EA_PRINT_HOOK(M68K_REG_BASE);
@@ -4521,12 +4527,12 @@ M68K_MAKE_OPCODE(RTR, 32, 0, 0)
     M68K_FLAG_X = (CCR >> 4) & 1;
 }
 
-M68K_MAKE_OPCODE(SBCD, 8, RR, 0)
+M68K_MAKE_OPCODE(SBCD, 8, DN, DY)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
     unsigned SRC = M68K_DATA_LOW;
 
-    unsigned RESULT = (*DEST - SRC) == READ_IMM_8();
+    unsigned RESULT = M68K_LOW_NIBBLE(*DEST) - M68K_LOW_NIBBLE(SRC); 
 
     M68K_FLAG_V &= RESULT;
     M68K_FLAG_N = M68K_READ_8(RESULT);
@@ -5137,6 +5143,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CLR_8_PD_0,                0xFFF8,     0x4220,     12},  // CLR.B -(An)
     {CLR_16_PD_0,               0xFFF8,     0x4260,     12},  // CLR.W -(An)
     {CLR_32_PD_0,               0xFFF8,     0x42A0,     12},  // CLR.L -(An)
+    {CLR_32_IMM_EA,             0xFFFF,     0x42B8,     12},  // CLR.B #<ea>
     {CMP_8_EA_0,                0xF1FF,     0xB039,     4},  // CMP.B <ea>,Dn
     {CMP_16_EA_0,               0xF1FF,     0xB079,     4},  // CMP.W <ea>,Dn
     {CMP_32_EA_0,               0xF1FF,     0xB0B9,     6},  // CMP.L <ea>,Dn
@@ -5209,10 +5216,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PI_D,               0xF1F8,     0x1018,     10},  // MOVE.B (An)+, Dn
     {MOVE_16_PI_D,              0xF1F8,     0x3018,     10},  // MOVE.W (An)+, Dn
     {MOVE_32_PI_D,              0xF1F8,     0x2018,     20},  // MOVE.L (An)+, Dn
-    {MOVEA_16_D_0,              0xF1C0,     0x3040,     8},  // MOVEA.W Dn,Ay 
-    {MOVEA_32_D_0,              0xF1C0,     0x2040,     12}, // MOVEA.L Dn,Ay
-    {MOVEA_16_A_0,              0xF1C0,     0x3048,     10},  // MOVEA.W An,Ay
-    {MOVEA_32_A_0,              0xF1C0,     0x2048,     20},  // MOVEA.L An,Ay
+    {MOVEA_16_D_0,              0xF1F8,     0x3040,     8},  // MOVEA.W Dn,Ay 
+    {MOVEA_32_D_0,              0xF1F8,     0x2040,     12}, // MOVEA.L Dn,Ay
+    {MOVEA_16_A_0,              0xF1F8,     0x3048,     10},  // MOVEA.W An,Ay
+    {MOVEA_32_A_0,              0xF1F8,     0x2048,     20},  // MOVEA.L An,Ay
     {MOVEA_16_AN_AY,            0xF1F8,     0x3050,     16}, // MOVEA.W (An),Ay
     {MOVEA_32_AN_AY,            0xF1F8,     0x2050,     16}, // MOVEA.L (An),Ay
     {MOVE_8_AI_AI,              0xF1F8,     0x1090,     10},  // MOVE.B (An), (Ay)
@@ -5347,7 +5354,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {RTS_0_0_0,                 0xFFFF,     0x4E75,     16}, // RTS
     {RTE_32_0_0,                0xFFFF,     0x4E73,     20}, // RTE
     {RTR_32_0_0,                0xFFFF,     0x4E77,     20}, // RTR
-    {SBCD_8_RR_0,               0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
+    {SBCD_8_DN_DY,              0xF1F8,     0x8100,     6},  // SBCD Dy,Dx
     {STOP_0_0_0,                0xFFFF,     0x4E72,     4},  // STOP #<data>
     {SUB_8_D_0,                 0xF1F8,     0x9000,     6},  // SUB.B Dn,Dy
     {SUB_16_D_0,                0xF1F8,     0x9040,     6},  // SUB.W Dn,Dy
