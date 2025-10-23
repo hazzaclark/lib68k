@@ -163,12 +163,13 @@ void M68K_SET_SR(unsigned VALUE)
 void M68K_INIT(void)
 {      
     M68K_BUILD_OPCODE_TABLE();
+    M68K_BUILD_EXCEPTION_TABLE();
 
     // 512KB RAM 
-    MEMORY_MAP(0x000000, 0x07FFFF, true);
+    MEMORY_MAP(0x000000, 0x7FFFF, true);
     
     // 512KB ROM 
-    MEMORY_MAP(0x080000, 0x0FFFFF, false);     
+    MEMORY_MAP(0x080000, 0xFFFFF, false);     
 }
 
 // EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
@@ -198,9 +199,6 @@ void M68K_EXEC(int CYCLES)
         printf("CYCLES: %d, TOTAL ELAPSED: %d\n", CYCLES, M68K_MASTER_CYC);
         printf("-------------------------------------------------------------\n");
     }
-
-    // SET PPC TO NEXT ENTRY IN THE EXEC
-    M68K_REG_PPC = M68K_REG_PC;
 
     printf("EXECUTION STOPPED AT 0x%04X\n", M68K_REG_PC);
     printf("TOTAL CYCLES USED: %d\n", M68K_MASTER_CYC);
