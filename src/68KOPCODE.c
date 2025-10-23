@@ -1233,6 +1233,7 @@ M68K_MAKE_OPCODE(BRA, 8, 0, 0)
 M68K_MAKE_OPCODE(BRA, 16, 0, 0)
 {
     S16 OFFSET = (S16)(READ_IMM_16());
+    M68K_REG_PC -= 2;
     M68K_BRANCH_16(OFFSET);
 }
 
@@ -1259,13 +1260,9 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
     if(M68K_COND_FLAG_Z())
     {
         unsigned OFFSET = READ_IMM_16();
-        M68K_REG_PC -= 2;
         M68K_BRANCH_16(OFFSET);
         return;
     }
-
-    M68K_REG_PC += 4;
-    M68K_USE_CYCLES(8);
 }
 
 M68K_MAKE_OPCODE(BNE, 32, 0, 0)
@@ -2171,7 +2168,7 @@ M68K_MAKE_OPCODE(JSR, 32, 0, PC)
 
 M68K_MAKE_OPCODE(LEA, 32, AI, 0)
 {
-    M68K_ADDRESS_LOW = M68K_LEA_AL_16();
+    M68K_ADDRESS_LOW = READ_IMM_32();
     M68K_BASE_LEA_HOOK(M68K_REG_A, M68K_ADDRESS_LOW);
 }
 
@@ -2360,11 +2357,8 @@ M68K_MAKE_OPCODE(MOVE, 32, D, 0)
     unsigned* DEST = &M68K_DATA_HIGH;
 
     *DEST = RESULT;
-
-    M68K_MOVE_32(RESULT, *DEST, 4);
-
     M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
-    M68K_FLAG_Z = (RESULT == 0);
+    M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
@@ -2737,7 +2731,7 @@ M68K_MAKE_OPCODE(MOVE, 32, D, POST_DEC)
 
 M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_8(M68K_ADDRESS_LOW++);
+    unsigned RESULT = M68K_ADDRESS_LOW++;
     unsigned EA = M68K_MASK_OUT_ABOVE_8(M68K_EA_INCR_BYTE());
 
     M68K_FLAG_N = M68K_MASK_OUT_ABOVE_8(M68K_BIT_SHIFT_N_8(RESULT));
@@ -2750,8 +2744,8 @@ M68K_MAKE_OPCODE(MOVE, 8, PI, A)
 
 M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_16(M68K_ADDRESS_LOW++);
-    unsigned EA = M68K_MASK_OUT_ABOVE_16(M68K_EA_INCR_WORD());
+    unsigned RESULT = M68K_ADDRESS_LOW += 2 - 2;
+    unsigned EA = M68K_EA_INCR_WORD();
 
     M68K_FLAG_N = M68K_MASK_OUT_ABOVE_16(M68K_BIT_SHIFT_N_16(RESULT));
     M68K_FLAG_Z = RESULT;
@@ -2763,8 +2757,8 @@ M68K_MAKE_OPCODE(MOVE, 16, PI, A)
 
 M68K_MAKE_OPCODE(MOVE, 32, PI, A)
 {
-    unsigned RESULT = M68K_MASK_OUT_ABOVE_32(M68K_ADDRESS_LOW++);
-    unsigned EA = M68K_MASK_OUT_ABOVE_32(M68K_EA_INCR_WORD_LONG());
+    unsigned RESULT = M68K_ADDRESS_LOW += 4 - 4;
+    unsigned EA = M68K_EA_INCR_WORD_LONG();
 
     M68K_FLAG_N = M68K_MASK_OUT_ABOVE_32(M68K_BIT_SHIFT_N_32(RESULT));
     M68K_FLAG_Z = RESULT;
@@ -2948,6 +2942,45 @@ M68K_MAKE_OPCODE(MOVE, 32, PD, AI)
     M68K_FLAG_C = 0;
 
     M68K_WRITE_32(SRC, DEST);
+}
+
+M68K_MAKE_OPCODE(MOVE, 8, PI, DISP)
+{
+    unsigned RESULT = M68K_ADDRESS_HIGH++;
+    unsigned EA = M68K_ADDRESS_LOW + (S16)READ_IMM_16();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_8(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, PI, DISP)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    unsigned EA = M68K_EA_INCR_WORD();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, PI, DISP)
+{
+    unsigned RESULT = M68K_ADDRESS_LOW;
+    unsigned EA = M68K_EA_INCR_WORD_LONG();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+
+    M68K_WRITE_32(EA, RESULT);
 }
 
 M68K_MAKE_OPCODE(MOVEA, 16, POST_INC, AY)
@@ -3185,7 +3218,7 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_DEC, A)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
-M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
+M68K_MAKE_OPCODE(MOVEM, 16, IND, A)
 {
     unsigned INDEX = 0;
     unsigned LIST = READ_IMM_16();
@@ -3205,6 +3238,46 @@ M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
     *M68K_REG_BASE = EA;
 }
 
+M68K_MAKE_OPCODE(MOVEM, 32, IND, A)
+{
+    unsigned INDEX = 0;
+    unsigned LIST = READ_IMM_16();
+    unsigned EA = *M68K_REG_BASE;
+
+    for(; INDEX < 16; INDEX++)
+    {
+        if(LIST & (1 << INDEX))  
+        {
+            unsigned int REG_VALUE = M68K_READ_32(EA);  
+            M68K_SET_REGISTERS(INDEX, REG_VALUE);        
+            EA += 4;
+        }
+    }
+
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+}
+
+M68K_MAKE_OPCODE(MOVEM, 16, POST_INC, A)
+{
+    unsigned INDEX = 0;
+    unsigned LIST = READ_IMM_16();
+    unsigned EA = M68K_ADDRESS_LOW;
+
+    for(; INDEX < 16; INDEX++)
+    {
+        if(LIST & (1 << INDEX))  
+        {
+            unsigned int REG_VALUE = M68K_READ_16(EA);  
+            M68K_SET_REGISTERS(INDEX, REG_VALUE);        
+            EA += 2;
+        }
+    }
+
+    M68K_ADDRESS_LOW = EA;
+    M68K_READ_16(EA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
+}
+
 M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
 {
     unsigned INDEX = 0;
@@ -3221,8 +3294,9 @@ M68K_MAKE_OPCODE(MOVEM, 32, POST_INC, A)
         }
     }
 
+    M68K_ADDRESS_LOW = EA;
+    M68K_READ_16(EA);
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
-    *M68K_REG_BASE = EA;
 }
 
 M68K_MAKE_OPCODE(MOVEP, 16, ER, 0)
@@ -3402,15 +3476,15 @@ M68K_MAKE_OPCODE(MOVE, 16, AY, IND)
 
 M68K_MAKE_OPCODE(MOVE, 32, AY, IND)
 {
-    unsigned RESULT = M68K_MASK_OUT_BELOW_32(M68K_DATA_LOW);
-    unsigned EA = M68K_MASK_OUT_BELOW_32(M68K_ADDRESS_HIGH);
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned EA = M68K_BIT_SHIFT_N_32(M68K_ADDRESS_HIGH);
 
     M68K_FLAG_N = M68K_BIT_SHIFT_N_32(RESULT);
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
 
-    M68K_MOVE_32(EA, RESULT, 4);
+    M68K_WRITE_32(EA, RESULT);
 }
 
 M68K_MAKE_OPCODE(MULS, 16, D, 0)
@@ -4903,19 +4977,21 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCHG_8_D_EA,               0xF1FF,     0x0179,     10},  // BCHG.B <ea>, Dy
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFFFF,     0x6000,     10}, // BRA <label> (16-bit DISP)
+    {BRA_16_0_0,                0xFFFF,     0x6000,     12}, // BRA <label> (16-bit DISP)
     {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit DISP)
     {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
-    {BNE_16_0_0,                0xFFFF,     0x6600,     10},  // BNE <ea>
+    {BNE_16_0_0,                0xFFFF,     0x6600,     12},  // BNE <ea>
     {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
     {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
     {BTST_8_D_AI,               0xF1F8,     0x0110,     10},  // BTST Dn, (Ay)
+
+
     {CHK_16_EA_0,               0xFFFF,     0x41B9,     10}, // CHK <ea>,Dn
     {CLR_8_D_0,                 0xFFF8,     0x4200,     4},  // CLR.B Dn
     {CLR_16_D_0,                0xFFF8,     0x4240,     4},  // CLR.W Dn
@@ -5014,6 +5090,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PD_AI,              0xF1F8,     0x1098,     10},  // MOVE.B (An)+, (Ay)
     {MOVE_16_PD_AI,             0xF1F8,     0x3098,     10},  // MOVE.W (An)+, (Ay)
     {MOVE_32_PD_AI,             0xF1F8,     0x2098,     20},  // MOVE.L (An)+, (Ay)
+    {MOVE_8_PI_DISP,            0xF1F8,     0x1158,     20},  // MOVE.B (An)+, disp(Ay)
+    {MOVE_16_PI_DISP,           0xF1F8,     0x3158,     20},  // MOVE.W (An)+, disp(Ay)
+    {MOVE_32_PI_DISP,           0xF1F8,     0x2158,     24},  // MOVE.L (An)+, disp(Ay)
     {MOVEA_16_POST_INC_AY,      0xF1F8,     0x3058,     16}, // MOVEA.W (An)+,Ay
     {MOVEA_16_PRE_DEC_AY,       0xF1F8,     0x3060,     20}, // MOVEA.W -(An),Ay
     {MOVEA_32_POST_INC_AY,      0xF1F8,     0x2058,     20}, // MOVEA.L (An)+,Ay
@@ -5055,8 +5134,10 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVEM_32_DA_0,             0xFFF0,     0x48F0,     12}, // MOVEM.L <ea>,Regs
     {MOVEM_16_POST_DEC_A,       0xFFF0,     0x48A0,     12},  // MOVEM.W <reglist>, -(An)
     {MOVEM_32_POST_DEC_A,       0xFFF8,     0x48E0,     16},  // MOVEM.L <reglist>, -(An)
-    {MOVEM_16_POST_INC_A,       0xFFF0,     0x4C90,     12}, // MOVEM.W (An)+, <reglist>
-    {MOVEM_32_POST_INC_A,       0xFFF0,     0x4CD0,     12}, // MOVEM.L (An)+, <reglist>
+    {MOVEM_16_IND_A,            0xFFF8,     0x4C90,     12}, // MOVEM.W (An), <reglist>
+    {MOVEM_32_IND_A,            0xFFF8,     0x4CD0,     12}, // MOVEM.L (An), <reglist>
+    {MOVEM_16_POST_INC_A,       0xFFF8,     0x4C98,     14}, // MOVEM.W (An)+, <reglist> 
+    {MOVEM_32_POST_INC_A,       0xFFF8,     0x4CD8,     16}, // MOVEM.L (An)+, <reglist> 
     {MOVEP_16_ER_0,             0xF1F8,     0x0188,     20}, // MOVEP.W Dn, disp(An)
     {MOVEP_32_ER_0,             0xF1F8,     0x01C8,     24}, // MOVEP.L Dn, disp(An)
     {MOVEQ_32_D_0,              0xF100,     0x7000,     4},  // MOVEQ #<data>,Dn
@@ -5222,7 +5303,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
 // AND EVALUATE EXCEPTIONS DURING RUNTIME MUCH LIKE WITH THE ABOVE
 //
 // LEVERAGES THE VECTOR TABLE TO GET THEIR CYCLES AND HANDLER 
-static void M68K_BUILD_EXCEPTION_TABLE(void)
+void M68K_BUILD_EXCEPTION_TABLE(void)
 {
     memset(M68K_EXCEPTION_HANDLER_TABLE, 0, sizeof(M68K_EXCEPTION_HANDLER_TABLE));
 
