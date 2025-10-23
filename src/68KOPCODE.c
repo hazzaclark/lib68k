@@ -1191,8 +1191,6 @@ M68K_MAKE_OPCODE(BCC, 32, 0, 0)
         M68K_REG_PC -= 2;
         M68K_BRANCH_16(OFFSET);
     }
-
-    M68K_REG_PC += 2;
 }
 
 M68K_MAKE_OPCODE(BCHG, 8, D, EA)
@@ -1261,6 +1259,7 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
     {
         unsigned OFFSET = READ_IMM_16();
         M68K_BRANCH_16(OFFSET);
+        M68K_REG_PC -= 2;
         return;
     }
 }
@@ -1612,8 +1611,8 @@ M68K_MAKE_OPCODE(CMP, 32, D, 0)
 
 M68K_MAKE_OPCODE(CMP, 16, AN, IND)
 {
-    unsigned SRC = M68K_MASK_OUT_ABOVE_16(M68K_ADDRESS_HIGH);
-    unsigned DEST = M68K_MASK_OUT_ABOVE_16(M68K_DATA_LOW);
+    unsigned SRC = M68K_MASK_OUT_ABOVE_16(M68K_ADDRESS_LOW);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_16(M68K_DATA_HIGH);
 
     unsigned RESULT = DEST - SRC;
 
@@ -1625,8 +1624,8 @@ M68K_MAKE_OPCODE(CMP, 16, AN, IND)
 
 M68K_MAKE_OPCODE(CMP, 32, AN, IND)
 {
-    unsigned SRC = M68K_MASK_OUT_ABOVE_32(M68K_ADDRESS_HIGH);
-    unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_LOW);
+    unsigned SRC = M68K_MASK_OUT_ABOVE_32(M68K_ADDRESS_LOW);
+    unsigned DEST = M68K_MASK_OUT_ABOVE_32(M68K_DATA_HIGH);
 
     unsigned RESULT = DEST - SRC;
 
@@ -5079,8 +5078,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {CMP_8_D_0,                 0xF1F0,     0xB000,     4},  // CMP.B Dn,Dy
     {CMP_16_D_0,                0xF1F0,     0xB040,     4},  // CMP.W Dn,Dy
     {CMP_32_D_0,                0xF1F0,     0xB080,     4},  // CMP.L Dn,Dys
-    {CMP_16_AN_IND,             0xF1F0,     0xB050,     4},  // CMP.W (An), Dy
-    {CMP_32_AN_IND,             0xF1F0,     0xB090,     4},  // CMP.L (An), Dy
+    {CMP_16_AN_IND,             0xF1F8,     0xB050,     4},  // CMP.W (An), Dy
+    {CMP_32_AN_IND,             0xF1F8,     0xB090,     4},  // CMP.L (An), Dy
     {CMPA_16_DA_0,              0xF1C0,     0xB0C0,     6},  // CMPA.W <ea>,An
     {CMPA_32_DA_0,              0xF1C0,     0xB1C0,     6},  // CMPA.L <ea>,An
     {CMPA_16_AN_DISP,           0xFFF8,     0xB0E8,     6},  // CMPA.W #imm(An),Ay
