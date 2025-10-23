@@ -2645,7 +2645,7 @@ M68K_MAKE_OPCODE(MOVE, 32, IMM, POST_INC)
     M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
 }
 
-M68K_MAKE_OPCODE(MOVE, 8, IMM, EA)
+M68K_MAKE_OPCODE(MOVE, 8, IMM, AY)
 {
     unsigned RESULT = M68K_MASK_OUT_ABOVE_8(READ_IMM_8());
     unsigned EA = M68K_ADDRESS_HIGH;
@@ -2658,7 +2658,7 @@ M68K_MAKE_OPCODE(MOVE, 8, IMM, EA)
     M68K_WRITE_8(EA, RESULT);
 }
 
-M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
+M68K_MAKE_OPCODE(MOVE, 16, IMM, AY)
 {
     unsigned RESULT = READ_IMM_16();
     unsigned EA = M68K_ADDRESS_HIGH;
@@ -2671,7 +2671,7 @@ M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
     M68K_WRITE_16(EA, RESULT);
 }
 
-M68K_MAKE_OPCODE(MOVE, 32, IMM, EA)
+M68K_MAKE_OPCODE(MOVE, 32, IMM, AY)
 {
     unsigned RESULT = READ_IMM_32();
     unsigned EA = M68K_ADDRESS_HIGH;
@@ -3549,6 +3549,71 @@ M68K_MAKE_OPCODE(MOVE, 32, AN, IND)
     M68K_FLAG_Z = RESULT;
     M68K_FLAG_V = 0;
     M68K_FLAG_C = 0;
+}
+
+M68K_MAKE_OPCODE(MOVE, 8, IMM, DN)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned EA = READ_IMM_16();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_8(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, IMM, DN)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned EA = READ_IMM_16();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, DN)
+{
+    unsigned RESULT = M68K_DATA_LOW;
+    unsigned EA = READ_IMM_32();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_32(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 16, IMM, EA)
+{
+    unsigned RESULT = READ_IMM_16();
+    unsigned EA = READ_IMM_16();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_16(EA, RESULT);
+}
+
+M68K_MAKE_OPCODE(MOVE, 32, IMM, EA)
+{
+    unsigned RESULT = READ_IMM_16();
+    unsigned EA = READ_IMM_16();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = RESULT;
+    M68K_FLAG_C = 0;
+    M68K_FLAG_V = 0;
+
+    M68K_WRITE_32(EA, RESULT);
 }
 
 M68K_MAKE_OPCODE(MULS, 16, D, 0)
@@ -5177,9 +5242,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_8_PRE_DEC_D,          0xFFF8,     0x1F00,     20},  // MOVE.B Dn, -(Ay)
     {MOVE_16_IMM_POST_INC,      0xF1FF,     0x30FC,     10},  // MOVE.W #imm, (An)+
     {MOVE_32_IMM_POST_INC,      0xF1FF,     0x20FC,     20},  // MOVE.L #imm, (An)+
-    {MOVE_8_IMM_EA,             0xF1FF,     0x10BC,     10},  // MOVE.B #imm, (An)
-    {MOVE_16_IMM_EA,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
-    {MOVE_32_IMM_EA,            0xF1FF,     0x20BC,     24},  // MOVE.L #imm, (An)
+    {MOVE_8_IMM_AY,             0xF1FF,     0x10BC,     10},  // MOVE.B #imm, (An)
+    {MOVE_16_IMM_AY,            0xF1FF,     0x30BC,     20},  // MOVE.W #imm, (An)
+    {MOVE_32_IMM_AY,            0xF1FF,     0x20BC,     24},  // MOVE.L #imm, (An)
     {MOVE_8_IMM_POST_DEC,       0xF1FF,     0x113C,     20},  // MOVE.B #imm, -(An)
     {MOVE_16_IMM_POST_DEC,      0xF1FF,     0x313C,     20},  // MOVE.W #imm, -(An)
     {MOVE_32_IMM_POST_DEC,      0xF1FF,     0x213C,     30},  // MOVE.L #imm, -(An)
@@ -5216,6 +5281,11 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {MOVE_16_I_SR,              0xFFFF,     0x46FC,     12}, // MOVE.W #imm, SR
     {MOVEA_16_I_AY,             0xF1FF,     0x307C,     12}, // MOVEA.L #imm, Ay
     {MOVEA_32_I_AY,             0xF1FF,     0x207C,     12}, // MOVEA.L #imm, Ay
+    {MOVE_8_IMM_DN,             0xFFF8,     0x11C0,     12}, // MOVE.B Dn, #<ea>
+    {MOVE_16_IMM_DN,            0xFFF8,     0x31C0,     12}, // MOVE.W Dn #<ea>
+    {MOVE_32_IMM_DN,            0xFFF8,     0x21C0,     16}, // MOVE.L Dn, #<ea>
+    {MOVE_16_IMM_EA,            0xFFFF,     0x31FC,     12}, // MOVE.W #imm, #<ea>
+    {MOVE_32_IMM_EA,            0xFFFF,     0x21FC,     16}, // MOVE.L #imm, #<ea>
     {MULS_16_D_0,               0xF1F8,     0xC1C0,     8}, // MULS.W Dn,Dy
     {MULU_16_D_0,               0xF1F8,     0xC0C0,     8}, // MULU.W Dn,Dy
     {MULS_16_I_0,               0xF1FF,     0xC1FC,     4}, // MULS.W #imm, Dn
