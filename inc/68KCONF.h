@@ -84,6 +84,7 @@
 	#define		M68K_ADDR_HOOK		M68K_OPT_ON
 	#define		M68K_EA_HOOK		M68K_OPT_ON
 	#define		M68K_DISP_HOOK		M68K_OPT_ON
+	#define		M68K_SYS_HOOK		M68K_OPT_ON
 
 	#if M68K_JUMP_HOOK == M68K_OPT_ON
     #define M68K_BASE_JUMP_HOOK(ADDR, FROM_ADDR) \
@@ -175,6 +176,18 @@
     	#define M68K_DISP_PRINT_HOOK() ((void)0)
 	#endif
 
+	#if M68K_SYS_HOOK
+	#define M68K_SYS_PRINT_HOOK() 	\
+		do {						\
+			printf("\nCPU INFORMATION:\t\n"); \
+            printf("  CPU SET TO TYPE:  %u -> %s\n", CPU_TYPE, \
+                   CPU_TYPE == M68K_CPU_000 ? "68000" : \
+                   CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN"); \
+            printf("  SUPERVISOR MODE:  %s\n\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); \
+		} while(0)
+	#else 
+		#define M68K_SYS_PRINT_HOOK() ((void)0)
+		#endif
 	#endif
 
 #define		M68K_USE_CYCLES(VALUE)				M68K_MASTER_CYC += (VALUE)
