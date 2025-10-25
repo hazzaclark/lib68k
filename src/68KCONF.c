@@ -16,131 +16,6 @@
 
 unsigned CPU_TYPE = M68K_CPU_TYPE;
 
-// 04/10/25 - WHILE I DID MENTION THAT THIS WAS STRICTLY
-// USED FOR THE MEGA DRIVE, WE CAN ACTUALLY LEVERAGE THIS 
-// ADJACENT FROM ANY SORT OF SYSTEMS EMULATION
-//
-// THE 68000 WILL ALWAYS LEVERAGE THE FIRST 256 BYTES
-// OF A PROGRAM TO DELEGATE THE ESSENTIALS SUCH AS SP AND PC
-//
-// SUCH IS THE CASE WITH MY RESET FUNCTIONALITY, WE CAN PROMPTLY
-// USE THIS TABLE TO DELEGATE THE APPROPRIATE AMOUNT OF CYCLES NEEDED
-// TO FLUSH THE COROURTINE PROPERLY - RATHER THAN ALWAYS PRESUPPOSING A HARD RESET
-U8 M68K_VECTOR_TABLE[5][256] =
-{
-	{ 
-		  0,                                                                  /*  0: RESET - INITIAL STACK POINTER                      */
-		  4,                                                                  /*  1: RESET - INITIAL PROGRAM COUNTER                    */
-		 50,                                                                  /*  2: BUS ERROR                                          */
-		 50,                                                                  /*  3: ADDRESS ERROR                                      */
-		 34,                                                                  /*  4: ILLEGAL INSTR                                      */
-		 38,                                                                  /*  5: ZERO DIV                                           */
-		 40,                                                                  /*  6: CHK                                                */
-		 34,                                                                  /*  7: TRAPV                                              */
-		 34,                                                                  /*  8: PRIV VIO                                           */
-		 34,                                                                  /*  9: TRACE                                              */
-		 34,                                                                  /* 10: 1010                                               */
-		 34,                                                                  /* 11: 1111                                               */
-		  4,                                                                  /* 12: RESERVED                                           */
-		  4,                                                                  /* 13: CPV                                                */
-		  4,                                                                  /* 14: FMT ERROR                                          */
-		 44,                                                                  /* 15: UINIT                                              */
-		  4,                                                                  /* 16: RESERVED                                           */
-		  4,                                                                  /* 17: RESERVED                                           */
-		  4,                                                                  /* 18: RESERVED                                           */
-		  4,                                                                  /* 19: RESERVED                                           */
-		  4,                                                                  /* 20: RESERVED                                           */
-		  4,                                                                  /* 21: RESERVED                                           */
-		  4,                                                                  /* 22: RESERVED                                           */
-		  4,                                                                  /* 23: RESERVED                                           */
-		 44,                                                                  /* 24: SPUR IRQ                                           */
-		 44,                                                                  /* 25: LVL 1 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 26: LVL 2 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 27: LVL 3 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 28: LVL 4 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 29: LVL 5 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 30: LVL 6 INTERRUPT VECTOR                             */
-		 44,                                                                  /* 31: LVL 7 INTERRUPT VECTOR                             */
-		 34,                                                                  /* 32: TRAP #0                                            */
-		 34,                                                                  /* 33: TRAP #1                                            */
-		 34,                                                                  /* 34: TRAP #2                                            */
-		 34,                                                                  /* 35: TRAP #3                                            */
-		 34,                                                                  /* 36: TRAP #4                                            */
-		 34,                                                                  /* 37: TRAP #5                                            */
-		 34,                                                                  /* 38: TRAP #6                                            */
-		 34,                                                                  /* 39: TRAP #7                                            */
-		 34,                                                                  /* 40: TRAP #8                                            */
-		 34,                                                                  /* 41: TRAP #9                                            */
-		 34,                                                                  /* 42: TRAP #10                                           */
-		 34,                                                                  /* 43: TRAP #11                                           */
-		 34,                                                                  /* 44: TRAP #12                                           */
-		 34,                                                                  /* 45: TRAP #13                                           */
-		 34,                                                                  /* 46: TRAP #14                                           */
-		 34,                                                                  /* 47: TRAP #15                                           */
-		  4,                                                                  /* 48: FP BRAS                                            */
-		  4,                                                                  /* 49: FP INEXACT                                         */
-		  4,                                                                  /* 50: FP ZERO DIV                                        */
-		  4,                                                                  /* 51: FP UNDERFLOW                                       */
-		  4,                                                                  /* 52: FP OPERAND FLOW                                    */
-		  4,                                                                  /* 53: FP OVERFLOW                                        */
-		  4,                                                                  /* 54: FP NAN                                             */
-		  4,                                                                  /* 55: FP UNIMPLEMENTED DATA TYPE                         */
-		  4,                                                                  /* 56: MMU ERROR                                          */
-		  4,                                                                  /* 57: MMU ILLEGAL OP ERROR                               */
-		  4,                                                                  /* 58: MMU ACCESS VIO                                     */
-		  4,                                                                  /* 59: RESERVED                                           */
-		  4,                                                                  /* 60: RESERVED                                           */
-		  4,                                                                  /* 61: RESERVED                                           */
-		  4,                                                                  /* 62: RESERVED                                           */
-		  4,                                                                  /* 63: RESERVED                                           */
-		                                                                      /* 64-255: USER STACK SPACE                               */
-                                                                              
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
-		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
-	},
-};
-
-/* SET THE CPU TYPE BASED ON HTE PRE-REQUISTIES DETERMINED BY THEIR RESPECTIVE CHARACTERISTICS */
-/* EACH OF THESE CHARACTERISTICS REFER TO THE INITIALISATION OF THE CPU'S EXECUTION */
-
-/* MOREOVER, THIS IS SPECIFC TO THE RESPECTIVE CHARACTERISTICS OF THE STATUS REGISTER */
-/* OF EACH CPU TYPE, WHICH HANDLES EXCEPTIONS AND HANDLES DIFFERENTLY BASED ON DIFFERENT ADDRESSABLE MODES */
-
-/* SEE: https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=17 */
-
-void M68K_SET_CPU_TYPE(unsigned TYPE)
-{
-    switch (TYPE)
-    {
-        case M68K_CPU_000:
-            CPU_TYPE = M68K_CPU_000;
-            M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK = 0x00FFFFFF;
-            break;
-
-        case M68K_CPU_010:
-            CPU_TYPE = M68K_CPU_010;
-            M68K_SR_MASK = 0x2700;
-            M68K_ADDRESS_MASK = 0x00FFFFFF;
-            break;
-
-        default:
-			fprintf(stderr, "UNRECOGNISED TYPE %d\n", CPU_TYPE);
-            exit(1);
-    }
-
-	printf("\nCPU INFORMATION:	\n");
-	printf("  CPU SET TO TYPE:  %u -> %s\n", CPU_TYPE, 
-       CPU_TYPE == M68K_CPU_000 ? "68000" : 
-       CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN");
-
-	printf("  SUPERVISOR MODE:  %s\n\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED");
-}
-
 /* THIS FUNCTION DISCERNS THE FUNCTIONALITY BASED ON PROVIDING PULSE TO THE RESET LINE */
 /* SEE: RESET OPERATION - https://www.nxp.com/docs/en/reference-manual/MC68000UM.pdf#page=75 */
 /* https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#page=537 */
@@ -148,18 +23,16 @@ void M68K_SET_CPU_TYPE(unsigned TYPE)
 void M68K_PULSE_RESET(void)
 {
 	M68K_CPU_STOPPED = 0;
-	M68K_FLAG_INT_LVL = 0;
 
 	#if M68K_USE_SUPERVISOR
 	M68K_SET_S_FLAG(M68K_FLAG_S);
 	#endif
 
-	M68K_JUMP(0);
 	M68K_REG_SP = READ_IMM_32();
 	M68K_REG_PC = READ_IMM_32();
 	M68K_JUMP(M68K_REG_PC);
 
-	M68K_SET_CPU_TYPE(CPU_TYPE);
+	M68K_SYS_PRINT_HOOK();
 	M68K_BASE_RES_HOOK(M68K_FLAG_T0, M68K_FLAG_T1, M68K_REG_PC, M68K_REG_SP);
 }
 
@@ -270,6 +143,10 @@ unsigned int M68K_PCDI(void)
 	return PREVIOUS + (S16)(READ_IMM_16());
 }
 
+////////////////////////////////////////////////////////////////
+//						MISC. FUNCTIONS
+////////////////////////////////////////////////////////////////
+
 // LOAD THE BINARY FILE AS PER THE SIMULATOR
 // THE IDEA FOR THIS IS TO DETERMINE THE SIZE OF THE FILE, THE MEMORY THAT NEEDS TO BE
 // ALLOCATED AS SUCH
@@ -327,6 +204,95 @@ int LOAD_BINARY_FILE(const char* FILE_PATH, U32 LOAD_ADDR)
     free(BUFFER);
     return FILE_SIZE;
 }
+
+// 04/10/25 - WHILE I DID MENTION THAT THIS WAS STRICTLY
+// USED FOR THE MEGA DRIVE, WE CAN ACTUALLY LEVERAGE THIS 
+// ADJACENT FROM ANY SORT OF SYSTEMS EMULATION
+//
+// THE 68000 WILL ALWAYS LEVERAGE THE FIRST 256 BYTES
+// OF A PROGRAM TO DELEGATE THE ESSENTIALS SUCH AS SP AND PC
+//
+// SUCH IS THE CASE WITH MY RESET FUNCTIONALITY, WE CAN PROMPTLY
+// USE THIS TABLE TO DELEGATE THE APPROPRIATE AMOUNT OF CYCLES NEEDED
+// TO FLUSH THE COROURTINE PROPERLY - RATHER THAN ALWAYS PRESUPPOSING A HARD RESET
+
+U8 M68K_VECTOR_TABLE[5][256] =
+{
+	{ 
+		  0,                                                                  /*  0: RESET - INITIAL STACK POINTER                      */
+		  4,                                                                  /*  1: RESET - INITIAL PROGRAM COUNTER                    */
+		 50,                                                                  /*  2: BUS ERROR                                          */
+		 50,                                                                  /*  3: ADDRESS ERROR                                      */
+		 34,                                                                  /*  4: ILLEGAL INSTR                                      */
+		 38,                                                                  /*  5: ZERO DIV                                           */
+		 40,                                                                  /*  6: CHK                                                */
+		 34,                                                                  /*  7: TRAPV                                              */
+		 34,                                                                  /*  8: PRIV VIO                                           */
+		 34,                                                                  /*  9: TRACE                                              */
+		 34,                                                                  /* 10: 1010                                               */
+		 34,                                                                  /* 11: 1111                                               */
+		  4,                                                                  /* 12: RESERVED                                           */
+		  4,                                                                  /* 13: CPV                                                */
+		  4,                                                                  /* 14: FMT ERROR                                          */
+		 44,                                                                  /* 15: UINIT                                              */
+		  4,                                                                  /* 16: RESERVED                                           */
+		  4,                                                                  /* 17: RESERVED                                           */
+		  4,                                                                  /* 18: RESERVED                                           */
+		  4,                                                                  /* 19: RESERVED                                           */
+		  4,                                                                  /* 20: RESERVED                                           */
+		  4,                                                                  /* 21: RESERVED                                           */
+		  4,                                                                  /* 22: RESERVED                                           */
+		  4,                                                                  /* 23: RESERVED                                           */
+		 44,                                                                  /* 24: SPUR IRQ                                           */
+		 44,                                                                  /* 25: LVL 1 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 26: LVL 2 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 27: LVL 3 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 28: LVL 4 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 29: LVL 5 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 30: LVL 6 INTERRUPT VECTOR                             */
+		 44,                                                                  /* 31: LVL 7 INTERRUPT VECTOR                             */
+		 34,                                                                  /* 32: TRAP #0                                            */
+		 34,                                                                  /* 33: TRAP #1                                            */
+		 34,                                                                  /* 34: TRAP #2                                            */
+		 34,                                                                  /* 35: TRAP #3                                            */
+		 34,                                                                  /* 36: TRAP #4                                            */
+		 34,                                                                  /* 37: TRAP #5                                            */
+		 34,                                                                  /* 38: TRAP #6                                            */
+		 34,                                                                  /* 39: TRAP #7                                            */
+		 34,                                                                  /* 40: TRAP #8                                            */
+		 34,                                                                  /* 41: TRAP #9                                            */
+		 34,                                                                  /* 42: TRAP #10                                           */
+		 34,                                                                  /* 43: TRAP #11                                           */
+		 34,                                                                  /* 44: TRAP #12                                           */
+		 34,                                                                  /* 45: TRAP #13                                           */
+		 34,                                                                  /* 46: TRAP #14                                           */
+		 34,                                                                  /* 47: TRAP #15                                           */
+		  4,                                                                  /* 48: FP BRAS                                            */
+		  4,                                                                  /* 49: FP INEXACT                                         */
+		  4,                                                                  /* 50: FP ZERO DIV                                        */
+		  4,                                                                  /* 51: FP UNDERFLOW                                       */
+		  4,                                                                  /* 52: FP OPERAND FLOW                                    */
+		  4,                                                                  /* 53: FP OVERFLOW                                        */
+		  4,                                                                  /* 54: FP NAN                                             */
+		  4,                                                                  /* 55: FP UNIMPLEMENTED DATA TYPE                         */
+		  4,                                                                  /* 56: MMU ERROR                                          */
+		  4,                                                                  /* 57: MMU ILLEGAL OP ERROR                               */
+		  4,                                                                  /* 58: MMU ACCESS VIO                                     */
+		  4,                                                                  /* 59: RESERVED                                           */
+		  4,                                                                  /* 60: RESERVED                                           */
+		  4,                                                                  /* 61: RESERVED                                           */
+		  4,                                                                  /* 62: RESERVED                                           */
+		  4,                                                                  /* 63: RESERVED                                           */
+		                                                                      /* 64-255: USER STACK SPACE                               */
+                                                                              
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+		  4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
+	},
+};
 
 #endif
 #endif
