@@ -168,7 +168,7 @@
         #define         M68K_GET_IX_16()            M68K_READ_16(M68K_IX_16())
         #define         M68K_GET_IX_32()            M68K_READ_32(M68K_IX_32())
 
-        #define         M68K_BRANCH_8(OFFSET)       (M68K_REG_PC += 2 + (S8)(OFFSET))
+        #define         M68K_BRANCH_8(OFFSET)       (M68K_REG_PC += (S8)(OFFSET))
         #define         M68K_BRANCH_16(OFFSET)      (M68K_REG_PC += (S16)(OFFSET) - 2)
         #define         M68K_BRANCH_32(OFFSET)      (M68K_REG_PC += (OFFSET) - 2)
 
