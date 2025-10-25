@@ -11,7 +11,8 @@ WARNINGS	=		-std=gnu99 -Wall -Wextra -Wparentheses -Werror -pedantic -O0
 SRC			= 		src
 INC			=		inc
 
-CPU				?= 		M68K_CPU_000
+DCPU			?=		000
+CPU				?= 		M68K_CPU_$(DCPU)
 SUPPORTED_CPUS	= 		M68K_CPU_000 M68K_CPU_010
 
 ifeq ($(filter $(CPU),$(SUPPORTED_CPUS)),)
