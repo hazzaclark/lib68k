@@ -14,7 +14,7 @@
 #include "68KCONF.h"
 
 #define         M68K_LSB_MASK                   0xFF                
-#define         M68K_MAX_BUFFERS                5                   
+#define         M68K_MAX_BUFFERS                16                   
 
 #define         M68K_OPT_BASIC                  (1 << 0)            
 #define         M68K_OPT_VERB                   (1 << 1)
@@ -27,6 +27,9 @@
 
 #define         M68K_MAX_ADDR_END               (M68K_MAX_ADDR_START + M68K_MAX_MEMORY_SIZE - 1)        
 #define         M68K_OPT_FLAGS                  (M68K_OPT_BASIC | M68K_OPT_VERB | M68K_OPT_DEVICE) 
+
+#define         M68K_BUS_ALIGNMENT(ADDRESS, SIZE)   \
+                (((SIZE) == MEM_SIZE_8) ? true : !((ADDRSSS) & 1))
 
 typedef enum
 {
@@ -48,9 +51,38 @@ typedef enum
     MEM_ERR_RESERVED,
     MEM_ERR_OVERFLOW,
     MEM_ERR_BAD_READ,
-    MEM_ERR_BAD_WRITE
+    MEM_ERR_BAD_WRITE,
+    MEM_ERR_BERR,
+    MEM_ERR_ALIGN
 
 } M68K_MEM_ERROR;
+
+typedef enum
+{
+    BERR_NONE,
+    BERR_UNMAPPED_READ,
+    BERR_UNMAPPED_WRITE,
+    BERR_READONLY,
+    BERR_ALIGN,
+    BERR_BOUNDS,
+    BERR_TIMEOUT,
+    BERR_DOUBLE_FAULT
+    
+} M68K_BERR_TYPE;
+
+typedef struct
+{
+    bool ACTIVE;                // 0x00
+    bool HALT_LINE;             // 0x01
+    bool DOUBLE_FAULT;          // 0x02
+    uint32_t CURRENT_ADDRESS;   // 0x06
+    uint32_t CURRENT_PC;        // 0x0A
+    uint32_t ACCESS_SIZE;       // 0x0E
+    uint32_t FAULT_COUNT;       // 0x12
+
+    M68K_BERR_TYPE TYPE;        // 0x16
+
+} M68K_BERR_STATE;
 
 typedef struct
 {
@@ -62,6 +94,7 @@ typedef struct
     U32 LAST_MOVE_SRC;
     U32 LAST_MOVE_DEST;
     U32 VIOLATION;
+    U32 BUS_ERROR;
     bool ACCESSED;
 
 } M68K_MEM_USAGE;
@@ -73,6 +106,7 @@ typedef struct
     U32 SIZE;
     U8* BUFFER;
     bool WRITE;
+    bool BERR;
     M68K_MEM_USAGE USAGE;
 
 } M68K_MEM_BUFFER;
@@ -83,13 +117,13 @@ typedef struct
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
 
-#define         MEM_TRACE_HOOK                  M68K_OPT_ON
+#define         MEM_TRACE_HOOK                  M68K_OPT_OFF
 #define         MEM_MAP_TRACE_HOOK              M68K_OPT_OFF
 #define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
@@ -100,7 +134,7 @@ typedef struct
     #define MEM_TRACE(OP, ADDR, SIZE, VAL) ((void)0)
 #endif
 
-#if MEM_TRACE_HOOK == M68K_OPT_ON
+#if MEM_TRACE_HOOK == M68K_OPT_OFF
     #define MEM_MOVE_TRACE(SRC, DST, SIZE, COUNT) \
         do { \
             if (IS_TRACE_ENABLED(M68K_OPT_BASIC) && CHECK_TRACE_CONDITION()) \
@@ -163,6 +197,8 @@ bool IS_TRACE_ENABLED(U8 FLAG);
 void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE);
 void SHOW_MEMORY_MAPS(void);
 void SHOW_TRACE_STATUS(void);
+
+M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS);
 
 extern U8 ENABLED_FLAGS;
 
