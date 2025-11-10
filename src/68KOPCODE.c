@@ -1173,6 +1173,15 @@ M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
     M68K_CCR_HOOK();
 }
 
+M68K_MAKE_OPCODE(BCC, 8, 0, 0)
+{
+    if((!M68K_FLAG_C) & 0x100)
+    {
+        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
+        return;
+    }
+}
+
 M68K_MAKE_OPCODE(BCC, 16, 0, 0)
 {
     if(!M68K_FLAG_C)
@@ -1185,11 +1194,9 @@ M68K_MAKE_OPCODE(BCC, 16, 0, 0)
 
 M68K_MAKE_OPCODE(BCC, 32, 0, 0)
 {
-    if(!M68K_FLAG_C)
+    if(M68K_FLAG_C)
     {
-        unsigned OFFSET = READ_IMM_16();
-        M68K_REG_PC -= 2;
-        M68K_BRANCH_16(OFFSET);
+        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
     }
 }
 
@@ -1254,8 +1261,8 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
     if(M68K_COND_FLAG_Z())
     {
         unsigned OFFSET = READ_IMM_16();
-        M68K_BRANCH_16(OFFSET);
         M68K_REG_PC -= 2;
+        M68K_BRANCH_16(OFFSET);
         return;
     }
 }
@@ -1329,11 +1336,16 @@ M68K_MAKE_OPCODE(BSET, 32, R, D)
     *DEST |= MASK;
 }
 
+M68K_MAKE_OPCODE(BSR, 8, 0, 0)
+{
+    M68K_PUSH_SP(M68K_REG_PC);
+    M68K_BRANCH_8(M68K_REG_IR);
+}
+
 M68K_MAKE_OPCODE(BSR, 16, 0, 0)
 {
     unsigned OFFSET = READ_IMM_16();
     M68K_PUSH_SP(M68K_REG_PC);
-    M68K_REG_PC -= 2;    
     M68K_BRANCH_16(OFFSET);
 }
 
@@ -2189,6 +2201,11 @@ M68K_MAKE_OPCODE(ILLEGAL, 0, 0, 0)
 M68K_MAKE_OPCODE(JMP, 32, 0, PC)
 {
     M68K_JUMP(READ_IMM_32());
+}
+
+M68K_MAKE_OPCODE(JMP, 32, EA, AY)
+{
+    M68K_JUMP(M68K_ADDRESS_LOW);
 }
 
 M68K_MAKE_OPCODE(JSR, 32, 0, PC)
@@ -3417,17 +3434,15 @@ M68K_MAKE_OPCODE(MOVE, 32, D, IMM)
 
 M68K_MAKE_OPCODE(MOVE, 16, I, SR)
 {
-    if(M68K_FLAG_S)
+    if(!M68K_FLAG_S)
     {
-        unsigned NEW_SR = READ_IMM_16();
-        M68K_SET_SR(NEW_SR);
-        return;
+        // THROW BUS ERROR EXCEPTION DUE TO BEING IN USER MODE
+        M68K_USE_CYCLES(M68K_EXEC_VECTOR_TABLE[0][8] - CYCLE_RANGE[M68K_REG_IR]);
     }
 
-    M68K_REG_PC += 2;
-
-    // THROW BUS ERROR EXCEPTION DUE TO BEING IN USER MODE
-    M68K_USE_CYCLES(M68K_EXEC_VECTOR_TABLE[0][8] - CYCLE_RANGE[M68K_REG_IR]);
+    unsigned NEW_SR = READ_IMM_16();
+    M68K_SET_SR(NEW_SR);
+    M68K_USE_CYCLES(12);
 }
 
 M68K_MAKE_OPCODE(MOVEA, 16, I, AY)
@@ -5016,6 +5031,16 @@ M68K_MAKE_OPCODE(TST, 32, IMM, 0)
     M68K_REG_PC += 4;
 }
 
+M68K_MAKE_OPCODE(TST, 16, AN, EA)
+{
+    unsigned RESULT = READ_IMM_32();
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_N_16(RESULT);
+    M68K_FLAG_Z  = RESULT;
+    M68K_FLAG_V = 0;
+    M68K_FLAG_C = 0;
+}
+
 M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 {
     unsigned* DEST = &M68K_ADDRESS_HIGH;
@@ -5107,8 +5132,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_8_ASR_0,               0xF1F8,     0xE020,     6},  // ASR.B Dn, Dy
     {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
-    {BCC_16_0_0,                0xF000,     0x6000,     10}, // BCC <label>
-    {BCC_32_0_0,                0xF000,     0x6000,     10}, // BCC <label> (32-bit DISP)
+    {BCC_8_0_0,                 0xFF00,     0x6400,     10}, // BCC <label>
+    {BCC_16_0_0,                0xFFFF,     0x6400,     10}, // BCC <label>
+    {BCC_32_0_0,                0xFFFF,     0x64FF,     10}, // BCC <label> (32-bit DISP)
     {BCHG_8_D_EA,               0xF1FF,     0x0179,     10},  // BCHG.B <ea>, Dy
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
@@ -5121,7 +5147,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BNE_16_0_0,                0xFFFF,     0x6600,     12},  // BNE <ea>
     {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
-    {BSR_16_0_0,                0xFF00,     0x6100,     18}, // BSR <label>
+    {BSR_8_0_0,                 0xFF00,     0x6100,     18}, // BSR <label>
+    {BSR_16_0_0,                0xFFFF,     0x6100,     20}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
     {BTST_8_IMM_D,              0xFFF8,     0x0310,     12},  // BTST #<imm>, Dn
     {BTST_8_D_AI,               0xF1F8,     0x0110,     10},  // BTST Dn, (Ay)
@@ -5187,6 +5214,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {EXT_32_0_0,                0xFFFF,     0x48C0,     4},  // EXT.L Dn
     {ILLEGAL_0_0_0,             0xFFFF,     0x4AFC,     4},  // ILLEGAL
     {JMP_32_0_PC,               0xFFFF,     0x4EF9,     10},  // JMP <ea>
+    {JMP_32_EA_AY,              0xFFF8,     0x4ED0,     10}, // JMP (An)
     {JSR_32_0_PC,               0xFFFF,     0x4EB9,     16}, // JSR <ea>
     {LEA_32_AI_0,               0xF1FF,     0x41F9,     10},  // LEA <ea>, An
     {LEA_32_SP_I,               0xFFFF,     0x4FF9,     10},  // LEA <ea>, SP
@@ -5385,6 +5413,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {TST_8_IMM_0,               0xFFF0,     0x4A30,     4},  // TST.B <ea>
     {TST_16_IMM_0,              0xFFF0,     0x4A70,     4},  // TST.W <ea>
     {TST_32_IMM_0,              0xFFF0,     0x4AB0,     4},  // TST.L <ea>
+    {TST_16_AN_EA,              0xFFFF,     0x4A79,     8},  // TST.W An, <ea>
+
     {UNLK_32_0_0,               0xFFF8,     0x4E58,     12}, // UNLK An
     {NULL,                      0,          0,          0}   // NULL TERM
 };
