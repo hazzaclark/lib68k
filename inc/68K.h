@@ -458,7 +458,7 @@ void M68K_BUILD_OPCODE_TABLE(void);
 
 extern unsigned char CYCLE_RANGE[0x10000];
 extern unsigned CPU_TYPE;
-CPU_68K CPU;
+extern CPU_68K CPU;
 
 #endif
 #endif
