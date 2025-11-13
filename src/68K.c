@@ -18,6 +18,7 @@
 #undef BUILD_OP_TABLE
 
 unsigned char CYCLE_RANGE[0x10000];
+CPU_68K CPU;
 
 /*==================================================================================*/
 /*                          68000 MAIN CPU FUNCTIONALIY                             */
