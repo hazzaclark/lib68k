@@ -251,6 +251,6 @@ extern unsigned int M68K_PULL_SP(void);
 
 extern unsigned int M68K_PULL_CCR(void);
 
-U8 M68K_VECTOR_TABLE[5][256];
+extern U8 M68K_VECTOR_TABLE[5][256];
 
 #endif
