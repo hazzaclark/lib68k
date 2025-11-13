@@ -169,8 +169,8 @@
         #define         M68K_GET_IX_32()            M68K_READ_32(M68K_IX_32())
 
         #define         M68K_BRANCH_8(OFFSET)       (M68K_REG_PC += (S8)(OFFSET))
-        #define         M68K_BRANCH_16(OFFSET)      (M68K_REG_PC += (S16)(OFFSET) - 2)
-        #define         M68K_BRANCH_32(OFFSET)      (M68K_REG_PC += (OFFSET) - 2)
+        #define         M68K_BRANCH_16(OFFSET)      (M68K_REG_PC += (S16)(OFFSET))
+        #define         M68K_BRANCH_32(OFFSET)      (M68K_REG_PC += (OFFSET))
 
         #define         M68K_CPU_000                0
         #define         M68K_CPU_010                1
@@ -457,7 +457,6 @@ void M68K_BUILD_OPCODE_TABLE(void);
 /*==============================================================================*/
 
 extern unsigned char CYCLE_RANGE[0x10000];
-extern unsigned CPU_TYPE;
 extern CPU_68K CPU;
 
 #endif
