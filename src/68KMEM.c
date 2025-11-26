@@ -29,6 +29,18 @@ const char* M68K_MEM_ERR[] =
     "MEMORY ENCOUNTERED A BAD WRITE"
 };
 
+static const char* M68K_BERR_ERR[] = 
+{
+    "NONE",
+    "UNMAPPED READ",
+    "UNMAPPED WRITE",
+    "READONLY WRITE",
+    "ALIGNMENT ERROR",
+    "BOUNDS VIOLATION",
+    "BUS TIMEOUT",
+    "DOUBLE FAULT"
+};
+
 void ENABLE_TRACE_FLAG(U8 FLAG) { ENABLED_FLAGS |= FLAG; }
 void DISABLE_TRACE_FLAG(U8 FLAG) { ENABLED_FLAGS &= ~FLAG; }
 bool IS_TRACE_ENABLED(U8 FLAG) { return (ENABLED_FLAGS & FLAG) == FLAG; }
@@ -49,28 +61,31 @@ void SHOW_TRACE_STATUS(void)
 void SHOW_MEMORY_MAPS(void)
 {
     printf("\n%s MEMORY MAPS:\n", M68K_CPU_STOPPED ? "AFTER" : "BEFORE");
-    printf("----------------------------------------------------------------------------------------------\n");
-    printf("START        END         SIZE    STATE      READS   WRITES   MOVES      ACCESS      VIOLATIONS  \n");
-    printf("----------------------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------\n");
+    printf("START        END         SIZE    BERR  STATE   READS   WRITES  MOVES   ACCESS  VIOLATIONS   BUS_ERRORS\n");
+    printf("------------------------------------------------------------------------------------------------------\n");
 
     for (unsigned INDEX = 0; INDEX < MEM_NUM_BUFFERS; INDEX++)
     {
         M68K_MEM_BUFFER* BUF = &MEM_BUFFERS[INDEX];
-        printf("0x%08X 0x%08X    %3d%s    %2s     %6u  %6u   %6u          %s            %1u\n",
+        printf("0x%08X 0x%08X   %4d%s   %3s   %2s  %7u  %7u %6u      %3s     %4u        %6u\n",
                 BUF->BASE,
                 BUF->BASE + BUF->SIZE - 1,
                 FORMAT_SIZE(BUF->SIZE), 
                 FORMAT_UNIT(BUF->SIZE),
+                BUF->BERR ? "ON" : "OFF",
                 BUF->WRITE ? "RW" : "RO",
                 BUF->USAGE.READ_COUNT,
                 BUF->USAGE.WRITE_COUNT,
                 BUF->USAGE.MOVE_COUNT,
                 BUF->USAGE.ACCESSED ? "YES" : "NO",
-                BUF->USAGE.VIOLATION);
+                BUF->USAGE.VIOLATION,
+                BUF->USAGE.BUS_ERROR);
     }
 
-    printf("----------------------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------\n");
 }
+
 
 // FIND THE CURRENTLY EXECUTED MEMORY BUFFER IN CONJUNCTION WITH 
 // THE MEMORY RANGES THAT ARE BEING USED
@@ -165,7 +180,17 @@ static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
         if((OFFSET + BYTES) > MEM_BASE->SIZE)
         {
             MEM_BASE->USAGE.VIOLATION++;
+            MEM_BASE->USAGE.BUS_ERROR++;
+            BUS_ERROR(BERR_BOUNDS, ADDRESS, SIZE);
             MEM_ERROR(MEM_ERR_BOUNDS, SIZE, "READ OUT OF BOUNDS: OFFSET = %d, SIZE = %d, VIOLATION #%u", OFFSET, BYTES, MEM_BASE->USAGE.VIOLATION);
+            goto MALFORMED_READ;
+        }
+
+        // DETERMINE IF THE BERR PULSE LINE IS ENABLED FOR THIS BUFFER
+        if(MEM_BASE->BERR && BERR_STATE.ACTIVE)
+        {
+            MEM_BASE->USAGE.BUS_ERROR++;
+            MEM_ERROR(MEM_ERR_BERR, SIZE, "BERR ACTIVE FOR CURRENT BUFFER: %u", MEM_BASE->BUFFER);
             goto MALFORMED_READ;
         }
 
@@ -203,6 +228,7 @@ static U32 MEMORY_READ(U32 ADDRESS, U32 SIZE)
                 break;
         }
 
+        BUS_ERROR(BERR_UNMAPPED_READ, ADDRESS, SIZE);
         MEM_TRACE("[READ]", ADDRESS, SIZE, MEM_RETURN);
         return MEM_RETURN;
     }
@@ -235,6 +261,7 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
         if(!MEM_BASE->WRITE) 
         {
             MEM_BASE->USAGE.VIOLATION++;
+            MEM_BASE->USAGE.BUS_ERROR++;
             MEM_ERROR(MEM_ERR_READONLY, SIZE, "WRITE ATTEMPT TO READ-ONLY MEMORY AT 0x%08X, VIOLATION #%u", ADDRESS, MEM_BASE->USAGE.VIOLATION);
             goto MALFORMED_WRITE;
         }
@@ -245,7 +272,17 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
         if((OFFSET + BYTES) > MEM_BASE->SIZE) 
         {
             MEM_BASE->USAGE.VIOLATION++;
+            MEM_BASE->USAGE.BUS_ERROR++;
+            BUS_ERROR(BERR_BOUNDS, ADDRESS, SIZE);
             MEM_ERROR(MEM_ERR_BOUNDS, SIZE, "WRITE OUT OF BOUNDS: OFFSET = %d, SIZE = %d, VIOLATION #%u", OFFSET, BYTES, MEM_BASE->USAGE.VIOLATION);
+            goto MALFORMED_WRITE;
+        }
+
+        // DETERMINE IF THE BERR PULSE LINE IS ENABLED FOR THIS BUFFER
+        if(MEM_BASE->BERR && BERR_STATE.ACTIVE)
+        {
+            MEM_BASE->USAGE.BUS_ERROR++;
+            MEM_ERROR(MEM_ERR_BERR, SIZE, "BERR ACTIVE FOR CURRENT BUFFER: %u", MEM_BASE->BUFFER);
             goto MALFORMED_WRITE;
         }
 
@@ -281,6 +318,7 @@ static void MEMORY_WRITE(U32 ADDRESS, U32 SIZE, U32 VALUE)
         return;
     }
 
+    BUS_ERROR(BERR_UNMAPPED_WRITE, ADDRESS, SIZE);
     MEM_ERROR(MEM_ERR_UNMAPPED, SIZE, "NO BUFFER FOUND FOR ADDRESS: 0x%08X", ADDRESS);
 
 MALFORMED_WRITE:
@@ -349,7 +387,7 @@ static void MEMORY_MOVE(uint32_t SRC, uint32_t DEST, uint32_t SIZE, uint32_t COU
     MEM_MOVE_TRACE(SRC, DEST, SIZE, COUNT);
 } 
 
-void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE) 
+void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE, bool ENABLE_BERR) 
 {
     U32 SIZE = (END - BASE) + 1;
 
@@ -371,6 +409,7 @@ void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE)
     BUF->END = END;
     BUF->SIZE = SIZE;
     BUF->WRITE = WRITABLE;
+    BUF->BERR = ENABLE_BERR;
     BUF->USAGE.MOVE_COUNT = 0;
     BUF->BUFFER = malloc(SIZE);
     memset(BUF->BUFFER, 0, SIZE);
