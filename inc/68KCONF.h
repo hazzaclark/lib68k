@@ -33,6 +33,8 @@
 
 	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
 	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
+	#define		M68K_GENS_MODE				M68K_OPT_OFF
+	#define		M68K_L68K_MODE				M68K_OPT_ON
 
 	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
 	#define		M68K_X_FLAG_HOOK	M68K_OPT_ON
@@ -176,20 +178,6 @@
     	#define M68K_DISP_PRINT_HOOK() ((void)0)
 	#endif
 
-	#if M68K_SYS_HOOK
-	#define M68K_SYS_PRINT_HOOK() 	\
-		do {						\
-			printf("\nCPU INFORMATION:\t\n"); \
-            printf("  CPU SET TO TYPE:  %u -> %s\n", CPU_TYPE, \
-                   CPU_TYPE == M68K_CPU_000 ? "68000" : \
-                   CPU_TYPE == M68K_CPU_010 ? "68010" : "UNKNOWN"); \
-            printf("  SUPERVISOR MODE:  %s\n\n", M68K_USE_SUPERVISOR ? "ENABLED" : "DISABLED"); \
-		} while(0)
-	#else 
-		#define M68K_SYS_PRINT_HOOK() ((void)0)
-		#endif
-	#endif
-
 #define		M68K_USE_CYCLES(VALUE)				M68K_MASTER_CYC += (VALUE)
 #define		M68K_SET_CYCLES(VALUE)				M68K_MASTER_CYC = VALUE
 #define		M68K_GET_CYCLES()					M68K_MASTER_CYC
@@ -226,6 +214,8 @@
 #define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 8)
 #define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 24)
 
+#define		M68K_BIT_ZEROED(VALUE)					((VALUE == 0) ? 1 : 0)
+
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
 
 /*===============================================================================*/
@@ -253,4 +243,5 @@ extern unsigned int M68K_PULL_CCR(void);
 
 extern U8 M68K_VECTOR_TABLE[5][256];
 
+#endif
 #endif
