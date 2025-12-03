@@ -210,9 +210,9 @@
 #define		M68K_BIT_SHIFT_N_24(VALUE)			((VALUE) >> 16)
 #define		M68K_BIT_SHIFT_N_32(VALUE)			((VALUE) >> 24)
 
-#define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		((SRC ^ RESULT) & (DEST ^ RESULT))
-#define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 8)
-#define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 24)
+#define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 7 & 1)
+#define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		((((SRC ^ RESULT) & (DEST ^ RESULT)) >> 15) & 1)
+#define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		((((SRC ^ RESULT) & (DEST ^ RESULT)) >> 31) & 1)
 
 #define		M68K_BIT_ZEROED(VALUE)					((VALUE == 0) ? 1 : 0)
 
