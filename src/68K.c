@@ -165,20 +165,34 @@ void M68K_INIT(void)
     M68K_BUILD_OPCODE_TABLE();
     M68K_BUILD_EXCEPTION_TABLE();
 
+    #if M68K_GENS_MODE
+
     // 4MB ROM
-    MEMORY_MAP(0x000000, 0x3FFFFF, false);
+    MEMORY_MAP(0x000000, 0x3FFFFF, false, true);
     
     // 64KB Z80 ROM
-    MEMORY_MAP(0xA00000, 0xA0FFFF, true);
+    MEMORY_MAP(0xA00000, 0xA0FFFF, true, true);
     
     // I/O - CONTROL REGISTERS
-    MEMORY_MAP(0xA10000, 0xA1001F, true);
+    MEMORY_MAP(0xA10000, 0xA1001F, true, true);
     
     // VDP REGISTERS
-    MEMORY_MAP(0xC00000, 0xC0001F, true);
+    MEMORY_MAP(0xC00000, 0xC0001F, true, true);
     
     // 64KB WORK RAM FOR STACK
-    MEMORY_MAP(0xFF0000, 0xFFFFFF, true);
+    MEMORY_MAP(0xFF0000, 0xFFFFFF, true, true);
+    
+    #endif
+
+    #if M68K_L68K_MODE
+
+     // 512KB RAM 
+    MEMORY_MAP(0x000000, 0x7FFFF, true, true);
+    
+    // 512KB ROM 
+    MEMORY_MAP(0x080000, 0xFFFFF, false, false);   
+
+    #endif
 }
 
 // EXEC FUNCTION STRICTLY DESIGNED FOR THE PURPOSE OF THE SIMULATOR
