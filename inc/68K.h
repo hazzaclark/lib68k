@@ -213,25 +213,35 @@
 
         typedef struct CPU_68K
         {
-            unsigned int PC;
             unsigned int* INSTRUCTION_CYCLES;
-            unsigned int REMAINING_CYCLES;
-            unsigned int CYCLE_RATE;
-            unsigned int RESET_CYCLES;
             unsigned int* CYCLE_EXCEPTION;
-            unsigned int CYCLE_END;
+            unsigned int* INT_LEVEL;
 
             unsigned(*MEMORY_DATA);
             unsigned(*MEMORY_ADDRESS);
             unsigned(*MEMORY_POINTER);
-
             unsigned(*LOW_ADDR);
             unsigned(*HIGH_ADDR);
-            void(*USER_DATA);
 
-            unsigned int STOPPED;
+            UNK* ERROR_JUMP;
 
-            U16 STATUS_REGISTER;
+            S32(*INTERRUPT_CALLBACK)(unsigned INTERRUPT);
+            S32(*RESET_INTERRUPT)(void);
+            S32(*CPU_FUNC_CALLBACK)(unsigned FUNCTION);
+
+            int(*INT_ACK_CALLBACK)(int VALUE);
+            void(*RESET_CALLBACK)(void);
+            void(*PC_CHANGED_CALLBACK)(unsigned* NEW_PC);
+            void(*SET_FC_CALLBACK)(void);
+            void(*INSTR_HOOK)(unsigned PC);
+
+            unsigned int PC;
+            unsigned int REMAINING_CYCLES;
+            unsigned int CYCLE_RATE;
+            unsigned int RESET_CYCLES;
+            unsigned int CYCLE_END;
+            unsigned int CPU_STOPPED;
+
             U32 INDEX_REGISTER;
             U32 REGISTER_BASE[16];
             U32 DATA_REGISTER[8];
@@ -263,31 +273,6 @@
             unsigned char ERROR_ADDRESS;
             unsigned char ERROR_WRITE_MODE;
             unsigned char ERROR_PC;
-            UNK* ERROR_JUMP;
-
-            S32(*INTERRUPT_CALLBACK)(unsigned INTERRUPT);
-            S32(*RESET_INTERRUPT)(void);
-            S32(*CPU_FUNC_CALLBACK)(unsigned FUNCTION);
-            unsigned int* INT_LEVEL;
-
-            unsigned int CPU_STOPPED;
-
-            unsigned S_FLAG;
-            unsigned X_FLAG;
-            unsigned N_FLAG;
-            unsigned V_FLAG;
-            unsigned Z_FLAG;
-            unsigned C_FLAG;
-            unsigned M_FLAG;
-
-            unsigned T0_FLAG;
-            unsigned T1_FLAG;
-
-            int(*INT_ACK_CALLBACK)(int VALUE);
-            void(*RESET_CALLBACK)(void);
-            void(*PC_CHANGED_CALLBACK)(unsigned* NEW_PC);
-            void(*SET_FC_CALLBACK)(void);
-            void(*INSTR_HOOK)(unsigned PC);
 
             unsigned int ADDRESS_MASK;
             unsigned int SR_MASK;
@@ -300,6 +285,19 @@
 
             signed int MASTER_CYCLES;
             signed int REFRESH_CYCLES;
+
+            U16 STATUS_REGISTER;
+    
+            unsigned S_FLAG : 1;
+            unsigned X_FLAG : 1;
+            unsigned N_FLAG : 1;
+            unsigned V_FLAG : 1;
+            unsigned Z_FLAG : 1;
+            unsigned C_FLAG : 1;
+            unsigned M_FLAG : 1;
+
+            unsigned T0_FLAG : 1;
+            unsigned T1_FLAG : 1;
 
         } CPU_68K;
 
