@@ -104,8 +104,6 @@ void M68K_SET_REGISTERS(unsigned int REGISTER, unsigned int VALUE)
 void M68K_JUMP(unsigned NEW_PC)
 {
     M68K_REG_PC = NEW_PC;
-    M68K_REG_IR = M68K_READ_16(M68K_REG_PC);
-    M68K_REG_PC += 2;
 }
 
 void M68K_JUMP_VECTOR(unsigned VECTOR)
