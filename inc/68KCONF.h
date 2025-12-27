@@ -217,12 +217,11 @@
 
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
 
-#define		M68K_PREFETCH()									\
-		do {												\
-			INSTR = M68K_READ_MEMORY_16(M68K_REG_PC);		\
-			M68K_REG_PC += 2;								\
+#define		M68K_PREFETCH()												\
+		do {															\
+			M68K_REG_PC += 2, M68K_READ_MEMORY_16(M68K_REG_PC - 2);		\
 		} while(0)
-		
+
 #define		M68K_CHECK_PRIV()						(M68K_FLAG_S ? true : (M68K_REG_PC -= 4, false))
 
 /*===============================================================================*/
