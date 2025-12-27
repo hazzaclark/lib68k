@@ -195,8 +195,7 @@
 #define 	M68K_MASK_OUT_BELOW_16(A)  			((A) & ~0xFFFF)
 #define 	M68K_MASK_OUT_BELOW_32(A)  			((A) & ~0xFFFFFFFF)
 
-/// RETURNS BIT SHIFT MASKS BASED ON A LOGICAL AND OPERATIONS
-// LOG AND IS USED TO EXTRACT THE LSB TO PROPERLY READ FROM BITS 0 - X 
+/// RETURNS BIT SHIFT MASKS BASED ON A LOGICAL AND OPERATIONS 
 
 #define		M68K_BIT_SHIFT_8(VALUE)				((VALUE) >> 7) & 1
 #define		M68K_BIT_SHIFT_16(VALUE)			((VALUE) >> 15) & 1
@@ -217,6 +216,14 @@
 #define		M68K_BIT_ZEROED(VALUE)					((VALUE == 0) ? 1 : 0)
 
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
+
+#define		M68K_PREFETCH()									\
+		do {												\
+			INSTR = M68K_READ_MEMORY_16(M68K_REG_PC);		\
+			M68K_REG_PC += 2;								\
+		} while(0)
+		
+#define		M68K_CHECK_PRIV()						(M68K_FLAG_S ? true : (M68K_REG_PC -= 4, false))
 
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
