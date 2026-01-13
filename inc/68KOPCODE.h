@@ -42,7 +42,7 @@
         void(*HANDLER)(void);
         unsigned MASK;
         unsigned MATCH;
-        unsigned(*CYCLES);
+        unsigned CYCLES;
 
     } OPCODE_HANDLER;
 
