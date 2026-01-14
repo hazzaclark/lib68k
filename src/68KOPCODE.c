@@ -100,11 +100,11 @@ M68K_MAKE_OPCODE(ABCD, 8, DN, DY)
 
     DESTINATION = M68K_MASK_OUT_ABOVE_8(DESTINATION) | RESULT;
 
-    M68K_FLAG_Z = (RESULT & 0xFF) == 0;
-    M68K_FLAG_C = (RESULT > 0xFF);
+    M68K_FLAG_Z = ((RESULT & 0xFF) == 0);
+    M68K_FLAG_C = ((RESULT > 0xFF) == 0);
     M68K_FLAG_X = M68K_FLAG_C; 
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+    M68K_ADDRESS_HOOK(M68K_REG_D, REG_DATA);
     M68K_CCR_HOOK();
 }
 
@@ -116,11 +116,11 @@ M68K_MAKE_OPCODE(ABCD, 8, PD, AY)
 
     DESTINATION = M68K_MASK_OUT_ABOVE_8(DESTINATION) | RESULT;
 
-    M68K_FLAG_Z = (RESULT & 0xFF) == 0;
-    M68K_FLAG_C = (RESULT > 0xFF);
+    M68K_FLAG_Z = ((RESULT & 0xFF) == 0);
+    M68K_FLAG_C = ((RESULT > 0xFF) == 0);
     M68K_FLAG_X = M68K_FLAG_C; 
 
-    M68K_BASE_ADDRESS_HOOK(M68K_REG_A);
+    M68K_ADDRESS_HOOK(M68K_REG_A, REG_ADDRESS);
     M68K_CCR_HOOK();
 }   
 
@@ -3501,16 +3501,14 @@ M68K_MAKE_OPCODE(MOVE, 32, D, IMM)
 
 M68K_MAKE_OPCODE(MOVE, 16, I, SR)
 {
-    if(!M68K_FLAG_S)
+    if(M68K_FLAG_S)
     {
-        M68K_REG_PC -= 2;
-        M68K_EXCEPTION(PRIV_VIO);
+        unsigned NEW_SR = READ_IMM_16();
+        M68K_SET_SR(NEW_SR);
         return;
     }
-    
-    unsigned NEW_SR = READ_IMM_16();
-    
-    M68K_SET_SR(NEW_SR);
+
+    M68K_EXCEPTION(PRIV_VIO);
     M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_USE_CYCLES(12);
 }
@@ -5133,8 +5131,8 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
     // HANDLER                  MASK        MATCH       CYCLES
-    {ABCD_8_DN_DY,              0xF1F8,     0xC100,     6},   // ABCD Dn, Dy
-    {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(An), -(Ay)
+    {ABCD_8_DN_DY,              0xF1F8,     0xC100,     6},   // ABCD Dy, Dx
+    {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(Ay), -(An)
     {ADD_8_EA_DN,               0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_DN,              0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
     {ADD_32_EA_DN,              0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
