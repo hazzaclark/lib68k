@@ -138,6 +138,8 @@
 		#define M68K_BASE_LEA_HOOK(REG_ARRAY, EA_VALUE) ((void)0)
 	#endif
 
+	// M68K_BASE_ADDRESS_HOOK - SOON TO BE DEPRACATED
+	
 	#if M68K_ADDR_HOOK
 	#define M68K_BASE_ADDRESS_HOOK(REG_ARRAY) \
 		do { \
@@ -176,6 +178,21 @@
         } while(0)
 	#else
     	#define M68K_DISP_PRINT_HOOK() ((void)0)
+	#endif
+
+	// TODO:
+	// REFACTOR ALL OF THE HOOK DECLARATIONS TO USE
+	// THIS ONE 
+
+	#if M68K_ADDR_HOOK
+    #define M68K_ADDRESS_HOOK(REG_ARRAY, TYPE) \
+		do { \
+    		int REG = (M68K_REG_IR >> 9) & 7; \
+    		printf("%s REGISTER %d FOUND\n", \
+           (TYPE) == REG_DATA ? "DATA" : "ADDRESS", REG); \
+		} while(0)
+	#else
+    	#define M68K_ADDRESS_HOOK(REG_ARRAY, TYPE) ((void)0)
 	#endif
 
 #define		M68K_USE_CYCLES(VALUE)				M68K_MASTER_CYC += (VALUE)
@@ -217,10 +234,13 @@
 
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
 
-#define		M68K_PREFETCH()												\
-		do {															\
-			M68K_REG_PC += 2, M68K_READ_MEMORY_16(M68K_REG_PC - 2);		\
-		} while(0)
+#define M68K_PREFETCH()               \
+    do {                               \
+        M68K_READ_MEMORY_16(M68K_REG_PC); \
+        M68K_REG_PC += 2;             \
+    } while(0)
+
+
 
 #define		M68K_CHECK_PRIV()						(M68K_FLAG_S ? true : (M68K_REG_PC -= 4, false))
 
