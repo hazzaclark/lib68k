@@ -1240,29 +1240,27 @@ M68K_MAKE_OPCODE(BCLR, 8, D, EA)
     M68K_REG_PC += 2;
 }
 
-M68K_MAKE_OPCODE(BRA, 8, 0, 0)
-{
-    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-}
+// 21/01/26 
+// REFACTORED TO HANDLE ALL OF THE BRANCH SIZES
+// WITHIN ONE STATEMENT
+//
+// USES THE SAME MASK AND THE LIKE 
+// EXCEPT IT HANDLES THE DISPLACEMENT AS A PC RELATIVE OFFSET
 
-// I HATE YOU SO MUCH, BRA
-M68K_MAKE_OPCODE(BRA, 16, 0, 0)
+M68K_MAKE_OPCODE(BRA, LABEL, 0, 0)
 {
-    S16 OFFSET = READ_IMM_16();
-    M68K_BRANCH_16(OFFSET);
-}
+    S32 DISP = (S8)(M68K_REG_IR & 0xFF);
 
-M68K_MAKE_OPCODE(BRA, 32, 0, 0)
-{
-    S32 DISPLACEMENT = (S8)(M68K_REG_IR & 0xFF);
-    
-    if(DISPLACEMENT == 0)
-    {
-        // BRA.W - 16-bit displacement
-        DISPLACEMENT = (S16)READ_IMM_16();
-    }
-    
-    M68K_REG_PC += DISPLACEMENT;
+    // CHECK FOR THE SIGNEDNESS
+    // 0xFF REPRESENTS THE SIGNED BYTE
+
+    if(DISP == 0)
+        DISP = (S16)READ_IMM_16();
+
+    else if(DISP == -1)
+        DISP = (S32)READ_IMM_32();
+
+    M68K_REG_PC += DISP;
 }
 
 M68K_MAKE_OPCODE(BNE, 8, 0, 0)
@@ -4581,6 +4579,9 @@ M68K_MAKE_OPCODE(RTS, 0, 0, 0)
     M68K_BASE_RTS_HOOK(M68K_REG_SP);
 }
 
+// TODO:
+// UPDATE THIS TO PROPERLY HANDLE EXCEPTIONS BETTER
+
 M68K_MAKE_OPCODE(RTE, 32, 0, 0)
 {
     #if M68K_USE_SUPERVISOR
@@ -5208,9 +5209,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCC_32_0_0,                0xFFFF,     0x64FF,     10}, // BCC <label> (32-bit DISP)
     {BCHG_8_D_EA,               0xF1FF,     0x0179,     10},  // BCHG.B <ea>, Dy
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
-    {BRA_8_0_0,                 0xFF00,     0x6000,     10}, // BRA <label>
-    {BRA_16_0_0,                0xFFFF,     0x6000,     12}, // BRA <label> (16-bit DISP)
-    {BRA_32_0_0,                0xFFFF,     0x60FF,     10}, // BRA <label> (32-bit DISP)
+    {BRA_LABEL_0_0,             0xFF00,     0x6000,     10}, // BRA <label>
     {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
     {BEQ_16_0_0,                0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
@@ -5506,7 +5505,7 @@ void M68K_BUILD_OPCODE_TABLE(void)
     for (INDEX = 0; INDEX < OPCODE_MAX; INDEX++)
     {
         M68K_OPCODE_JUMP_TABLE[INDEX] = ILLEGAL_0_0_0;
-        CYCLE_RANGE[INDEX] = 0;
+        CYCLE_RANGE[INDEX] = 4;
     }
 
     // MAP THE HANDLER STRUCT TO THE DESIGNATED FUNCTION POINTER
