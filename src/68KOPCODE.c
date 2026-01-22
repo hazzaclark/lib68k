@@ -5559,3 +5559,4 @@ void M68K_BUILD_EXCEPTION_TABLE(void)
 }
 
 #endif
+
