@@ -92,7 +92,7 @@ M68K_EXCEPTION(PRIV_VIO)
 
 /* SEE INTEGER INSTRUCTIONS: https://www.nxp.com/docs/en/reference-manual/M68000PRM.pdf#PAGE=105 */
 
-M68K_MAKE_OPCODE(ABCD, 8, DN, DY)
+M68K_MAKE_OPCODE(ABCD, 8, , )
 {
     int DESTINATION = M68K_DATA_HIGH;
     int SRC = M68K_DATA_LOW;
@@ -104,25 +104,9 @@ M68K_MAKE_OPCODE(ABCD, 8, DN, DY)
     M68K_FLAG_C = ((RESULT > 0xFF) == 0);
     M68K_FLAG_X = M68K_FLAG_C; 
 
-    M68K_ADDRESS_HOOK(M68K_REG_D, REG_DATA);
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
     M68K_CCR_HOOK();
 }
-
-M68K_MAKE_OPCODE(ABCD, 8, PD, AY)
-{
-    int DESTINATION = M68K_ADDRESS_HIGH;
-    int SRC = M68K_ADDRESS_LOW;
-    int RESULT = M68K_LOW_NIBBLE(SRC) + M68K_LOW_NIBBLE(DESTINATION) + M68K_FLAG_X;
-
-    DESTINATION = M68K_MASK_OUT_ABOVE_8(DESTINATION) | RESULT;
-
-    M68K_FLAG_Z = ((RESULT & 0xFF) == 0);
-    M68K_FLAG_C = ((RESULT > 0xFF) == 0);
-    M68K_FLAG_X = M68K_FLAG_C; 
-
-    M68K_ADDRESS_HOOK(M68K_REG_A, REG_ADDRESS);
-    M68K_CCR_HOOK();
-}   
 
 M68K_MAKE_OPCODE(ADD, 8, EA, DN)
 {
@@ -1260,17 +1244,7 @@ M68K_MAKE_OPCODE(BRA, LABEL, 0, 0)
     M68K_REG_PC += DISP;
 }
 
-M68K_MAKE_OPCODE(BNE, 8, 0, 0)
-{
-    if(!M68K_COND_FLAG_Z())
-    {
-        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-    }
-
-    M68K_USE_CYCLES(8);
-}
-
-M68K_MAKE_OPCODE(BNE, 16, 0, 0)
+M68K_MAKE_OPCODE(BNE, LABEL, 0, 0)
 {
     if(M68K_COND_FLAG_Z())
     {
@@ -1281,17 +1255,6 @@ M68K_MAKE_OPCODE(BNE, 16, 0, 0)
     }
 
     M68K_REG_PC += 2;
-}
-
-M68K_MAKE_OPCODE(BNE, 32, 0, 0)
-{
-    if(!M68K_COND_FLAG_Z())
-    {
-        M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-    }
-
-    M68K_REG_PC += 6;
-    M68K_USE_CYCLES(8);
 }
 
 M68K_MAKE_OPCODE(BEQ, 8, 0, 0)
@@ -5128,9 +5091,8 @@ M68K_MAKE_OPCODE(UNLK, 32, 0, 0)
 
 OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
 {
-    // HANDLER                  MASK        MATCH       CYCLES
-    {ABCD_8_DN_DY,              0xF1F8,     0xC100,     6},   // ABCD Dy, Dx
-    {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(Ay), -(An)
+    // HANDLER                  MASK                                MATCH        CYCLES
+    {ABCD_8__,                  M68K_MASK_RANGE_2(12, 15, 4, 8),     0xC100,     12},   
     {ADD_8_EA_DN,               0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
     {ADD_16_EA_DN,              0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
     {ADD_32_EA_DN,              0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
@@ -5211,9 +5173,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BEQ_16_0_0,                0xFFFF,     0x6700,     10}, // BEQ <label>
     {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
-    {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
-    {BNE_16_0_0,                0xFFFF,     0x6600,     12},  // BNE <ea>
-    {BNE_32_0_0,                0xFFFF,     0x66FF,     20},  // BNE <ea>
+    {BNE_LABEL_0_0,             0xFFFF,     0x6600,     12},  // BNE <ea>
     {BSR_8_0_0,                 0xFF00,     0x6100,     18}, // BSR <label>
     {BSR_16_0_0,                0xFFFF,     0x6100,     20}, // BSR <label>
     {BTST_8_D_0,                0xFFC0,     0x0800,     16},  // BTST Dn,<ea>
@@ -5559,4 +5519,3 @@ void M68K_BUILD_EXCEPTION_TABLE(void)
 }
 
 #endif
-
