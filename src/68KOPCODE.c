@@ -1249,16 +1249,13 @@ M68K_MAKE_OPCODE(BCLR, 8, D, EA)
 
 M68K_MAKE_OPCODE(BRA, LABEL, 0, 0)
 {
-    S32 DISP = (S8)(M68K_REG_IR & 0xFF);
+    S16 DISP = (S8)(M68K_REG_IR & 0xFF);
 
     // CHECK FOR THE SIGNEDNESS
     // 0xFF REPRESENTS THE SIGNED BYTE
 
     if(DISP == 0)
         DISP = (S16)READ_IMM_16();
-
-    else if(DISP == -1)
-        DISP = (S32)READ_IMM_32();
 
     M68K_REG_PC += DISP;
 }
