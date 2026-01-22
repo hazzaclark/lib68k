@@ -2278,8 +2278,7 @@ M68K_MAKE_OPCODE(LSL, 8, S, 0)
     2. REGISTER - THE SHIFT COUNT IS THE VALUE IN THE DATA REGISTER SPECIFIED IN THE INSTRUCTION MODULO 64. 
     */    
 
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
-
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
     unsigned RESULT = SRC << SHIFT;
 
@@ -2296,7 +2295,7 @@ M68K_MAKE_OPCODE(LSL, 8, S, 0)
 M68K_MAKE_OPCODE(LSL, 16, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
     unsigned RESULT = SRC << SHIFT;
@@ -2314,7 +2313,7 @@ M68K_MAKE_OPCODE(LSL, 16, S, 0)
 M68K_MAKE_OPCODE(LSL, 32, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
     unsigned RESULT = SRC << SHIFT;
@@ -2333,7 +2332,7 @@ M68K_MAKE_OPCODE(LSL, 32, S, 0)
 M68K_MAKE_OPCODE(LSR, 8, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_8(*DEST);
     unsigned RESULT = SRC >> SHIFT;
@@ -2351,7 +2350,7 @@ M68K_MAKE_OPCODE(LSR, 8, S, 0)
 M68K_MAKE_OPCODE(LSR, 16, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_16(*DEST);
     unsigned RESULT = SRC >> SHIFT;
@@ -2369,7 +2368,7 @@ M68K_MAKE_OPCODE(LSR, 16, S, 0)
 M68K_MAKE_OPCODE(LSR, 32, S, 0)
 {
     unsigned* DEST = &M68K_DATA_HIGH;
-    unsigned SHIFT = (M68K_REG_IR >> 9) & 0x7;
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
 
     unsigned SRC = M68K_MASK_OUT_ABOVE_32(*DEST);
     unsigned RESULT = SRC >> SHIFT;
