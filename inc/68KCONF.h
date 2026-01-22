@@ -241,8 +241,26 @@
     } while(0)
 
 
-
 #define		M68K_CHECK_PRIV()						(M68K_FLAG_S ? true : (M68K_REG_PC -= 4, false))
+
+/*===============================================================================*/
+/*							68000 BIT EXTRACTION UTILITIES						 */
+/*===============================================================================*/
+
+// THE FOLLOWING AIMS TO PROVIDE A CONDUCIVE MEANS OF ACCESSING THE BITS ASSOCIATED
+// WITH OPCODE DEFINITIONS - MAKING IT EASIER TO DETERMINE THE CURRENT MODE OF
+// EACH INSTRUCTION TO AID WITH RUNTIME
+
+#define		M68K_EXTRACT_BITS(VALUE, START, END)				\
+			(((VALUE) >> (START)) & (U16)(~((~(U16)0) << ((END) - (START) + 1))))
+
+
+			// WRAPPER FUNCTION TO AID WITH EXTRACTING BITS
+#define		M68K_EXTRACT(OPCODE, START, END)		M68K_EXTRACT_BITS(OPCODE, START, END)
+
+			// PRE-PROCESSOR CONSTANTS FOR ACCESSING COMMON INSTRUCTION FIELDS
+#define		M68K_OPCODE(MATCH)						M68K_EXTRACT(MATCH, 12, 15);
+
 
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
