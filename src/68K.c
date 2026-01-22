@@ -204,7 +204,7 @@ void M68K_INIT(void)
 
 void M68K_EXEC(int CYCLES) 
 {   
-    while(!M68K_CPU_STOPPED)
+    while(!M68K_CPU_STOPPED && (CYCLES < 0 || M68K_MASTER_CYC < CYCLES))
     {
         // DOES AN IMMEDIATE READ AGAINST THE CURRENT PC VALUE
         // TO LOAD THE OPCODE INTO THE IR
@@ -214,15 +214,15 @@ void M68K_EXEC(int CYCLES)
         M68K_REG_IR = READ_IMM_16();
 
         // CYCLE RANGE IS MORE SO DETERMINED BY THE MAX AMOUNT OF MEMORY ON THE BUS
-        CYCLES = CYCLE_RANGE[M68K_REG_IR];
+        int BASE_CYCLES = CYCLE_RANGE[M68K_REG_IR];
 
         printf("[PC -> %04X]  [IR -> %04X]  ", M68K_REG_PC, M68K_REG_IR);
         
         M68K_OPCODE_JUMP_TABLE[M68K_REG_IR]();
 
-        M68K_USE_CYCLES(CYCLE_RANGE[M68K_REG_IR]);
+        M68K_USE_CYCLES(BASE_CYCLES);
         
-        printf("CYCLES: %d, TOTAL ELAPSED: %d\n", CYCLES, M68K_MASTER_CYC);
+        printf("CYCLES: %d, TOTAL ELAPSED: %d\n", BASE_CYCLES, M68K_MASTER_CYC);
         printf("-------------------------------------------------------------\n");
     }
 
