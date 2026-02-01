@@ -1193,6 +1193,22 @@ M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
     M68K_CCR_HOOK();
 }
 
+M68K_MAKE_OPCODE(ASL, 8, ASR, IMM)
+{
+    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_HIGH;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_8(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_8(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & 0x80) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC >> (8 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
 M68K_MAKE_OPCODE(BCC, 8, 0, 0)
 {
     if((!M68K_FLAG_C) & 0x100)
@@ -5206,6 +5222,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_8_ASR_0,               0xF1F8,     0xE020,     6},  // ASR.B Dn, Dy
     {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
+    {ASL_8_ASR_IMM,             0xF1F8,     0xE100,     6},  // ASL.B #imm, Dy
     {BCC_8_0_0,                 0xFF00,     0x6400,     10}, // BCC <label>
     {BCC_16_0_0,                0xFFFF,     0x6400,     10}, // BCC <label>
     {BCC_32_0_0,                0xFFFF,     0x64FF,     10}, // BCC <label> (32-bit DISP)
