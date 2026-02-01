@@ -1195,8 +1195,8 @@ M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
 
 M68K_MAKE_OPCODE(ASL, 8, ASR, IMM)
 {
-    unsigned SHIFT = M68K_SHIFT_COUNT_IMM(M68K_REG_IR);
-    unsigned SRC = M68K_DATA_HIGH;
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
     unsigned RESULT = SRC << SHIFT;
     M68K_USE_CYCLES(SHIFT);
 
@@ -5581,4 +5581,3 @@ void M68K_BUILD_EXCEPTION_TABLE(void)
 }
 
 #endif
-
