@@ -28,7 +28,7 @@
 	#ifndef 	USE_M68K_HOOKS
 	#define 	USE_M68K_HOOKS
 
-	#define		M68K_USE_SUPERVISOR		M68K_OPT_OFF
+	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
 
 	#ifndef 		M68K_CCR_LOGGING
 		#define 	M68K_CCR_LOGGING 			M68K_OPT_OFF
@@ -268,7 +268,7 @@
 // EACH INSTRUCTION TO AID WITH RUNTIME
 
 #define		M68K_EXTRACT_BITS(VALUE, START, END)								\
-			(((VALUE) >> (START)) & (U16)((((U16)1) << ((END) - (START) + 1))))
+			(((VALUE) >> (START)) & (U16)((((U16)1) << ((END) - (START) + 1)) - 1))
 
 #define		M68K_MASK_BITS(START, END)											\
 			((U16)((((U16)1) << ((END) - (START) + 1)) - 1) << (START))
