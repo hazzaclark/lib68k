@@ -28,28 +28,46 @@
 	#ifndef 	USE_M68K_HOOKS
 	#define 	USE_M68K_HOOKS
 
-// DEBUG MESSAGE FOR ISOLATING WHICH OFFSET OF THE PC 
-// CERTAIN JUMP CONDITIONS TAKE ON DURING EXECUTION
+	#define		M68K_USE_SUPERVISOR		M68K_OPT_OFF
 
-	#define		M68K_USE_SUPERVISOR			M68K_OPT_OFF
-	#define 	M68K_CCR_LOGGING 			M68K_OPT_ON
+	#ifndef 		M68K_CCR_LOGGING
+		#define 	M68K_CCR_LOGGING 			M68K_OPT_OFF
+	#endif
+
 	#define		M68K_GENS_MODE				M68K_OPT_OFF
 	#define		M68K_L68K_MODE				M68K_OPT_ON
 
-	#define		M68K_S_FLAG_HOOK	M68K_OPT_ON
-	#define		M68K_X_FLAG_HOOK	M68K_OPT_ON
-	#define		M68K_Z_FLAG_HOOK	M68K_OPT_ON
-	#define		M68K_V_FLAG_HOOK	M68K_OPT_ON
-	#define		M68K_C_FLAG_HOOK	M68K_OPT_ON
-	#define		M68K_N_FLAG_HOOK	M68K_OPT_ON
+	#ifndef 		M68K_S_FLAG_HOOK
+		#define		M68K_S_FLAG_HOOK            M68K_OPT_OFF
+	#endif
 
-	#if M68K_CCR_LOGGING
-	#if (M68K_S_FLAG_HOOK || \
-		M68K_X_FLAG_HOOK || \
-		M68K_Z_FLAG_HOOK || \
-		M68K_V_FLAG_HOOK || \
-		M68K_C_FLAG_HOOK || \
-		M68K_N_FLAG_HOOK)
+	#ifndef 		M68K_X_FLAG_HOOK
+		#define		M68K_X_FLAG_HOOK            M68K_OPT_OFF
+	#endif
+
+	#ifndef 		M68K_Z_FLAG_HOOK
+		#define		M68K_Z_FLAG_HOOK            M68K_OPT_OFF
+	#endif
+
+	#ifndef 		M68K_V_FLAG_HOOK
+		#define		M68K_V_FLAG_HOOK            M68K_OPT_OFF
+	#endif
+
+	#ifndef 		M68K_C_FLAG_HOOK
+		#define		M68K_C_FLAG_HOOK            M68K_OPT_OFF
+	#endif
+
+	#ifndef 		M68K_N_FLAG_HOOK
+		#define		M68K_N_FLAG_HOOK            M68K_OPT_OFF
+	#endif
+
+	#if M68K_CCR_LOGGING == M68K_OPT_ON
+	#if (M68K_S_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_X_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_Z_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_V_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_C_FLAG_HOOK == M68K_OPT_ON || \
+		M68K_N_FLAG_HOOK == M68K_OPT_ON)
 	
 		#define M68K_PRINT_FLAG(COND, FLAG_VAR, NAME) \
 			do { \
@@ -72,8 +90,6 @@
 	#else
 		#define M68K_CCR_HOOK() ((void)0)
 		#endif
-
-	// EXTRA #ELSE CLAUSE SO THAT THE COMPILER WILL SHUT UP
 	#else
 	#define M68K_CCR_HOOK() ((void)0)
 	#endif
