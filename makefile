@@ -11,24 +11,13 @@ WARNINGS	=		-std=gnu99 -Wall -Wextra -Wparentheses -Werror -pedantic -O0
 SRC			= 		src
 INC			=		inc
 
-DCPU			?=		000
-CPU				?= 		M68K_CPU_$(DCPU)
-SUPPORTED_CPUS	= 		M68K_CPU_000 M68K_CPU_010
-
-ifeq ($(filter $(CPU),$(SUPPORTED_CPUS)),)
-$(error CPU $(CPU) IS UNSUPPORTED -> SUPPORTED MODELS: $(SUPPORTED_CPUS))
-endif
-
-## SIMPLE STRING CONCATENATION FOR CPU TYPE SUPPORTED
-## MEANS NOTHING IN TERMS OF COMPATIBILITY - JUST LOOKS COOL
-
-CPU_NUM = $(subst M68K_CPU_,,$(CPU))
-CPU_CONCATE = 68$(CPU_NUM)
+include hooks.mk
 
 #########################################################################
 ##				FILE ACCESS			       ##
 #########################################################################
 
+CFLAGS      =       $(WARNINGS) $(OPT_LEVEL) $(TRACE_FLAGS)
 68K_FILES	=		$(wildcard $(SRC)/*.c)
 68K_OBJS	=		$(68K_FILES:$(SRC)/%.c=$(SRC)/%.o)
 
@@ -45,10 +34,10 @@ $(LIBRARY): $(68K_OBJS)
 	$(AR) rcs $@ $^
 
 $(TARGET): $(LIBRARY)
-	$(CC) -o $@ -L. -l68k $(WARNINGS)  
+	$(CC) -o $@ -L. -l68k $(CFLAGS)  
 
 $(SRC)/%.o: $(SRC)/%.c
-	$(CC) $(WARNINGS) -I$(INC) -DM68K_CPU_TYPE=$(CPU) -DM68K_CPU_LABEL="$(CPU_CONCATE)" -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INC) -c $< -o $@
 
 clean:
 	rm -f $(SRC)/*.o $(TARGET) $(LIBRARY)
