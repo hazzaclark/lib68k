@@ -1204,8 +1204,40 @@ M68K_MAKE_OPCODE(ASL, 8, ASR, IMM)
 
     M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
     M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_8(RESULT) == 0);
-    M68K_FLAG_V = ((SRC ^ RESULT) & 0x80) != 0;
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_8) != 0;
     M68K_FLAG_X = M68K_FLAG_C = (SRC >> (8 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASL, 16, ASR, IMM)
+{
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_16(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_16(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_16) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC >> (16 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASL, 32, ASR, IMM)
+{
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_32(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_32(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_32) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC >> (32 - SHIFT)) & 1;
     M68K_CCR_HOOK();
 }
 
@@ -5223,6 +5255,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
     {ASL_8_ASR_IMM,             0xF1F8,     0xE100,     6},  // ASL.B #imm, Dy
+    {ASL_16_ASR_IMM,            0xF1F8,     0xE140,     6},  // ASL.W #imm, Dy
+    {ASL_32_ASR_IMM,            0xF1F8,     0xE180,     12},  // ASL.L #imm, Dy
     {BCC_8_0_0,                 0xFF00,     0x6400,     10}, // BCC <label>
     {BCC_16_0_0,                0xFFFF,     0x6400,     10}, // BCC <label>
     {BCC_32_0_0,                0xFFFF,     0x64FF,     10}, // BCC <label> (32-bit DISP)
