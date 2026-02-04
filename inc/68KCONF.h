@@ -242,20 +242,27 @@
 #define		M68K_BIT_SHIFT_N_24(VALUE)			((VALUE) >> 16)
 #define		M68K_BIT_SHIFT_N_32(VALUE)			((VALUE) >> 24)
 
+// FLAGS FOR DETERMINING THE OVERFLOW RESULT BASED ON BITWISE OPERATIONS
+// THE DIFFERENCE BETWEEN THIS AND A VARIATION THAT INCLUDES MANUAL BITSHIFTING 
+// FOR DYNAMIC EDGE CASES (I.E, ASL/R), IS THAT THIS CHECKS AGAINST THE MAX BIT VALUE
+// IN AN INSTRUCTION DEFINITON + 1 
+
 #define 	M68K_FLAG_V_8(SRC, DEST, RESULT)  		(((SRC ^ RESULT) & (DEST ^ RESULT)) >> 7 & 1)
 #define 	M68K_FLAG_V_16(SRC, DEST, RESULT) 		((((SRC ^ RESULT) & (DEST ^ RESULT)) >> 15) & 1)
 #define 	M68K_FLAG_V_32(SRC, DEST, RESULT) 		((((SRC ^ RESULT) & (DEST ^ RESULT)) >> 31) & 1)
 
-#define		M68K_BIT_ZEROED(VALUE)					((VALUE == 0) ? 1 : 0)
+#define		M68K_FLAG_V_EDGE_8						0x80
+#define		M68K_FLAG_V_EDGE_16						0x8000
+#define		M68K_FLAG_V_EDGE_32						0x80000000		
 
+#define		M68K_BIT_ZEROED(VALUE)					((VALUE == 0) ? 1 : 0)
 #define		M68K_EXEC_VECTOR_TABLE					M68K_VECTOR_TABLE
 
-#define M68K_PREFETCH()               \
-    do {                               \
-        M68K_READ_MEMORY_16(M68K_REG_PC); \
-        M68K_REG_PC += 2;             \
-    } while(0)
-
+#define 	M68K_PREFETCH()               			\
+    	do {                               			\
+        	M68K_READ_MEMORY_16(M68K_REG_PC); 		\
+        	M68K_REG_PC += 2;             			\
+    	} while(0)
 
 #define		M68K_CHECK_PRIV()						(M68K_FLAG_S ? true : (M68K_REG_PC -= 4, false))
 
