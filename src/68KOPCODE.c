@@ -374,7 +374,7 @@ M68K_MAKE_OPCODE(ADD, 8, PRE_DEC, D)
 
     M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
 
-    M68K_FLAG_N = (RESULT >> 7) & 1;
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
     M68K_FLAG_Z = (U32)RESULT == 0;
     M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 7 & 1;
     M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 7) & 1;
@@ -390,14 +390,14 @@ M68K_MAKE_OPCODE(ADD, 16, PRE_DEC, D)
 
     U32 SRC_VALUE = M68K_REG_D[SRC_REG];
     U32 DEST_VALUE = M68K_REG_D[DEST_REG];
-    U32 RESULT = (U32)(SRC_VALUE) + (U32)(DEST_VALUE);
+    U32 RESULT = (S16)(SRC_VALUE) + (S16)(DEST_VALUE);
 
-    M68K_REG_D[DEST_REG] = (U32)(RESULT & 0xFFFFFFFFF);
+    M68K_REG_D[DEST_REG] = (S32)(RESULT & 0xFFFFFFFFF);
 
-    M68K_FLAG_N = (RESULT >> 15) & 1;
-    M68K_FLAG_Z = (U32)RESULT == 0;
-    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ (U32)RESULT)) >> 15 & 1;
-    M68K_FLAG_X = M68K_FLAG_C = (RESULT >> 15) & 1;
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (S16)RESULT == 0;
+    M68K_FLAG_V = ((SRC_VALUE ^ ~DEST_VALUE) & (SRC_VALUE ^ M68K_BIT_SHIFT_16(RESULT)));
+    M68K_FLAG_X = M68K_FLAG_C = M68K_BIT_SHIFT_16(RESULT);
 
     M68K_CCR_HOOK();
     M68K_EA_PRINT_HOOK(M68K_REG_D);
@@ -1193,7 +1193,7 @@ M68K_MAKE_OPCODE(ASR, 32, ASR, 0)
     M68K_CCR_HOOK();
 }
 
-M68K_MAKE_OPCODE(ASL, 8, ASR, IMM)
+M68K_MAKE_OPCODE(ASL, 8, IMM)
 {
     unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
     unsigned SRC = M68K_DATA_LOW;
@@ -1209,7 +1209,7 @@ M68K_MAKE_OPCODE(ASL, 8, ASR, IMM)
     M68K_CCR_HOOK();
 }
 
-M68K_MAKE_OPCODE(ASL, 16, ASR, IMM)
+M68K_MAKE_OPCODE(ASL, 16, IMM)
 {
     unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
     unsigned SRC = M68K_DATA_LOW;
@@ -1225,7 +1225,7 @@ M68K_MAKE_OPCODE(ASL, 16, ASR, IMM)
     M68K_CCR_HOOK();
 }
 
-M68K_MAKE_OPCODE(ASL, 32, ASR, IMM)
+M68K_MAKE_OPCODE(ASL, 32, IMM)
 {
     unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
     unsigned SRC = M68K_DATA_LOW;
@@ -1238,6 +1238,54 @@ M68K_MAKE_OPCODE(ASL, 32, ASR, IMM)
     M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_32(RESULT) == 0);
     M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_32) != 0;
     M68K_FLAG_X = M68K_FLAG_C = (SRC >> (32 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASR, 8, IMM)
+{
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_8(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_8(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_8(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_8(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_8) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC << (8 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASR, 16, IMM)
+{
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_16(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_16(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_16(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_16(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_16) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC << (16 - SHIFT)) & 1;
+    M68K_CCR_HOOK();
+}
+
+M68K_MAKE_OPCODE(ASR, 32, IMM)
+{
+    unsigned SHIFT = M68K_QUICK_DATA(M68K_REG_IR);
+    unsigned SRC = M68K_DATA_LOW;
+    unsigned RESULT = SRC << SHIFT;
+    M68K_USE_CYCLES(SHIFT);
+
+    M68K_DATA_HIGH = M68K_MASK_OUT_BELOW_32(M68K_DATA_HIGH) | M68K_MASK_OUT_ABOVE_32(RESULT);
+
+    M68K_FLAG_N = M68K_BIT_SHIFT_32(RESULT);
+    M68K_FLAG_Z = (M68K_MASK_OUT_ABOVE_32(RESULT) == 0);
+    M68K_FLAG_V = ((SRC ^ RESULT) & M68K_FLAG_V_EDGE_32) != 0;
+    M68K_FLAG_X = M68K_FLAG_C = (SRC << (32 - SHIFT)) & 1;
     M68K_CCR_HOOK();
 }
 
@@ -5222,8 +5270,8 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADDA_32_PD_AY,             0xF1F8,     0xD1E0,     22},  // ADDA.L -(An), Ay
     {ADDA_16_PI_AY,             0xF1F8,     0xD0D8,     12},  // ADDA.W (An)+, Ay
     {ADDA_32_PI_AY,             0xF1F8,     0xD1D8,     20},  // ADDA.L (An)+, Ay
-    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     10},  // ADDI.B #<data>,Dy
-    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     10},  // ADDI.W #<data>,Dy
+    {ADDI_8_IMM_0,              0xFFF8,     0x0600,     12},  // ADDI.B #<data>,Dy
+    {ADDI_16_IMM_0,             0xFFF8,     0x0640,     12},  // ADDI.W #<data>,Dy
     {ADDI_32_IMM_0,             0xFFF8,     0x0680,     20}, // ADDI.L #<data>,Dy
     {ADDI_8_IMM_EA,             0xFFFF,     0x0639,     20}, // ADDI.B #imm,<ea>
     {ADDI_16_IMM_EA,            0xFFFF,     0x0679,     20}, // ADDI.W #imm,<ea>
@@ -5254,9 +5302,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ASR_8_ASR_0,               0xF1F8,     0xE020,     6},  // ASR.B Dn, Dy
     {ASR_16_ASR_0,              0xF1F8,     0xE060,     6},  // ASR.W Dn, Dy
     {ASR_32_ASR_0,              0xF1F8,     0xE0A0,     6},  // ASR.L Dn, Dy
-    {ASL_8_ASR_IMM,             0xF1F8,     0xE100,     6},  // ASL.B #imm, Dy
-    {ASL_16_ASR_IMM,            0xF1F8,     0xE140,     6},  // ASL.W #imm, Dy
-    {ASL_32_ASR_IMM,            0xF1F8,     0xE180,     12},  // ASL.L #imm, Dy
+    {ASL_8_IMM_,                0xF1F8,     0xE100,     6},  // ASL.B #imm, Dy
+    {ASL_16_IMM_,               0xF1F8,     0xE140,     6},  // ASL.W #imm, Dy
+    {ASL_32_IMM_,               0xF1F8,     0xE180,     12},  // ASL.L #imm, Dy
+    {ASR_8_IMM_,                0xF1F8,     0xE000,     6},  // ASL.B #imm, Dy
+    {ASR_16_IMM_,               0xF1F8,     0xE040,     6},  // ASL.W #imm, Dy
+    {ASR_32_IMM_,               0xF1F8,     0xE080,     6},  // ASL.L #imm, Dy
     {BCC_8_0_0,                 0xFF00,     0x6400,     10}, // BCC <label>
     {BCC_16_0_0,                0xFFFF,     0x6400,     10}, // BCC <label>
     {BCC_32_0_0,                0xFFFF,     0x64FF,     10}, // BCC <label> (32-bit DISP)
