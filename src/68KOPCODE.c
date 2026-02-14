@@ -1407,25 +1407,21 @@ M68K_MAKE_OPCODE(BNE, 32, 0, 0)
 
 M68K_MAKE_OPCODE(BEQ, 8, 0, 0)
 {
-    M68K_BRANCH_8(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-    return;
-}
+    if(M68K_FLAG_Z)
+    {
+        S16 DISP = (S8)(M68K_REG_IR & 0xFF);
 
-// IIRC, BEQ 16/32 BIT IS RESERVED MOSTLY FOR THE 68851 MMU
-// SO, GIVEN THE OUTCOME WE WANT, WE WONT BE CONCERNING OURSELVES WITH THIS FOR NOW
+        if(DISP == 0)
+        {
+            DISP = (S16)READ_IMM_16();
+            M68K_REG_PC += DISP - 2;
+        }
 
-M68K_MAKE_OPCODE(BEQ, 16, 0, 0)
-{
-    M68K_BRANCH_16(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-    M68K_REG_PC += 2;
-    return;
-}
-
-M68K_MAKE_OPCODE(BEQ, 32, 0, 0)
-{
-    M68K_BRANCH_32(M68K_MASK_OUT_ABOVE_8(M68K_REG_IR));
-    M68K_REG_PC += 2;
-    return;
+        else
+        {
+            M68K_REG_PC += DISP;
+        }
+    }
 }
 
 M68K_MAKE_OPCODE(BLT, 16, 0, 0)
@@ -5324,8 +5320,6 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_LABEL_0_0,             0xFF00,     0x6000,     10}, // BRA <label>
     {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
-    {BEQ_16_0_0,                0xFFFF,     0x6700,     10}, // BEQ <label>
-    {BEQ_32_0_0,                0xFFFF,     0x67FF,     20}, // BEQ <label>
     {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BNE_16_0_0,                0xFFFF,     0x6600,     12},  // BNE <ea>
