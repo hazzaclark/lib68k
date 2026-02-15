@@ -1405,22 +1405,31 @@ M68K_MAKE_OPCODE(BNE, 32, 0, 0)
     M68K_USE_CYCLES(8);
 }
 
-M68K_MAKE_OPCODE(BEQ, 8, 0, 0)
-{
-    if(M68K_FLAG_Z)
-    {
-        S16 DISP = (S8)(M68K_REG_IR & 0xFF);
+// ONLY UPDATE THE PROPER DISPLACMENT ASSUMING
+// THAT THE CONDITIONAL FOR FLAG Z IS PROPERLY SET
+//
+// THE -2 ON THE 16 BIT DISPLACEMENT NEGATES THE
+// MANUAL PC ADVANCE FROM THE IMMEDIATE DISPLACEMENT
 
-        if(DISP == 0)
+M68K_MAKE_OPCODE(BEQ, LABEL, DISP, ALL)
+{
+    S16 DISP = (S8)(M68K_REG_IR & 0xFF);
+
+    if(DISP == 0)
+    {
+        DISP = (S16)READ_IMM_16();
+
+        if(M68K_FLAG_Z)
         {
-            DISP = (S16)READ_IMM_16();
             M68K_REG_PC += DISP - 2;
         }
+    }
 
-        else
-        {
-            M68K_REG_PC += DISP;
-        }
+    // ONLY ACCOUNT FOR THE DISPLACEMENT 
+    // AS A BRANCH EVALUATION FOR 8-BIT
+    else
+    {
+        if(M68K_FLAG_Z) M68K_REG_PC += DISP;
     }
 }
 
@@ -5040,7 +5049,8 @@ M68K_MAKE_OPCODE(SUBQ, 16, D, 0)
 
 M68K_MAKE_OPCODE(SUBQ, 32, D, 0)
 {
-    unsigned* DEST = &M68K_DATA_HIGH;
+    unsigned VALUE = M68K_DATA_LOW;
+    unsigned* DEST = &VALUE;
     unsigned SRC = (((M68K_REG_IR >> 9) - 1) & 7) + 1;
     unsigned RESULT = *DEST - SRC;
 
@@ -5319,7 +5329,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {BCHG_8_D_EA,               0xF1FF,     0x0179,     10},  // BCHG.B <ea>, Dy
     {BCLR_8_D_EA,               0xF1FF,     0x01B9,     10}, // BCLR.B <ea>, Dy
     {BRA_LABEL_0_0,             0xFF00,     0x6000,     10}, // BRA <label>
-    {BEQ_8_0_0,                 0xFF00,     0x6700,     10}, // BEQ <label>
+    {BEQ_LABEL_DISP_ALL,        0xFF00,     0x6700,     10}, // BEQ <label>
     {BLT_16_0_0,                0xFFFF,     0x6D00,     10},  // BLT <ea>
     {BNE_8_0_0,                 0xFF00,     0x6600,     10},  // BNE <ea>
     {BNE_16_0_0,                0xFFFF,     0x6600,     12},  // BNE <ea>
