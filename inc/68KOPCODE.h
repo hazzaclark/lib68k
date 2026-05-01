@@ -40,8 +40,8 @@
     typedef struct OPCODE_HANDLER
     {
         void(*HANDLER)(void);
-        unsigned MASK;
-        unsigned MATCH;
+        U16 MASK;
+        U16 MATCH;
         unsigned CYCLES;
 
     } OPCODE_HANDLER;
@@ -71,11 +71,36 @@
     #define     M68K_EXCEPTION(...) \
     void __VA_ARGS__(void) 
 
-extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[OPCODE_MAX];
+    extern OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[OPCODE_MAX];
 
-extern void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
-extern void(*M68K_EXCEPTION_JUMP_TABLE[256])(void);
-extern void M68K_BUILD_EXCEPTION_TABLE(void);
+    extern void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
+    extern void(*M68K_EXCEPTION_JUMP_TABLE[256])(void);
+    extern void M68K_BUILD_EXCEPTION_TABLE(void);
+
+#endif
+
+/* ============================================================ */
+/*               68000 CYCLE ACCURACY DECLARATIONS              */
+/* ============================================================ */
+
+#if defined(USE_EA_CYCLES)
+    #define USE_EA_CYCLES
+#else
+    #define USE_EA_CYCLES
+
+    #include <stdint.h>
+
+    // DEFINE THE BASIS FOR EA MODE FIELDS AND THEIR RESPECTIVE BITS 
+    // THAT WILL BE EXTRACTED TO ACCESS THE MODE ITSELF
+    
+    #define         M68K_EA_DN              0b000
+    #define         M68K_EA_AN              0b001
+    #define         M68K_EA_AN_IND          0b010
+    #define         M68K_EA_AN_POST         0b011
+    #define         M68K_EA_AN_PRE          0b100
+    #define         M68K_EA_AN_DISP         0b101
+    #define         M68K_EA_AN_IDX          0b110
+    #define         M68K_EA_EXT             0b111
 
 #endif
 #endif
