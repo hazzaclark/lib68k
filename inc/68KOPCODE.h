@@ -118,13 +118,17 @@
     //
     // THE FOLLOWING ARE THE DETERMINISTIC OPCODES VALUE
     // WHEN MODE AND XN ARE EXTRACTED FROM THE OPCODE WORD
+    //
+    // SEE CYCLE ACCURACY: https://wiki.neogeodev.org/index.php?title=68k_instructions_timings
 
     #define         M68K_EA_FILL_SLOTS(VALUE)           {(VALUE), (VALUE), (VALUE), (VALUE), (VALUE), (VALUE), (VALUE), (VALUE)}
 
     static const U8 M68K_EA_CYCLES_BW[8][8] = 
     {
-        [M68K_EA_DN]    =  M68K_EA_FILL_SLOTS(0),
-        [M68K_EA_AN]    =  M68K_EA_FILL_SLOTS(0),
+        [M68K_EA_DN]            =  M68K_EA_FILL_SLOTS(0),
+        [M68K_EA_AN]            =  M68K_EA_FILL_SLOTS(0),
+        [M68K_EA_AN_IND]        =  M68K_EA_FILL_SLOTS(4),
+        [M68K_EA_AN_POST]       =  M68K_EA_FILL_SLOTS(4),
     };
 
 #endif
