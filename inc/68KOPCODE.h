@@ -143,5 +143,25 @@
         },
     };
 
+    static const U8 M68K_EA_CYCLES_L[8][8] =
+    {
+        [M68K_EA_DN]                =  M68K_EA_FILL_SLOTS(0),
+        [M68K_EA_AN]                =  M68K_EA_FILL_SLOTS(0),
+        [M68K_EA_AN_IND]            =  M68K_EA_FILL_SLOTS(8),
+        [M68K_EA_AN_POST]           =  M68K_EA_FILL_SLOTS(8),
+        [M68K_EA_AN_PRE]            =  M68K_EA_FILL_SLOTS(10),
+        [M68K_EA_AN_DISP]           =  M68K_EA_FILL_SLOTS(12),
+        [M68K_EA_AN_IDX]            =  M68K_EA_FILL_SLOTS(14),
+        
+        [M68K_EA_EXT]   =
+        {
+            [M68K_EA_EXT_ABS_W]     =  M68K_EA_FILL_SLOTS(12),
+            [M68K_EA_EXT_ABS_L]     =  M68K_EA_FILL_SLOTS(16),
+            [M68K_EA_EXT_PC]        =  M68K_EA_FILL_SLOTS(12),
+            [M68K_EA_EXT_PC_IDX]    =  M68K_EA_FILL_SLOTS(14),
+            [M68K_EA_EXT_IMM]       =  M68K_EA_FILL_SLOTS(8),
+        },
+    };
+
 #endif
 #endif
