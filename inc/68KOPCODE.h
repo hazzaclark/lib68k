@@ -102,5 +102,11 @@
     #define         M68K_EA_AN_IDX          0b110
     #define         M68K_EA_EXT             0b111
 
+    #define         M68K_EA_EXT_ABS_W       0b000
+    #define         M68K_EA_EXT_ABS_L       0b001
+    #define         M68K_EA_EXT_PC          0b010
+    #define         M68K_EA_EXT_PC_IDX      0b011
+    #define         M68K_EA_EXT_IMM         0b100
+
 #endif
 #endif
