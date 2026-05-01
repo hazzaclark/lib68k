@@ -93,20 +93,20 @@
     // DEFINE THE BASIS FOR EA MODE FIELDS AND THEIR RESPECTIVE BITS 
     // THAT WILL BE EXTRACTED TO ACCESS THE MODE ITSELF
     
-    #define         M68K_EA_DN              0b000
-    #define         M68K_EA_AN              0b001
-    #define         M68K_EA_AN_IND          0b010
-    #define         M68K_EA_AN_POST         0b011
-    #define         M68K_EA_AN_PRE          0b100
-    #define         M68K_EA_AN_DISP         0b101
-    #define         M68K_EA_AN_IDX          0b110
-    #define         M68K_EA_EXT             0b111
+    #define         M68K_EA_DN              0x0
+    #define         M68K_EA_AN              0x1
+    #define         M68K_EA_AN_IND          0x2
+    #define         M68K_EA_AN_POST         0x3
+    #define         M68K_EA_AN_PRE          0x4
+    #define         M68K_EA_AN_DISP         0x5
+    #define         M68K_EA_AN_IDX          0x6
+    #define         M68K_EA_EXT             0x7
 
-    #define         M68K_EA_EXT_ABS_W       0b000
-    #define         M68K_EA_EXT_ABS_L       0b001
-    #define         M68K_EA_EXT_PC          0b010
-    #define         M68K_EA_EXT_PC_IDX      0b011
-    #define         M68K_EA_EXT_IMM         0b100
+    #define         M68K_EA_EXT_ABS_W       0x0
+    #define         M68K_EA_EXT_ABS_L       0x1
+    #define         M68K_EA_EXT_PC          0x2
+    #define         M68K_EA_EXT_PC_IDX      0x3
+    #define         M68K_EA_EXT_IMM         0x4
 
     // CREATE PRE-COMPUTED LOOKUP TABLES WITH THE RESPECTIVE VALUES REQUIRED
     // PER EACH OF THE EA MODES
@@ -135,11 +135,11 @@
         
         [M68K_EA_EXT]   =
         {
-            [M68K_EA_EXT_ABS_W]     =  M68K_EA_FILL_SLOTS(8),
-            [M68K_EA_EXT_ABS_L]     =  M68K_EA_FILL_SLOTS(12),
-            [M68K_EA_EXT_PC]        =  M68K_EA_FILL_SLOTS(8),
-            [M68K_EA_EXT_PC_IDX]    =  M68K_EA_FILL_SLOTS(10),
-            [M68K_EA_EXT_IMM]       =  M68K_EA_FILL_SLOTS(4),
+            [M68K_EA_EXT_ABS_W]     =  8,
+            [M68K_EA_EXT_ABS_L]     =  12,
+            [M68K_EA_EXT_PC]        =  8,
+            [M68K_EA_EXT_PC_IDX]    =  10,
+            [M68K_EA_EXT_IMM]       =  4,
         },
     };
 
@@ -155,13 +155,28 @@
         
         [M68K_EA_EXT]   =
         {
-            [M68K_EA_EXT_ABS_W]     =  M68K_EA_FILL_SLOTS(12),
-            [M68K_EA_EXT_ABS_L]     =  M68K_EA_FILL_SLOTS(16),
-            [M68K_EA_EXT_PC]        =  M68K_EA_FILL_SLOTS(12),
-            [M68K_EA_EXT_PC_IDX]    =  M68K_EA_FILL_SLOTS(14),
-            [M68K_EA_EXT_IMM]       =  M68K_EA_FILL_SLOTS(8),
+            [M68K_EA_EXT_ABS_W]     =  12,
+            [M68K_EA_EXT_ABS_L]     =  16,
+            [M68K_EA_EXT_PC]        =  12,
+            [M68K_EA_EXT_PC_IDX]    =  14,
+            [M68K_EA_EXT_IMM]       =  8,
         },
     };
+
+    // EVALUATIVE MACROS WHICH ACT AS DIRECT LOOKUP FOR A GIVEN OPCODE WORD 
+    // USED WHEN THE MODE AND XN COME FROM AN ACTUAL OPCODE WORD
+
+    #define         M68K_EA_CYCLES_BW(MODE, XN)             \
+                ((unsigned)M68K_EA_CYCLES_BW[(MODE)][(XN)])
+
+     #define         M68K_EA_CYCLES_L(MODE, XN)             \
+                ((unsigned)M68K_EA_CYCLES_L[(MODE)][(XN)])
+
+
+    // DETERMINES THE EVALUATIVE SIZE OF A PROVIDED OPCODE WORD
+    // TO VALIDATE THE CORRECT CYCLE COUNTS PER ITS SIZE
+    #define         M68K_EA_CYCLE_EVAL(SIZE, MODE, XN)      \
+            ((SIZE) == 4 ? M68K_EA_CYCLES_L((MODE), (XN)) : M68K_EA_CYCLES_BW((MODE), (XN)))
 
 #endif
 #endif
