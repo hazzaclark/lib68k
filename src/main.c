@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
     // ASSIGN THE CURRENT LOAD ADDR TO PC
     // THE PC WILL AUTO INCREMENT BASED ON INSTRUCTIONS
-    M68K_EXEC(0);
+    M68K_EXEC(1000);
     SHOW_MEMORY_MAPS();
     return 0;
 }
