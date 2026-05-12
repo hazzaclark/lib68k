@@ -132,6 +132,8 @@
         #define         M68K_LOW_NIBBLE(VALUE)              ((VALUE) & 0x0F)
         #define         M68K_HIGH_NIBBLE(VALUE)             (((VALUE) >> 12) & 0x0F)
 
+        #define         M68K_LONGWORD(OPCODE)               (M68K_BIT_7(OPCODE) && !M68K_BIT_6(OPCODE))
+
         #define         M68K_IMM_NIBBLE()                   \
                     ((U32)READ_IMM_32() << 31) | READ_IMM_32()
 
@@ -350,6 +352,13 @@
 
         } CPU_68K_FLAGS;
 
+        typedef enum CPU_68K_MODES
+        {
+            REG_DATA,
+            REG_ADDRESS
+
+        } CPU_68K_MODES; 
+
         #define         M68K_REG_BASE           CPU.REGISTER_BASE
         #define 		M68K_REG_DA             CPU.DATA_REGISTER
         #define			M68K_REG_D              CPU.DATA_REGISTER
@@ -449,6 +458,7 @@ void M68K_SET_CCR(unsigned VALUE);
 void M68K_SET_SR(unsigned VALUE);
 
 void M68K_BUILD_OPCODE_TABLE(void);
+void M68K_BENCH_DISPATCH(void);
 
 /*==============================================================================*/
 /*                                  68000 MISC.                                 */
