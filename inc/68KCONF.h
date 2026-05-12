@@ -211,6 +211,14 @@
     	#define M68K_ADDRESS_HOOK(REG_ARRAY, TYPE) ((void)0)
 	#endif
 
+
+	#define	M68K_IMM_PRINT_HOOK(RESULT)											\
+		do {																	\
+			int IMM = M68K_DATA_HIGH;											\
+			printf("IMMEDIATE VALUE: #%d (0x%X)\n", 							\
+				IMM, IMM);														\
+		} while(0)
+
 #define		M68K_USE_CYCLES(VALUE)				M68K_MASTER_CYC += (VALUE)
 #define		M68K_SET_CYCLES(VALUE)				M68K_MASTER_CYC = VALUE
 #define		M68K_GET_CYCLES()					M68K_MASTER_CYC
@@ -294,7 +302,6 @@
 
 			// WRAPPER FUNCTION TO AID WITH EXTRACTING BITS
 #define		M68K_EXTRACT(OPCODE, START, END)		M68K_EXTRACT_BITS(OPCODE, START, END)
-
 
 /*===============================================================================*/
 /*							68000 READ AND WRITE							     */
