@@ -14,6 +14,8 @@
 #include "common.h"
 #include "util.h"
 
+#include <time.h>
+
 #undef USE_68K
 #undef BUILD_OP_TABLE
 
@@ -189,11 +191,8 @@ void M68K_INIT(void)
 
     #if M68K_L68K_MODE
 
-     // 512KB RAM 
-    MEMORY_MAP(0x000000, 0x7FFFF, true, true);
-    
-    // 512KB ROM 
-    MEMORY_MAP(0x080000, 0xFFFFF, false, false);   
+    // 512KB RAM 
+    MEMORY_MAP(0x00000, 0x7FFFF, true, true);
 
     #endif
 }
