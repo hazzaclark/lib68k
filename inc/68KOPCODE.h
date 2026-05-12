@@ -178,5 +178,24 @@
     #define         M68K_EA_CYCLE_EVAL(SIZE, MODE, XN)      \
             ((SIZE) == 4 ? M68K_EA_CYCLES_L((MODE), (XN)) : M68K_EA_CYCLES_BW((MODE), (XN)))
 
+
+    // INDIVUAL MATCH-DERIVED ACCESSORS CONTINGENT 
+    // ON THE MASK VALUE OF AN OPCODE WORD - WHICH DETERMINES
+    // THE CYCLES GIVEN TO SUCH
+
+    #define         M68K_EA_CYCLE_MATCH_BW(MATCH)           \
+        M68K_EA_CYCLES_BW                                   \
+        (                                                   \
+            M68K_EXTRACT_BITS((MATCH), 3, 5),               \
+            M68K_EXTRACT_BITS((MATCH), 0, 2)                \
+        )
+        
+    #define         M68K_EA_CYCLE_MATCH_L(MATCH)            \
+        M68K_EA_CYCLES_L                                    \
+        (                                                   \
+            M68K_EXTRACT_BITS((MATCH), 3, 5),               \
+            M68K_EXTRACT_BITS((MATCH), 0, 2)                \
+        )  
+
 #endif
 #endif
