@@ -9,6 +9,7 @@
 #include "68K.h"
 
 #ifdef BUILD_OP_TABLE
+#ifdef USE_EA_CYCLES
 
 void(*M68K_OPCODE_JUMP_TABLE[0x10000])(void);
 void(*M68K_EXCEPTION_JUMP_TABLE[256])(void);
@@ -285,6 +286,7 @@ M68K_MAKE_OPCODE(ADD, 16, D, 0)
     // MAKE SURE TO PRESERVE THE UPPER AND STORE LOWER 16 BITS
     *EA = M68K_MASK_OUT_BELOW_16(*EA) | M68K_MASK_OUT_ABOVE_16(RESULT);
     M68K_CCR_HOOK();
+    M68K_BASE_ADDRESS_HOOK(M68K_REG_BASE);
 }
 
 M68K_MAKE_OPCODE(ADD, 32, D, 0)
@@ -727,7 +729,7 @@ M68K_MAKE_OPCODE(ADDI, 8, IMM, 0)
     M68K_FLAG_Z = (RESULT == 0);
 
     M68K_CCR_HOOK();
-    *EA = M68K_FLAG_Z;
+    *EA = (*EA & ~0xFF) | (RESULT & 0xFF);
 }
 
 M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
@@ -743,7 +745,7 @@ M68K_MAKE_OPCODE(ADDI, 16, IMM, 0)
     M68K_FLAG_Z = (RESULT == 0);
 
     M68K_CCR_HOOK();
-    *EA = M68K_FLAG_Z;
+    *EA = (*EA & ~0xFF) | (RESULT & 0xFFFF);
 }
 
 M68K_MAKE_OPCODE(ADDI, 32, IMM, 0)
@@ -987,7 +989,6 @@ M68K_MAKE_OPCODE(AND, 8, D, 0)
     M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
     
-    M68K_REG_PC += 4;
     M68K_CCR_HOOK();
 }
 
@@ -1001,7 +1002,6 @@ M68K_MAKE_OPCODE(AND, 16, D, 0)
     M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
 
-    M68K_REG_PC += 4;
     M68K_CCR_HOOK();
 }
 
@@ -1015,7 +1015,6 @@ M68K_MAKE_OPCODE(AND, 32, D, 0)
     M68K_FLAG_N += (M68K_FLAG_Z == 0); 
     M68K_FLAG_Z |= (RESULT == 0);
 
-    M68K_REG_PC += 4;
     M68K_CCR_HOOK();
 }
 
@@ -1361,13 +1360,8 @@ M68K_MAKE_OPCODE(BRA, LABEL, 0, 0)
 
     if(DISP == 0)
     {
-        DISP = (S16)READ_IMM_16();
+        S16 DISP = (S16)READ_IMM_16();
         M68K_REG_PC += DISP - 2;
-    }
-
-    else
-    {
-        M68K_REG_PC += DISP;
     }
 }
 
@@ -1437,14 +1431,10 @@ M68K_MAKE_OPCODE(BLT, 16, 0, 0)
 {
     S16 OFFSET = (S16)(READ_IMM_16());
     
-    if(M68K_FLAG_N ^ M68K_FLAG_V)
+    if((M68K_FLAG_N ^ M68K_FLAG_V) & 0x80)
     {
         M68K_REG_PC -= 2;
         M68K_BRANCH_16(OFFSET);
-    }
-    else
-    {
-        M68K_REG_PC += 2;
     }
 }
 
@@ -2684,6 +2674,7 @@ M68K_MAKE_OPCODE(MOVE, 16, D, I)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+    M68K_IMM_PRINT_HOOK(*EA);
 }
 
 M68K_MAKE_OPCODE(MOVE, 32, D, I)
@@ -3578,6 +3569,7 @@ M68K_MAKE_OPCODE(MOVEQ, 32, D, 0)
 
     M68K_CCR_HOOK();
     M68K_BASE_ADDRESS_HOOK(M68K_REG_D);
+    M68K_IMM_PRINT_HOOK(RESULT);
 }
 
 M68K_MAKE_OPCODE(MOVE, 8, D, IMM)
@@ -5255,12 +5247,12 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     // HANDLER                  MASK        MATCH       CYCLES
     {ABCD_8_DN_DY,              0xF1F8,     0xC100,     6},   // ABCD Dy, Dx
     {ABCD_8_PD_AY,              0xF1F8,     0xC108,     18},  // ABCD -(Ay), -(An)
-    {ADD_8_EA_DN,               0xF1FF,     0xD039,     4},  // ADD.B <ea>,Dn
-    {ADD_16_EA_DN,              0xF1FF,     0xD079,     4},  // ADD.W <ea>,Dn
-    {ADD_32_EA_DN,              0xF1FF,     0xD0B9,     6},  // ADD.L <ea>,Dn
-    {ADD_8_D_0,                 0xF1F8,     0xD000,     8},  // ADD.B Dn, Dm
-    {ADD_16_D_0,                0xF1F8,     0xD040,     8},  // ADD.W Dn, Dm
-    {ADD_32_D_0,                0xF1F8,     0xD080,     12},  // ADD.L Dn, Dm
+    {ADD_8_EA_DN,               0xF1FF,     0xD039,     4 + M68K_EA_CYCLES_BW(M68K_EA_EXT, M68K_EA_EXT_ABS_L)},  // ADD.B <ea>,Dn
+    {ADD_16_EA_DN,              0xF1FF,     0xD079,     4 + M68K_EA_CYCLES_BW(M68K_EA_EXT, M68K_EA_EXT_ABS_L)},  // ADD.W <ea>,Dn
+    {ADD_32_EA_DN,              0xF1FF,     0xD0B9,     6 + M68K_EA_CYCLES_L(M68K_EA_EXT, M68K_EA_EXT_ABS_L)},  // ADD.L <ea>,Dn
+    {ADD_8_D_0,                 0xF1F8,     0xD000,     4},  // ADD.B Dn, Dm
+    {ADD_16_D_0,                0xF1F8,     0xD040,     4},  // ADD.W Dn, Dm
+    {ADD_32_D_0,                0xF1F8,     0xD080,     6},  // ADD.L Dn, Dm
     {ADD_8_EA_DISP,             0xF1F8,     0xD010,     8},  // ADD.B (An), Dy
     {ADD_16_EA_DISP,            0xF1F8,     0xD050,     8},  // ADD.W (An), Dy
     {ADD_32_EA_DISP,            0xF1F8,     0xD090,     20},  // ADD.L (An), Dy
@@ -5282,7 +5274,7 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {ADD_8_A_AI,                0xF1F8,     0xD028,     12},  // ADD.B $imm(An), Dy
     {ADD_16_A_AI,               0xF1F8,     0xD068,     12},  // ADD.W $imm(An), Dy
     {ADD_32_A_AI,               0xF1F8,     0xD0A8,     24},  // ADD.L $imm(An), Dy
-    {ADD_32_DISP_PC,            0xF1F8,     0xD0B8,     24},  // ADD.L $disp(PC), Dy
+    {ADD_32_DISP_PC,            0xF1FF,     0xD0BA,     24},  // ADD.L $disp(PC), Dy
 
 
     {ADDA_16_EA_0,              0xF1C0,     0xD0C0,     8},  // ADDA.W <ea>,An
@@ -5395,9 +5387,9 @@ OPCODE_HANDLER M68K_OPCODE_HANDLER_TABLE[] =
     {DIVS_16_D_0,               0xF1F8,     0x81C0,     4},  // DIVS.W Dn,Dy
     {DIVS_16_IMM_0,             0xF1FF,     0x81FC,     4},  // DIVS.W #imm, Dy
     {DIVU_16_D_0,               0xF1F8,     0x80C0,     4},  // DIVU.W <ea>, Dy
-    {EOR_8_D_0,                 0xFFFF,     0xB101,     4},  // EOR.B Dn,<ea>
-    {EOR_16_D_0,                0xFFFF,     0xB141,     4},  // EOR.W Dn,<ea>
-    {EOR_32_D_0,                0xFFFF,     0xB181,     8},  // EOR.L Dn,<ea>
+    {EOR_8_D_0,                 0xF1F8,     0xB100,     4},  // EOR.B Dn,<ea>
+    {EOR_16_D_0,                0xF1F8,     0xB140,     4},  // EOR.W Dn,<ea>
+    {EOR_32_D_0,                0xF1F8,     0xB180,     8},  // EOR.L Dn,<ea>
     {EORI_8_D_0,                0xFF00,     0x0A00,     8},  // EORI.B #<data>,<ea>
     {EORI_16_D_0,               0xFFF0,     0x0A40,     8},  // EORI.W #<data>,<ea>
     {EORI_32_D_0,               0xFF00,     0x0A80,     16}, // EORI.L #<data>,<ea>
@@ -5645,25 +5637,15 @@ void M68K_BUILD_OPCODE_TABLE(void)
         for (INDEX = 0; INDEX < OPCODE_MAX; INDEX++)
         {
             // IF THE CORRESPONDING OPCODE MASK FROM THE TABLE 
-            // MATCHES HOW IT APPEARS IN TRAD 68K, USE THE CORRESPONDING AMOUNT OF CYCLES
-
-            // USES THE CYCLES FROM THE OPCODE HANDLER AS A DETERMINENT
-            // THIS IS BECAUSE THAT THE CLOCK CYCLES OF THE CPU *ITSELF* ARE ADJACENT
-            // IN THAT REGARD TO THE OPCODE CYCLES AND HOW MUCH IS USED DURING EXECUTION
-
-            // IT IS ALSO WORTH MENTIONING THAT CERTAIN OPCODES WILL EITHER USE 4 OR 8
-            // CYCLES WHEN ACCESSING DATA
+            // MATCHES HOW IT APPEARS IN TRADITIONAL 68K, USING THE CORRESPONDING AMOUNT OF CYCLES
 
             // THE VARIANCE IN THE AMOUNT OF CYCLES IS DEPENDANT ON WHICHEVER OPCODES ARE
             // USING MEMORY OR NOT
 
-            // AREAS SUCH AS AN IMMEDIATE SECTION DESIGNATED TO DEFINING CONSTANTS
-            // WILL ONLY USE 4 CYCLES AS THAT ISNT NEEDING TO MANUALLY ASSERT ANY CHANGES IN MEMORY
-
             if ((INDEX & OPCODE->MASK) == OPCODE->MATCH)
             {
                 M68K_OPCODE_JUMP_TABLE[INDEX] = OPCODE->HANDLER;
-                CYCLE_RANGE[INDEX] = OPCODE->CYCLES;               
+                CYCLE_RANGE[INDEX] = OPCODE->CYCLES;     
             }
         }
 
@@ -5686,4 +5668,5 @@ void M68K_BUILD_EXCEPTION_TABLE(void)
     M68K_EXCEPTION_HANDLER_TABLE[8] = (EXCEPTION_HANDLER){8, M68K_VECTOR_TABLE[0][8], PRIV_VIO};
 }
 
+#endif
 #endif
