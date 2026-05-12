@@ -7,7 +7,7 @@
 
 CC			=		$(PREFIX)gcc
 AR			=		$(PREFIX)ar
-WARNINGS	=		-std=gnu99 -Wall -Wextra -Wparentheses -Werror -pedantic -O0
+WARNINGS	=		-std=gnu99 -Wall -Wextra -Wparentheses -Werror -pedantic -O1 -g -fno-omit-frame-pointer
 SRC			= 		src
 INC			=		inc
 
