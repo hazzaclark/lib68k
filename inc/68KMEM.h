@@ -22,6 +22,9 @@
 #define         M68K_T0_SHIFT                   (1 << 3)
 #define         M68K_T1_SHIFT                   (1 << 4)
 
+#define         M68K_BERR                       2
+#define         M68K_BERR_ADDR                  (M68K_BERR * 4)
+
 #define         M68K_MAX_ADDR_START             0x0000000                                               
 #define         M68K_MAX_MEMORY_SIZE            0x1000000                                               
 
@@ -117,9 +120,18 @@ typedef struct
 //              TRACE CONTROL MACROS
 /////////////////////////////////////////////////////
 
-#define         MEM_TRACE_HOOK                  M68K_OPT_OFF
-#define         MEM_MAP_TRACE_HOOK              M68K_OPT_OFF
-#define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
+    #ifndef             VERBOSE_TRACE_HOOK
+        #define         VERBOSE_TRACE_HOOK              M68K_OPT_OFF
+    #endif
+
+    #ifndef             MEM_TRACE_HOOK
+        #define         MEM_TRACE_HOOK                  M68K_OPT_OFF
+    #endif
+
+    #ifndef             MEM_MAP_TRACE_HOOK 
+        #define         MEM_MAP_TRACE_HOOK              M68K_OPT_OFF
+    #endif
+
 #define         JUMP_HOOK                       M68K_OPT_ON
 #define         PHASE_HOOK                      M68K_OPT_ON
 
@@ -158,10 +170,13 @@ typedef struct
 
 #define MEM_ERROR(ERROR_CODE, SIZE, MSG, ...) \
     do { \
+        size_t MEM_SIZE = (SIZE); \
         if (IS_TRACE_ENABLED(M68K_OPT_VERB) && CHECK_TRACE_CONDITION()) \
-            printf("[ERROR] -> %-18s [SIZE: %d]: " MSG "\n", \
+            printf("[ERROR] -> %-18s -> SIZE: (%.f%s) \n" MSG "\n", \
                 M68K_MEM_ERR[ERROR_CODE], \
-                (int)(SIZE), ##__VA_ARGS__); \
+                (double)FORMAT_SIZE(MEM_SIZE), \
+                FORMAT_UNIT(MEM_SIZE), \
+                ##__VA_ARGS__); \
     } while(0)
 
 #define VERBOSE_TRACE(MSG, ...) \
@@ -194,7 +209,7 @@ void ENABLE_TRACE_FLAG(U8 FLAG);
 void DISABLE_TRACE_FLAG(U8 FLAG);
 bool IS_TRACE_ENABLED(U8 FLAG);
 
-void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE, bool BERR);
+void MEMORY_MAP(U32 BASE, U32 END, bool WRITABLE, bool ENABLE_BERR);
 void SHOW_MEMORY_MAPS(void);
 void SHOW_TRACE_STATUS(void);
 
@@ -203,4 +218,3 @@ M68K_MEM_BUFFER* MEM_FIND(U32 ADDRESS);
 extern U8 ENABLED_FLAGS;
 
 #endif
-
